@@ -149,7 +149,7 @@
                                                     <input type="file" id="image" class="form-control"
                                                         name="image">
                                                     @if ($data->avatar)
-                                                        <img src="{{ url('storage/' . $data->avatar) }}"
+                                                        <img src="{{asset($data->avatar) }}"
                                                             alt="Profile Image" height="100" width="100px"
                                                             class="mt-1">
                                                     @endif

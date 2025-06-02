@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\chatController;
-use App\Http\Controllers\api\ContryController;
 use App\Http\Controllers\api\GoogleAuthController;
+use App\Http\Controllers\api\ContryController;
 use App\Http\Controllers\api\usercontroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;

@@ -13,7 +13,7 @@ class languageController extends Controller
     }
 
     public function add(){
-        return view('admin.language.Add');
+        return view('admin.language.add');
     }
 
     public function store(Request $request){

@@ -25,7 +25,7 @@
                                 </g>
                             </g>
                         </svg></span>
-                    <h2 class="brand-text">Vuexy</h2>
+                    <h2 class="brand-text">Talkamose</h2>
                 </a></li>
             <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary" data-feather="disc" data-ticon="disc"></i></a></li>
         </ul>
@@ -35,13 +35,13 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
             <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">Apps &amp; Pages</span><i data-feather="more-horizontal"></i>
             </li>
-             <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('descbord')}}"><i data-feather='home'></i><span class="menu-title text-truncate" data-i18n="Email">Dashboards</span></a>
+             <li class="nav-item {{ request()->routeIs('descbord') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('descbord')}}"><i data-feather='home'></i><span class="menu-title text-truncate" data-i18n="Email">Dashboards</span></a>
             </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('user.index')}}"><i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="Email">User</span></a>
+            <li class="nav-item {{ request()->routeIs('user.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('user.index')}}"><i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="Email">User</span></a>
 
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('contry.index')}}"><i data-feather="flag"></i><span class="menu-title text-truncate" data-i18n="Email">Country</span></a>
+            <li class="nav-item {{ request()->routeIs('contry.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('contry.index')}}"><i data-feather="flag"></i><span class="menu-title text-truncate" data-i18n="Email">Country</span></a>
             </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('language.index')}}"><i data-feather="globe"></i><span class="menu-title text-truncate" data-i18n="Email">Languages</span></a>
+            <li class="nav-item {{ request()->routeIs('language.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('language.index')}}"><i data-feather="globe"></i><span class="menu-title text-truncate" data-i18n="Email">Languages</span></a>
             </li>
             {{--<li class=" nav-item"><a class="d-flex align-items-center" href="{{route('order-index')}}"><i data-feather='shopping-cart'></i><span class="menu-title text-truncate" data-i18n="Email">Order</span></a>
             </li>

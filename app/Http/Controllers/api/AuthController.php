@@ -25,7 +25,8 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $e->errors(),
-            ], 422);
+                'status' => false
+            ]);
         }
         // dd($request);
 
@@ -43,6 +44,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully',
             'user'    => $user,
             'token'   => $token,
+            'status' => true
         ]);
     }
 
@@ -57,7 +59,7 @@ class AuthController extends Controller
              return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $e->errors(),
-            ], 422);
+            ]);
         }
 
         $user = User::where('email', $request->email)->first();
@@ -65,7 +67,8 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Invalid email or password',
-            ], 401);
+                'status' => false,
+            ]);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -73,6 +76,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'user'    => $user,
+            'status' => true,
             'token'   => $token,
         ]);
     }

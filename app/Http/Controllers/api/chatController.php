@@ -80,7 +80,7 @@ class chatController extends Controller
 
         // Broadcast the message
         // event(new \App\Events\MessageSent($message));
-         broadcast(new MessageSent($message))->toOthers();
+        broadcast(new MessageSent($message))->toOthers();
 
         return response()->json([
             'message' => 'Message sent successfully',
@@ -132,7 +132,7 @@ class chatController extends Controller
                 'user' => [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
-                    'image' => $otherUser->avatar ?? null,
+                    'image' => $otherUser->avatar ? asset($otherUser->avatar) : null,
                 ],
                 'last_message' => $lastMessage?->message,
                 'last_message_time' => $lastMessage?->created_at,

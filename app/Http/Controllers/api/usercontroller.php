@@ -23,7 +23,7 @@ class usercontroller extends Controller
         return response()->json([
             'message' => 'User Details get successfully',
             'user'    => $data,
-            'avatar_url' => asset('storage/' . $data->avatar),
+            'avatar_url' => asset($data->avatar),
         ]);
     }
 
@@ -82,14 +82,28 @@ class usercontroller extends Controller
             $user->here_about = $request->here_about;
         }
         // Handle avatar upload
+
+
         if ($request->hasFile('avatar')) {
-            // Delete old avatar if needed
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            // Delete old image if exists
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                unlink(public_path($user->avatar));
             }
 
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $path;
+            $file = $request->file('avatar');
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $sanitizedName = preg_replace('/\s+/', '_', $originalName); // replace spaces with underscores
+            $extension = $file->getClientOriginalExtension();
+
+            $filename = time() . '_' . $sanitizedName . '.' . $extension;
+
+            // Ensure directory exists
+            if (!file_exists(public_path('avatars'))) {
+                mkdir(public_path('avatars'), 0777, true);
+            }
+
+            $file->move(public_path('avatars'), $filename);
+            $user->avatar = 'avatars/' . $filename;
         }
 
         $user->save();
@@ -101,12 +115,25 @@ class usercontroller extends Controller
         ]);
     }
 
-    public function user_list(){
-        $data = User::where('type','user')->where('is_active','1')->get();
-        return response()->json([
-            'message' => 'User details updated successfully',
-            'user_list'    => $data,
-            'status'    => 200,
-        ]);
-    }
+    public function user_list()
+{
+    $users = User::where('type', 'user')->where('is_active', '1')->get();
+
+    $data = $users->map(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar ? asset($user->avatar) : null,
+            // add any other fields you need
+        ];
+    });
+
+    return response()->json([
+        'message' => 'User details fetched successfully',
+        'user_list' => $data,
+        'status' => 200,
+    ]);
+}
+
 }
