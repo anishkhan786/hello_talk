@@ -8,6 +8,8 @@ use App\Models\conversation;
 use App\Models\message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Lcobucci\JWT\Configuration;
+use App\Helpers\RtcTokenBuilder2;
 
 class chatController extends Controller
 {
@@ -144,4 +146,31 @@ class chatController extends Controller
             'data' => $chatList
         ]);
     }
+
+    public function generateAgoraToken(Request $request)
+{
+    $channelName = $request->channel_name;
+    $uid = $request->uid ?? rand(100000, 999999);
+    $expireTimeInSeconds = 3600;
+
+    $appID = config('services.agora.app_id');
+    $appCertificate = config('services.agora.certificate');
+    $currentTimestamp = now()->timestamp;
+    $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
+
+    $token = \App\Helpers\RtcTokenBuilder2::buildTokenWithUid(
+        $appID,
+        $appCertificate,
+        $channelName,
+        $uid,
+        \App\Helpers\RtcTokenBuilder2::ROLE_PUBLISHER,
+        $privilegeExpiredTs
+    );
+
+    return response()->json([
+        'token' => $token,
+        'uid' => $uid,
+        'channel_name' => $channelName
+    ]);
+}
 }

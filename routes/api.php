@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/get_chat_list', [chatController::class, 'get_chat_list']);
 });
 
+Route::post('/generate-agora-token', [chatController::class, 'generateAgoraToken']);
+
 //contrycontroller
 Route::get('/contry',[ContryController::class,'contry']);
 Route::get('/language',[ContryController::class,'language']);
