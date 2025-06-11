@@ -33,7 +33,7 @@
     <div class="shadow-bottom"></div>
     <div class="main-menu-content">
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
-            <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">Apps &amp; Pages</span><i data-feather="more-horizontal"></i>
+            <li class=" navigation-header"><span data-i18n="Apps &amp; Pages"></span><i data-feather="more-horizontal"></i>
             </li>
              <li class="nav-item {{ request()->routeIs('descbord') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('descbord')}}"><i data-feather='home'></i><span class="menu-title text-truncate" data-i18n="Email">Dashboards</span></a>
             </li>
@@ -43,6 +43,20 @@
             </li>
             <li class="nav-item {{ request()->routeIs('language.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('language.index')}}"><i data-feather="globe"></i><span class="menu-title text-truncate" data-i18n="Email">Languages</span></a>
             </li>
+
+            
+            <li class=" nav-item  {{ request()->routeIs('course.index') ? 'active' : '' }}" ><a class="d-flex align-items-center" href="{{route('course.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Course</span></a>
+            </li>
+            <li class=" nav-item {{ request()->routeIs('category') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('category')}}"><i data-feather='triangle'></i><span class="menu-title text-truncate" data-i18n="Email">Category</span></a>
+            </li>
+             <li class=" nav-item"><a class="d-flex align-items-center" href=""><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
+            </li>
+            <li class=" nav-item"><a class="d-flex align-items-center" href=""><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Troopers Together</span></a>
+            </li>
+            <li class=" nav-item {{ request()->routeIs('inquirie.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('inquirie.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Inquiries</span></a>
+            </li>
+
+
             {{--<li class=" nav-item"><a class="d-flex align-items-center" href="{{route('order-index')}}"><i data-feather='shopping-cart'></i><span class="menu-title text-truncate" data-i18n="Email">Order</span></a>
             </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('recharge-index')}}"><i data-feather='bar-chart-2'></i><span class="menu-title text-truncate" data-i18n="Email">Deposit</span></a>

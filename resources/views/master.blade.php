@@ -9,7 +9,7 @@
     <meta name="description" content="Talkamose Admin penal">
     <meta name="keywords" content="Talkamose">
     <meta name="author" content="Talkamose">
-    <title>Talkamose Dashboard</title>
+    <title>HelloTalk Dashboard</title>
     <link rel="apple-touch-icon" href="app-assets/images/ico/apple-icon-120.png">
     <link rel="shortcut icon" type="image/x-icon" href="app-assets/images/ico/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
@@ -48,7 +48,7 @@
 <body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
 
     <!-- BEGIN: Header-->
-   @include('layout.hadder')
+   @include('layout.header')
     <!-- END: Header-->
 
 

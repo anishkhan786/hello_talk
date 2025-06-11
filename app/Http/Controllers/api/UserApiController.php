@@ -4,12 +4,14 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Category;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 
-class usercontroller extends Controller
+class UserApiController extends Controller
 {
     public function get_user_detail()
     {
@@ -135,5 +137,41 @@ class usercontroller extends Controller
         'status' => 200,
     ]);
 }
+
+
+    public function category_list(Request $request)
+    {
+        try {
+            $course_id = $request->has('course_id')?$request->course_id:'';
+            $response = Category::select('id','name')->where('course_id',$course_id)->get();
+            if(!empty($response)){
+                $response = ['message'=> 'success.','status'=>true,'data' => $response,];
+                return response($response, 200);
+            } else {
+                $response = ["message" => "Category does not exit",'status'=>FALSE];
+                return response($response, 422);
+            }
+        } catch(\Exception $e)  {
+            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
+            return response($response, 400);
+        }
+    }
+
+        public function course_list(Request $request)
+        {
+            try {
+                $response = Course::select('id','name')->get();
+                if(!empty($response)){
+                    $response = ['message'=> 'success.','status'=>true,'data' => $response,];
+                    return response($response, 200);
+                } else {
+                    $response = ["message" => "Course does not exit",'status'=>FALSE];
+                    return response($response, 422);
+                }
+            } catch(\Exception $e)  {
+                $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
+                return response($response, 400);
+            }
+        }
 
 }

@@ -22,7 +22,7 @@
                                     <a href="javascript:void(0);">Total</a>
                                 </h3>
                                 <a href="" type="button" class="btn btn-primary">View Orders</a>
-                                <img src="app-assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" />
+                                <img src="../app-assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" />
                             </div>
                         </div>
                     </div>
