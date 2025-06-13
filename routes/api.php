@@ -28,13 +28,10 @@ Route::get('/auth/facebook/redirect', [GoogleAuthController::class, 'redirectToF
 Route::get('/auth/facebook/callback', [GoogleAuthController::class, 'handleFacebookCallback']);
 
 //usercontriller
-<<<<<<< HEAD
 Route::get('/get_user_detail',[UserApiController::class,'get_user_detail'])->middleware('auth:sanctum');
 Route::get('/get_user_list',[UserApiController::class,'user_list'])->middleware('auth:sanctum');
 Route::post('/update_user_details',[UserApiController::class,'update_user_details'])->middleware('auth:sanctum');
-=======
 
->>>>>>> dfe3430 (agora commit)
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversation/{receiver_id}', [chatController::class, 'getOrCreateConversation']);
@@ -47,7 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 //contrycontroller
-<<<<<<< HEAD
 Route::get('/contry',[ContryController::class,'contry']);
 Route::get('/language',[ContryController::class,'language']);
 Route::post('/inquirie-add',[InquirieApiController::class,'store']);
@@ -56,7 +52,4 @@ Route::get('/course-list',[UserApiController::class,'course_list']);
 
 
 
-=======
-Route::get('/contry', [ContryController::class, 'contry']);
-Route::get('/language', [ContryController::class, 'language']);
->>>>>>> dfe3430 (agora commit)
+
