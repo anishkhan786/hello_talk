@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Lcobucci\JWT\Configuration;
 use App\Helpers\RtcTokenBuilder2;
+use App\Models\agora_call;
+use Carbon\Carbon;
 
 class chatController extends Controller
 {
@@ -148,29 +150,98 @@ class chatController extends Controller
     }
 
     public function generateAgoraToken(Request $request)
-{
-    $channelName = $request->channel_name;
-    $uid = $request->uid ?? rand(100000, 999999);
-    $expireTimeInSeconds = 3600;
+    {
+        $request->validate([
+            'receiver_id' => 'required|exists:users,id',
+        ]);
 
-    $appID = config('services.agora.app_id');
-    $appCertificate = config('services.agora.certificate');
-    $currentTimestamp = now()->timestamp;
-    $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
+        $callerId = Auth::id();
+        $receiverId = $request->receiver_id;
 
-    $token = \App\Helpers\RtcTokenBuilder2::buildTokenWithUid(
-        $appID,
-        $appCertificate,
-        $channelName,
-        $uid,
-        \App\Helpers\RtcTokenBuilder2::ROLE_PUBLISHER,
-        $privilegeExpiredTs
-    );
+        // Generate consistent channel name for caller/receiver pair
+        $channelName = "call_" . min($callerId, $receiverId) . "_" . max($callerId, $receiverId);
+        $expireTimeInSeconds = 3600;
+        $currentTimestamp = now()->timestamp;
+        $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
 
-    return response()->json([
-        'token' => $token,
-        'uid' => $uid,
-        'channel_name' => $channelName
-    ]);
-}
+        //  Check for existing active call between same users
+        $existingCall = agora_call::where('caller_id', $callerId)
+            ->where('receiver_id', $receiverId)
+            ->where('channel_name', $channelName)
+            ->whereNull('ended_at') // call still active
+            ->latest()
+            ->first();
+
+        if ($existingCall) {
+            return response()->json([
+                'token' => $existingCall->token,
+                'uid' => $existingCall->agora_uid,
+                'channel_name' => $existingCall->channel_name,
+                'existing' => true,
+            ]);
+        }
+
+        // 🔐 Agora credentials
+        $appID = config('services.agora.app_id');
+        $appCertificate = config('services.agora.certificate');
+        $uid = rand(100000, 999999);
+
+        $token = RtcTokenBuilder2::buildTokenWithUid(
+            $appID,
+            $appCertificate,
+            $channelName,
+            $uid,
+            RtcTokenBuilder2::ROLE_PUBLISHER,
+            $privilegeExpiredTs
+        );
+
+        //Save new call
+        agora_call::create([
+            'caller_id' => $callerId,
+            'receiver_id' => $receiverId,
+            'channel_name' => $channelName,
+            'agora_uid' => $uid,
+            'token' => $token,
+            'started_at' => Carbon::now(),
+        ]);
+
+        return response()->json([
+            'token' => $token,
+            'uid' => $uid,
+            'channel_name' => $channelName,
+            'existing' => false,
+        ]);
+    }
+
+    public function endCall(Request $request)
+    {
+        $request->validate([
+            'channel_name' => 'required',
+        ]);
+
+        $call = agora_call::where('channel_name', $request->channel_name)
+            ->whereNull('ended_at')
+            ->latest()
+            ->first();
+
+        if (!$call) {
+            return response()->json(['message' => 'Call not found or already ended.'], 404);
+        }
+
+        $call->ended_at = Carbon::now();
+        $call->save();
+
+        return response()->json(['message' => 'Call ended successfully']);
+    }
+
+    public function callHistory()
+    {
+        $userId = auth()->id();
+        $calls = agora_call::where('caller_id', $userId)
+            ->orWhere('receiver_id', $userId)
+            ->latest()
+            ->get();
+
+        return response()->json($calls);
+    }
 }
