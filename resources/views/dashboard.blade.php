@@ -21,7 +21,7 @@
                                 <h3 class="mb-75 mt-2 pt-50">
                                     <a href="javascript:void(0);">Total</a>
                                 </h3>
-                                <a href="" type="button" class="btn btn-primary">View Orders</a>
+                                <a href="" type="button" class="btn btn-primary">View Posts</a>
                                 <img src="../app-assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" />
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                                             </div>
                                             <div class="media-body my-auto">
                                                 <h4 class="font-weight-bolder mb-0">5</h4>
-                                                <p class="card-text font-small-3 mb-0">Sales</p>
+                                                <p class="card-text font-small-3 mb-0">Inquirie</p>
                                             </div>
                                         </div>
                                     </div>

@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TroopersTogether extends Model
+class UserGroup extends Model
 {
     use HasFactory;
-    public $table = "groups";
+    public $table = "user_groups";
 
     protected $fillable = [
         'id',
-        'group_title',
-        'group_description'
+        'user_id',
+        'group_id',
+        'created_at',
+        'updated_at',
     ];
 }

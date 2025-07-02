@@ -9,7 +9,7 @@
     <meta name="description" content="Vuexy admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
     <meta name="keywords" content="admin template, Vuexy admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
-    <title>Login Page - Vuexy - Bootstrap HTML admin template</title>
+    <title>Login - Talkamose</title>
     <link rel="apple-touch-icon" href="app-assets/images/ico/apple-icon-120.png">
     <link rel="shortcut icon" type="image/x-icon" href="app-assets/images/ico/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
@@ -66,10 +66,10 @@
                                         <div class="card-body">
                                             <a href="javascript:void(0);" class="brand-logo">
                                                 <img src="{{url('logo/gold__2.png')}}" alt="">
-                                                <h2 class="brand-text text-primary ml-1">Vuexy</h2>
+                                                <h2 class="brand-text text-primary ml-1">Talkamose</h2>
                                             </a>
 
-                                            <h4 class="card-title mb-1">Welcome to Vuexy! 👋</h4>
+                                            <h4 class="card-title mb-1">Welcome to Talkamose! 👋</h4>
                                             <p class="card-text mb-2">Please sign-in to your account and start the adventure</p>
 
                                             @include('admin.flash')

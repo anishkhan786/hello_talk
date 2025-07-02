@@ -7,7 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InquirieController;
-
+use App\Http\Controllers\TroopersTogetherController;
+use App\Http\Controllers\LmsQuestionController;
+use App\Http\Controllers\PostsController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -85,5 +87,34 @@ Route::controller(CategoryController::class)->group(function() {
 // InquirieController
 Route::get('inquirie',[InquirieController::class,'index'])->name('inquirie.index');
 
+//TroopersTogetherController
+Route::controller(TroopersTogetherController::class)->group(function() {
+        Route::get('/trooper-together', 'index')->name('trooper-together');
+        Route::get('/trooper-together/new', 'create')->name('trooper-together.add');
+        Route::post('/trooper-together/new', 'store')->name('trooper-together.store');
+        Route::get('/trooper-together/edit/{id}', 'edit')->name('trooper-together-edit');
+        Route::post('/trooper-together/edit/{id}', 'update')->name('trooper-together-edit.update');
+        Route::get('/trooper-together/delete/{id}', 'destroy')->name('trooper-together-destroy');
+    });
+
+
+//LmsQuestionController
+Route::controller(LmsQuestionController::class)->group(function() {
+        Route::get('/LMSQuestion', 'index')->name('LMSQuestion');
+        Route::get('/LMSQuestion/new', 'create')->name('LMSQuestion.add');
+        Route::post('/LMSQuestion/new', 'store')->name('LMSQuestion.store');
+        Route::get('/LMSQuestion/edit/{id}', 'edit')->name('LMSQuestion-edit');
+        Route::post('/LMSQuestion/edit/{id}', 'update')->name('LMSQuestion-edit.update');
+        Route::get('/LMSQuestion/delete/{id}', 'destroy')->name('LMSQuestion-destroy');
+
+        Route::get('/get-categories-by-course/{course_id}', 'getCategories');
+    });
+
+    //post
+Route::controller(PostsController::class)->group(function() {
+        Route::get('/posts/view', 'index')->name('post.view');
+        Route::get('/posts/delete/{id}', 'delete')->name('posts-destroy');
+
+    });
 
 });

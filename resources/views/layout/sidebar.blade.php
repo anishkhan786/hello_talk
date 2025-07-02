@@ -49,38 +49,17 @@
             </li>
             <li class=" nav-item {{ request()->routeIs('category') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('category')}}"><i data-feather='triangle'></i><span class="menu-title text-truncate" data-i18n="Email">Category</span></a>
             </li>
-             <li class=" nav-item"><a class="d-flex align-items-center" href=""><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
+             <li class=" nav-item {{ request()->routeIs('LMSQuestion') ? 'active':''}}"><a class="d-flex align-items-center" href="{{route('LMSQuestion')}}"><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
             </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href=""><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Troopers Together</span></a>
+            <li class=" nav-item {{ request()->routeIs('trooper-together') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('trooper-together')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Troopers Together</span></a>
             </li>
             <li class=" nav-item {{ request()->routeIs('inquirie.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('inquirie.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Inquiries</span></a>
             </li>
+             <li class=" nav-item {{ request()->routeIs('post.view') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('post.view')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Posts</span></a>
+            </li>
 
 
-            {{--<li class=" nav-item"><a class="d-flex align-items-center" href="{{route('order-index')}}"><i data-feather='shopping-cart'></i><span class="menu-title text-truncate" data-i18n="Email">Order</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('recharge-index')}}"><i data-feather='bar-chart-2'></i><span class="menu-title text-truncate" data-i18n="Email">Deposit</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('withdrawal-index')}}"><i data-feather='credit-card'></i><span class="menu-title text-truncate" data-i18n="Email">Withdrawal</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('withdrawal_details')}}"><i data-feather='credit-card'></i><span class="menu-title text-truncate" data-i18n="Email">Withdrawal Details</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('transection-index')}}"><i data-feather='triangle'></i><span class="menu-title text-truncate" data-i18n="Email">Transection</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('wallet-index')}}"><i data-feather='layout'></i><span class="menu-title text-truncate" data-i18n="Email">Wallet</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('admin_from')}}"><i data-feather='layout'></i><span class="menu-title text-truncate" data-i18n="Email">Admin Bank Details</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('banner-index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">CMS</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('support_index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Support</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('support_details')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Support Details</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('faq_index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">FAQ</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('logout')}}"><i data-feather='log-out'></i><span class="menu-title text-truncate" data-i18n="Email">Logout</span></a>
-            </li> --}}
+            
         </ul>
     </div>
 </div>

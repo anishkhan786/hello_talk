@@ -25,4 +25,15 @@ class LmsQuestions extends Model
         'marks',
         'is_active',
     ];
+
+    
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+    
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

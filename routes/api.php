@@ -6,6 +6,10 @@ use App\Http\Controllers\api\GoogleAuthController;
 use App\Http\Controllers\api\ContryController;
 use App\Http\Controllers\api\UserApiController;
 use App\Http\Controllers\api\InquirieApiController;
+use App\Http\Controllers\api\GroupApiController;
+use App\Http\Controllers\api\LmsQuestionApiController;
+use App\Http\Controllers\api\PostApiController;
+use App\Http\Controllers\api\FollowApiController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -49,6 +53,38 @@ Route::get('/language',[ContryController::class,'language']);
 Route::post('/inquirie-add',[InquirieApiController::class,'store']);
 Route::post('/category-list',[UserApiController::class,'category_list']);
 Route::get('/course-list',[UserApiController::class,'course_list']);
+
+// GroupApiController
+Route::post('/group-list',[GroupApiController::class,'group_list']);
+Route::post('/user-group-add',[GroupApiController::class,'user_group_add']);
+Route::post('/user-group-remove',[GroupApiController::class,'user_group_remove']);
+
+// LmsQuestionApiController
+Route::post('/lms-question-list',[LmsQuestionApiController::class,'lms_question_list']);
+Route::post('/lms-question-submit',[LmsQuestionApiController::class,'lms_question_submit']);
+
+// POST API
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/posts', [PostApiController::class, 'index']);
+    Route::post('/posts/store', [PostApiController::class, 'store']);
+    Route::post('/posts/update', [PostApiController::class, 'update']);
+    Route::post('/posts/delete', [PostApiController::class, 'destroy']);
+
+    Route::post('/posts/like', [PostApiController::class, 'like']);
+    Route::post('/posts/comment', [PostApiController::class, 'comment']);
+    Route::post('/posts/share', [PostApiController::class, 'share']);
+    Route::post('/posts/unlike', [PostApiController::class, 'unlike']);
+    Route::post('/posts/comments/delete', [PostApiController::class, 'deleteComment']);
+    Route::post('/posts/translate-caption', [PostApiController::class, 'translate']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/follow', [FollowApiController::class, 'follow']);
+    Route::post('/unfollow', [FollowApiController::class, 'unfollow']);
+    Route::get('/followers', [FollowApiController::class, 'followers']);
+    Route::get('/followings', [FollowApiController::class, 'followings']);
+    Route::post('/follow-back', [FollowApiController::class, 'followBack']);
+});
 
 
 

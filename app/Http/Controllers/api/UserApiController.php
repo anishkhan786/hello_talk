@@ -145,7 +145,7 @@ class UserApiController extends Controller
             $course_id = $request->has('course_id')?$request->course_id:'';
             $response = Category::select('id','name')->where('course_id',$course_id)->get();
             if(!empty($response)){
-                $response = ['message'=> 'success.','status'=>true,'data' => $response,];
+                $response = ['message'=> 'success.','status'=>true,'data' => $response];
                 return response($response, 200);
             } else {
                 $response = ["message" => "Category does not exit",'status'=>FALSE];
@@ -162,7 +162,7 @@ class UserApiController extends Controller
             try {
                 $response = Course::select('id','name')->get();
                 if(!empty($response)){
-                    $response = ['message'=> 'success.','status'=>true,'data' => $response,];
+                    $response = ['message'=> 'success.','status'=>true,'data' => $response];
                     return response($response, 200);
                 } else {
                     $response = ["message" => "Course does not exit",'status'=>FALSE];
