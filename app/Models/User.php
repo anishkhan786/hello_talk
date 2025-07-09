@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'social_login_type',
         'type',
+        'source',
         'avatar',
         'native_language',
         'learning_language',

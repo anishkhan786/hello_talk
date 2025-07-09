@@ -22,6 +22,7 @@ class UserApiController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
+          $data['avatar'] = asset('storage/' . $data->avatar);
         return response()->json([
             'message' => 'User Details get successfully',
             'user'    => $data,
@@ -39,21 +40,10 @@ class UserApiController extends Controller
             ], 401);
         }
 
-        // $validated = $request->validate([
-        //     'name'     => 'sometimes|string|max:255',
-        //     'email'    => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-        //     'password' => 'sometimes|string|min:6|confirmed',
-        //     'native_language'   => 'sometimes|string',
-        //     'learning_language' => 'sometimes|string',
-        // ]);
 
         // Update the fields only if they are present in the request
         if ($request->has('name')) {
             $user->name = $request->name;
-        }
-
-        if ($request->has('email')) {
-            $user->email = $request->email;
         }
 
         if ($request->has('native_language')) {
@@ -64,8 +54,8 @@ class UserApiController extends Controller
             $user->learning_language = $request->learning_language;
         }
 
-        if ($request->has('bio')) {
-            $user->bio = $request->bio;
+        if ($request->has('know_language')) {
+            $user->know_language = $request->know_language;
         }
         if ($request->has('country')) {
             $user->country = $request->country;
@@ -74,42 +64,28 @@ class UserApiController extends Controller
             $user->gender = $request->gender;
         }
 
-        if ($request->has('password')) {
-            $user->password = Hash::make($request->password);
+        if ($request->has('source')) {
+            $user->source = $request->source;
         }
         if ($request->has('dob')) {
             $user->dob = $request->dob;
         }
-        if ($request->has('here_about')) {
-            $user->here_about = $request->here_about;
-        }
+       
         // Handle avatar upload
 
 
         if ($request->hasFile('avatar')) {
             // Delete old image if exists
-            if ($user->avatar && file_exists(public_path($user->avatar))) {
-                unlink(public_path($user->avatar));
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
             }
 
-            $file = $request->file('avatar');
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $sanitizedName = preg_replace('/\s+/', '_', $originalName); // replace spaces with underscores
-            $extension = $file->getClientOriginalExtension();
-
-            $filename = time() . '_' . $sanitizedName . '.' . $extension;
-
-            // Ensure directory exists
-            if (!file_exists(public_path('avatars'))) {
-                mkdir(public_path('avatars'), 0777, true);
-            }
-
-            $file->move(public_path('avatars'), $filename);
-            $user->avatar = 'avatars/' . $filename;
+            $mediaPath = $request->file('avatar')->store('avatar', 'public');
+            $user['avatar'] = $mediaPath;
         }
 
         $user->save();
-
+        $user['avatar'] = asset('storage/' . $user->avatar);
         return response()->json([
             'message' => 'User details updated successfully',
             'user'    => $user,
@@ -119,18 +95,19 @@ class UserApiController extends Controller
 
     public function user_list()
 {
-    $users = User::where('type', 'user')->where('is_active', '1')->get();
-
+     $user = auth()->user();
+    $users = User::where('type', 'user')->where('id','!=',$user->id)->where('is_active', '1')->get();
     $data = $users->map(function ($user) {
         return [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'avatar' => $user->avatar ? asset($user->avatar) : null,
+            'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
             // add any other fields you need
         ];
     });
 
+    
     return response()->json([
         'message' => 'User details fetched successfully',
         'user_list' => $data,

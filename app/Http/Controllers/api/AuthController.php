@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -40,6 +41,7 @@ class AuthController extends Controller
 
         if (!empty($user)) {
             $token = $user->createToken('auth_token')->plainTextToken;
+            $user['avatar'] = asset('storage/' . $user->avatar);
             return response(['user_data'=>$user,"message"=>'User already exists.','status'=>true,'token'=>$token],200);
         }
 
@@ -52,6 +54,7 @@ class AuthController extends Controller
             'dob'  => $request->dob,
             'gender'  => $request->gender,
             'country'=>$request->country,
+            'source'=>$request->source,
         ];
 
         if($request->login_with == 'mobile'){
@@ -67,9 +70,15 @@ class AuthController extends Controller
              $request_data['email'] = $request->email;
          }
 
+         if ($request->hasFile('avatar')) {
+                $mediaPath = $request->file('avatar')->store('avatar', 'public');
+                $request_data['avatar'] = $mediaPath;
+
+            }
+
         $user = User::create( $request_data);
         $token = $user->createToken('auth_token')->plainTextToken;
-
+        $user['avatar'] = asset('storage/' . $user->avatar);
          return response(['user_data'=>$user, "message"=>'User registered successfully','status'=>true,'token'=>$token],200);
     }
 
@@ -99,6 +108,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        $user['avatar'] = asset('storage/' . $user->avatar);
         return response(['user_data'=>$user, 200,"message"=>'User login successfull!','status'=>true,'token'=>$token]);
     }
 
