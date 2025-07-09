@@ -22,7 +22,7 @@ class UserApiController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
-          $data['avatar'] = asset('storage/' . $data->avatar);
+          $data['avatar'] = asset('storage/app/public/' . $data->avatar);
         return response()->json([
             'message' => 'User Details get successfully',
             'user'    => $data,
@@ -85,7 +85,7 @@ class UserApiController extends Controller
         }
 
         $user->save();
-        $user['avatar'] = asset('storage/' . $user->avatar);
+        $user['avatar'] = asset('storage/app/public/' . $user->avatar);
         return response()->json([
             'message' => 'User details updated successfully',
             'user'    => $user,
@@ -102,7 +102,7 @@ class UserApiController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+            'avatar' => $user->avatar ? asset('storage/app/public/' . $user->avatar) : null,
             // add any other fields you need
         ];
     });
