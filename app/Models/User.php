@@ -68,6 +68,11 @@ class User extends Authenticatable
         ];
     }
 
+public function countryDetail()
+{
+    return $this->belongsTo(contry::class, 'country', 'name');
+}
+
             // Who follows me
         public function followers()
         {

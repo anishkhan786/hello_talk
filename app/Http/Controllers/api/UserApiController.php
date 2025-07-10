@@ -123,28 +123,25 @@ class UserApiController extends Controller
     public function user_list(Request $request)
 {
     $user = auth()->user();
-        if ($request->has('gender') AND !empty($request->gender)) {
-            $users = User::where('type', 'user')
-                ->where('gender', $request->gender)
-                ->where('id', '!=', $user->id)
-                ->where('is_active', '1');
-        } elseif ($request->has('for_you') AND !empty($request->for_you)) {
-            $users = User::where('type', 'user')
-                ->where('country', $request->for_you)
-                ->where('id', '!=', $user->id)
-                ->where('is_active', '1');
-        } else {
-            $users = User::where('type', 'user')
-                ->where('id', '!=', $user->id)
-                ->where('is_active', '1');
+    $users = User::with('countryDetail')
+            ->where('type', 'user')
+            ->where('id', '!=', $user->id)
+            ->where('is_active', '1');
+
+        if ($request->has('gender') && !empty($request->gender)) {
+            $users = $users->where('gender', $request->gender);
         }
 
-        // 👉 Add name filter if present
-        if ($request->has('name') AND !empty($request->name)) {
+        if ($request->has('for_you') && !empty($request->for_you)) {
+            $users = $users->where('country', $request->for_you);
+        }
+
+        if ($request->has('name') && !empty($request->name)) {
             $users = $users->where('name', 'like', '%' . $request->name . '%');
         }
 
-    $users = $users->get();
+        $users = $users->get();
+
     $data = $users->map(function ($user) {
         return [
             'id' => $user->id,
@@ -153,6 +150,8 @@ class UserApiController extends Controller
             'introduction' => $user->introduction,
             'gender' => $user->gender,
             'avatar' => $user->avatar ? asset('storage/app/public/' . $user->avatar) : null,
+            'countryDetail' => $user->countryDetail,
+
             // add any other fields you need
         ];
     });
