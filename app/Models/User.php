@@ -26,6 +26,11 @@ class User extends Authenticatable
         'social_login_type',
         'type',
         'source',
+        'introduction',
+        'profession',
+        'personality',
+        'interest',
+
         'avatar',
         'native_language',
         'learning_language',
@@ -62,4 +67,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
         ];
     }
+
+            // Who follows me
+        public function followers()
+        {
+            return $this->hasMany(Follow::class, 'following_id');
+        }
+
+        // Who I follow
+        public function favorites()
+        {
+            return $this->hasMany(Follow::class, 'follower_id');
+        }
+
+        public function posts()
+        {
+            return $this->hasMany(Posts::class); // assuming model name is Post
+        }
+
 }

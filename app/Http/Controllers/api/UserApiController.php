@@ -13,16 +13,21 @@ use Illuminate\Support\Facades\Hash;
 
 class UserApiController extends Controller
 {
-    public function get_user_detail()
+    public function get_user_detail(Request $request)
     {
-        $id = Auth::user()->id;
-        $data = User::where('id', $id)->first();
+        $id = $request->user_id;
+        $data = User::withCount(['followers', 'favorites', 'posts'])->where('id', $id)->first();
         if (!$data) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 401);
         }
-          $data['avatar'] = asset('storage/app/public/' . $data->avatar);
+        $data['avatar'] = asset('storage/app/public/' . $data->avatar);
+        $user['profession'] = stringConvertToArray($data->profession);
+        $user['personality'] = stringConvertToArray($data->personality);
+        $user['interest'] = stringConvertToArray($data->interest);
+
+
         return response()->json([
             'message' => 'User Details get successfully',
             'user'    => $data,
@@ -67,8 +72,25 @@ class UserApiController extends Controller
         if ($request->has('source')) {
             $user->source = $request->source;
         }
+
         if ($request->has('dob')) {
             $user->dob = $request->dob;
+        }
+
+         if ($request->has('introduction')) {
+            $user->introduction = $request->introduction;
+        } 
+        
+        if ($request->has('profession')) {
+            $user->profession = implode(", ", $request->profession);
+        } 
+        
+        if ($request->has('personality')) {
+            $user->personality = implode(", ", $request->personality);
+        } 
+        
+        if ($request->has('interest')) {
+            $user->interest = implode(", ", $request->interest);
         }
        
         // Handle avatar upload
@@ -86,6 +108,11 @@ class UserApiController extends Controller
 
         $user->save();
         $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+        $user['profession'] = stringConvertToArray($user->profession);
+        $user['personality'] = stringConvertToArray($user->personality);
+        $user['interest'] = stringConvertToArray($user->interest);
+
+
         return response()->json([
             'message' => 'User details updated successfully',
             'user'    => $user,
@@ -93,15 +120,38 @@ class UserApiController extends Controller
         ]);
     }
 
-    public function user_list()
+    public function user_list(Request $request)
 {
-     $user = auth()->user();
-    $users = User::where('type', 'user')->where('id','!=',$user->id)->where('is_active', '1')->get();
+    $user = auth()->user();
+        if ($request->has('gender') AND !empty($request->gender)) {
+            $users = User::where('type', 'user')
+                ->where('gender', $request->gender)
+                ->where('id', '!=', $user->id)
+                ->where('is_active', '1');
+        } elseif ($request->has('for_you') AND !empty($request->for_you)) {
+            $users = User::where('type', 'user')
+                ->where('country', $request->for_you)
+                ->where('id', '!=', $user->id)
+                ->where('is_active', '1');
+        } else {
+            $users = User::where('type', 'user')
+                ->where('id', '!=', $user->id)
+                ->where('is_active', '1');
+        }
+
+        // 👉 Add name filter if present
+        if ($request->has('name') AND !empty($request->name)) {
+            $users = $users->where('name', 'like', '%' . $request->name . '%');
+        }
+
+    $users = $users->get();
     $data = $users->map(function ($user) {
         return [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'introduction' => $user->introduction,
+            'gender' => $user->gender,
             'avatar' => $user->avatar ? asset('storage/app/public/' . $user->avatar) : null,
             // add any other fields you need
         ];

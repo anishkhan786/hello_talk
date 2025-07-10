@@ -49,4 +49,8 @@ if (!function_exists('translateMessageWithOpenAI')) {
     }
 }
 
+function stringConvertToArray($data){
+    return explode(", ",$data);
+}
+
 

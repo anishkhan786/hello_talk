@@ -7,7 +7,7 @@ use App\Models\contry;
 use App\Models\languag;
 use Illuminate\Http\Request;
 
-class ContryController extends Controller
+class CountryController extends Controller
 {
     public function contry(){
         $data = contry::all();
