@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class UserApiController extends Controller
 {
@@ -23,9 +25,9 @@ class UserApiController extends Controller
             ], 401);
         }
         $data['avatar'] = asset('storage/app/public/' . $data->avatar);
-        $user['profession'] = stringConvertToArray($data->profession);
-        $user['personality'] = stringConvertToArray($data->personality);
-        $user['interest'] = stringConvertToArray($data->interest);
+        $data['profession'] = stringConvertToArray($data->profession);
+        $data['personality'] = stringConvertToArray($data->personality);
+        $data['interest'] = stringConvertToArray($data->interest);
 
 
         return response()->json([

@@ -108,6 +108,9 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        $user['profession'] = stringConvertToArray($user->profession);
+        $user['personality'] = stringConvertToArray($user->personality);
+        $user['interest'] = stringConvertToArray($user->interest);
         $user['avatar'] = asset('storage/app/public/' . $user->avatar);
         return response(['user_data'=>$user, 200,"message"=>'User login successfull!','status'=>true,'token'=>$token]);
     }
