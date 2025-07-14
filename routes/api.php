@@ -70,12 +70,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/update', [PostApiController::class, 'update']);
     Route::post('/posts/delete', [PostApiController::class, 'destroy']);
 
+    Route::post('/posts/feedPage', [PostApiController::class, 'feedPage']);
     Route::post('/posts/like', [PostApiController::class, 'like']);
     Route::post('/posts/comment', [PostApiController::class, 'comment']);
     Route::post('/posts/share', [PostApiController::class, 'share']);
     Route::post('/posts/unlike', [PostApiController::class, 'unlike']);
     Route::post('/posts/comments/delete', [PostApiController::class, 'deleteComment']);
     Route::post('/posts/translate-caption', [PostApiController::class, 'translate']);
+
+
 });
 
 Route::middleware('auth:sanctum')->group(function () {

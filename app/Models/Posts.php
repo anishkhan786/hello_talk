@@ -33,4 +33,8 @@ class Posts extends Model
         return $this->hasMany(PostShare::class,'post_id');
     }
 
+    public function isLikedBy($userId){
+        return $this->likes()->where('user_id', $userId)->exists();
+    }
+
 }

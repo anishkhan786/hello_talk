@@ -8,14 +8,86 @@ use App\Models\Posts;
 use App\Models\PostLike;
 use App\Models\PostComment;
 use App\Models\PostShare;
-
+use App\Models\Follow;
 use App\Models\PostMedia;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use DB;
 class PostApiController extends Controller
 {
+
+  public function feedPage(Request $request)
+{
+    $user = auth()->user();
+
+   
+
+    $perPage =  $request->per_page??10; // You can change this as needed
+    if (!empty($request->type) && $request->type == 'Favorites') {
+        $post_ids = PostLike::where('user_id', $user->id)->pluck('post_id');
+        $posts = Posts::whereIn('id', $post_ids)
+                    ->with('media', 'user', 'likes', 'comments')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    } else {
+        // Get all users this user follows
+        $followingIds = Follow::where('follower_id', $user->id)->pluck('following_id');
+
+        // Paginated posts from followed users
+        $posts = Posts::whereIn('user_id', $followingIds)
+                    ->with('media', 'user', 'likes', 'comments')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    }
+
+    // Format posts
+    $formattedPosts = $posts->getCollection()->map(function ($post) use ($user) {
+        $media_urls = [];
+
+        if ($post->post_type === 'photo' || $post->post_type === 'video') {
+            if ($post->media_path) {
+                $media_urls[] = asset('storage/app/public/' . $post->media_path);
+            }
+        } elseif ($post->post_type === 'carousel') {
+            $media_urls = $post->media->map(function ($media) {
+                return asset('storage/app/public/' . $media->media_path);
+            });
+        }
+
+        return [
+            'id' => $post->id,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+                'email' => $post->user->email,
+            ],
+            'post_type' => $post->post_type,
+            'content' => $post->content,
+            'media' => $media_urls,
+            'like_count' => $post->likes->count(),
+            'comment_count' => $post->comments->count(),
+            'is_liked_by_user' => $post->likes->contains('user_id', $user->id),
+            'created_at' => $post->created_at->toDateTimeString(),
+        ];
+    });
+
+    return response()->json([
+        'message' => 'Feed fetched successfully',
+        'status' => true,
+        'data' => [
+            'posts' => $formattedPosts,
+            'current_page' => $posts->currentPage(),
+            'last_page' => $posts->lastPage(),
+            'per_page' => $posts->perPage(),
+            'total' => $posts->total(),
+            'has_more' => $posts->currentPage() < $posts->lastPage()
+        ]
+    ], 200);
+}
+
+
     public function index(Request $request)
         {
             if(!empty($request->post_type)){
@@ -31,11 +103,11 @@ class PostApiController extends Controller
                 // Handle media based on post_type
                 if ($post->post_type === 'photo' || $post->post_type === 'video') {
                     if ($post->media_path) {
-                        $media_urls[] = asset('storage/' . $post->media_path);
+                        $media_urls[] = asset('storage/app/public/' . $post->media_path);
                     }
                 } elseif ($post->post_type === 'carousel') {
                     $media_urls = $post->media->map(function ($media) {
-                        return asset('storage/' . $media->media_path);
+                        return asset('storage/app/public/' . $media->media_path);
                     });
                 }
 

@@ -68,24 +68,24 @@ class User extends Authenticatable
         ];
     }
 
-public function countryDetail()
-{
-    return $this->belongsTo(contry::class, 'country', 'name');
-}
+    public function countryDetail()
+    {
+        return $this->belongsTo(contry::class, 'country', 'name');
+    }
 
             // Who follows me
-        public function followers()
+    public function followers()
         {
             return $this->hasMany(Follow::class, 'following_id');
         }
 
         // Who I follow
-        public function favorites()
+    public function favorites()
         {
             return $this->hasMany(Follow::class, 'follower_id');
         }
 
-        public function posts()
+    public function posts()
         {
             return $this->hasMany(Posts::class); // assuming model name is Post
         }
