@@ -77,7 +77,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/unlike', [PostApiController::class, 'unlike']);
     Route::post('/posts/comments/delete', [PostApiController::class, 'deleteComment']);
     Route::post('/posts/translate-caption', [PostApiController::class, 'translate']);
-
+    Route::post('/posts/show-lik-user', [PostApiController::class, 'showLikeUser']);
+    Route::post('/posts/show-comment-user', [PostApiController::class, 'showCommentUser']);
 
 });
 

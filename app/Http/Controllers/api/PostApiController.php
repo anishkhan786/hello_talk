@@ -25,19 +25,32 @@ class PostApiController extends Controller
    
 
     $perPage =  $request->per_page??10; // You can change this as needed
+    $searchText =  $request->searchText??''; // You can change this as needed
+
     if (!empty($request->type) && $request->type == 'Favorites') {
         $post_ids = PostLike::where('user_id', $user->id)->pluck('post_id');
         $posts = Posts::whereIn('id', $post_ids)
                     ->with('media', 'user', 'likes', 'comments')
+                     ->when(!empty($searchText), function ($query) use ($searchText) {
+                            $query->where(function ($q) use ($searchText) {
+                                $q->where('caption', 'like', '%' . $searchText . '%')
+                                ->orWhere('content', 'like', '%' . $searchText . '%');
+                            });
+                        })
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage);
     } else {
         // Get all users this user follows
-        $followingIds = Follow::where('follower_id', $user->id)->pluck('following_id');
+        // $followingIds = Follow::where('follower_id', $user->id)->pluck('following_id');
 
         // Paginated posts from followed users
-        $posts = Posts::whereIn('user_id', $followingIds)
-                    ->with('media', 'user', 'likes', 'comments')
+        $posts = Posts::with('media', 'user', 'likes', 'comments')
+                        ->when(!empty($searchText), function ($query) use ($searchText) {
+                            $query->where(function ($q) use ($searchText) {
+                                $q->where('caption', 'like', '%' . $searchText . '%')
+                                ->orWhere('content', 'like', '%' . $searchText . '%');
+                            });
+                        })
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage);
     }
@@ -58,11 +71,7 @@ class PostApiController extends Controller
 
         return [
             'id' => $post->id,
-            'user' => [
-                'id' => $post->user->id,
-                'name' => $post->user->name,
-                'email' => $post->user->email,
-            ],
+            'user' => $post->user,
             'post_type' => $post->post_type,
             'content' => $post->content,
             'media' => $media_urls,
@@ -304,26 +313,100 @@ class PostApiController extends Controller
         }
     
 
-    public function translate(Request $request)
-            {
-                $request->validate([
-                    'caption' => 'required|string',
-                    'target_lang' => 'required|string' // e.g., "hi", "fr", "es"
-                ]);
+        public function translate(Request $request){
+            // ✅ Validate required inputs
+            $request->validate([
+                'caption' => 'required|string',
+                'target_lang' => 'required|string', // Example: 'hi', 'fr', 'es'
+            ]);
 
+            try {
+                // ✅ Call translation helper/service
                 $translated = translateMessageWithOpenAI($request->caption, $request->target_lang, '');
-                if ( $translated) {
+
+                // Not condition add kar rakha hoonn mene jaab translate ki api aa jayegi taab me hata dunga 
+                if (!$translated) {
                     return response()->json([
-                        'status'=>true,
-                        'original' => $request->caption,
-                        'translated' => $translated,
-                        'lang' => $request->target_lang,
-                    ],200);
+                        'status'     => true,
+                        'original'   => $request->caption,
+                        'translated' => $request->caption, //!$translated
+                        'lang'       => $request->target_lang,
+                    ], 200);
                 } else {
-                     return response()->json(['status'=>false,'error' => 'Translation failed'], 500);
+                    return response()->json([
+                        'status' => false,
+                        'error'  => 'Translation failed.',
+                    ], 500);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'error'  => 'Internal server error.',
+                    'debug'  => $e->getMessage(), // Optional: remove in production
+                ], 500);
+            }
+        }
+    
+        public function showCommentUser(Request $request){
+            try {
+                $comments = PostComment::where('post_id', $request->post_id)
+                    ->with('user')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+                if ($comments->isEmpty()) {
+                    return response()->json([
+                        'message' => 'No comments found for this post.',
+                        'status' => false,
+                        'data' => []
+                    ], 404);
                 }
 
+                return response()->json([
+                    'message' => 'Successfully fetched comments.',
+                    'status' => true,
+                    'data' => $comments
+                ], 200);
+
+            } catch(\Exception $e) {
+                return response()->json([
+                    'message' => 'Some internal error occurred.',
+                    'status' => false,
+                    'error' => $e->getMessage() // Optional: remove in production
+                ], 400);
+            }
+        }
+
+
+    public function showLikeUser(Request $request){
+        try {
+            $likes = PostLike::where('post_id', $request->post_id)
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            if ($likes->isEmpty()) {
+                return response()->json([
+                    'message' => 'No likes found for this post.',
+                    'status' => false,
+                    'data' => []
+                ], 404);
             }
 
+            return response()->json([
+                'message' => 'Successfully fetched likes.',
+                'status' => true,
+                'data' => $likes
+            ], 200);
+
+        } catch(\Exception $e)  {
+            $response = [
+                'message' => 'Some internal error occurred.',
+                'status' => false,
+                'error' => $e->getMessage() // Optional: remove in production
+            ];
+            return response()->json($response, 400);
+        }
+    }
 
 }
