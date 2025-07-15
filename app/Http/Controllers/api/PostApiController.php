@@ -144,16 +144,29 @@ class PostApiController extends Controller
         {
             try{
             $request->validate([
-                'post_type' => 'required|in:text,photo,video,carousel',
-                'content' => 'nullable|string',
+                'post_type' => 'required|in:text,photo,video,carousel'
             ]);
+
+            if ($request->post_type == 'text' AND empty($request->content)) {
+                 return response()->json([
+                        'status' => false,
+                        'error'  => 'Please enter some text — content is required.',
+                    ], 500);
+            } else {
+                 if (empty($request->hasFile('media'))) {
+                    return response()->json([
+                        'status' => false,
+                        'error'  => 'Please select some media — media is required.',
+                    ], 500);
+                }
+            }
 
             $post = Posts::create([
                 'user_id' => $request->user_id,
                 'post_type' => $request->post_type,
-                'content' => $request->content,
-                'caption' => $request->caption,
-                'location' => $request->location,
+                'content' => $request->content??'',
+                'caption' => $request->caption??'',
+                'location' => $request->location??'',
 
             ]);
 
