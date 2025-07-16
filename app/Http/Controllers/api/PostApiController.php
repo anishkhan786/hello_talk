@@ -74,6 +74,8 @@ class PostApiController extends Controller
             'user' => $post->user,
             'post_type' => $post->post_type,
             'content' => $post->content,
+            'caption' => $post->caption,
+
             'media' => $media_urls,
             'like_count' => $post->likes->count(),
             'comment_count' => $post->comments->count(),
@@ -128,6 +130,7 @@ class PostApiController extends Controller
                         'email' => $post->user->email,
                     ],
                     'post_type' => $post->post_type,
+                    'caption' => $post->caption,
                     'content' => $post->content,
                     'media' => $media_urls,
                     'created_at' => $post->created_at->toDateTimeString(),
@@ -152,14 +155,17 @@ class PostApiController extends Controller
                         'status' => false,
                         'error'  => 'Please enter some text — content is required.',
                     ], 500);
-            } else {
-                 if (empty($request->hasFile('media'))) {
+            } 
+
+            if ($request->post_type == 'photo' OR $request->post_type == 'video' OR $request->post_type == 'carousel') {
+                if (empty($request->hasFile('media'))) {
+
                     return response()->json([
                         'status' => false,
                         'error'  => 'Please select some media — media is required.',
                     ], 500);
                 }
-            }
+             }
 
             $post = Posts::create([
                 'user_id' => $request->user_id,
@@ -220,25 +226,23 @@ class PostApiController extends Controller
     public function destroy(Request $request)
         {
             try {
-            $post = Posts::with('media')->findOrFail($request->post_id);
-
-            if ($post->user_id != auth()->id()) {
-                return response()->json(['error' => 'Unauthorized'], 403);
-            }
-
-            // Delete media files
-            if ($post->post_type == 'carousel') {
-                foreach ($post->media as $media) {
-                    Storage::disk('public')->delete($media->media_path);
-                    $media->delete();
+                $post = Posts::with('media')->findOrFail($request->post_id);
+               
+                // Delete media files
+                if ($post->post_type == 'carousel') {
+                    foreach ($post->media as $media) {
+                        Storage::disk('public')->delete($media->media_path);
+                        $media->delete();
+                    }
+                } else {
+                    if(!empty($post->media_path)){
+                        Storage::disk('public')->delete($post->media_path);
+                    }
                 }
-            } else {
-                Storage::disk('public')->delete($post->media_path);
-            }
 
-            $post->delete();
+                $post->delete();
 
-            return response()->json(['message' => 'Post deleted','status'=>true],200);
+                return response()->json(['message' => 'Post deleted','status'=>true],200);
             } catch(\Exception $e)  {
                 $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
                 return response($response, 400);
@@ -421,5 +425,68 @@ class PostApiController extends Controller
             return response()->json($response, 400);
         }
     }
+
+
+    public function postDetail(Request $request){
+        try {
+            $post = Posts::with(['media', 'user', 'likes', 'comments'])
+                ->where('id', $request->post_id)
+                ->first();
+
+            if (!$post) {
+                return response()->json([
+                    'message' => 'Post not found.',
+                    'status' => false,
+                    'data' => null
+                ], 404);
+            }
+
+            // Format media URLs
+            $media_urls = [];
+            if ($post->post_type === 'photo' || $post->post_type === 'video') {
+                if ($post->media_path) {
+                    $media_urls[] = asset('storage/app/public/' . $post->media_path);
+                }
+            } elseif ($post->post_type === 'carousel') {
+                $media_urls = $post->media->map(function ($media) {
+                    return asset('storage/app/public/' . $media->media_path);
+                });
+            }
+
+            // Prepare formatted post data
+            $formattedPost = [
+                'id'            => $post->id,
+                'user'          => $post->user,
+                'post_type'     => $post->post_type,
+                'content'       => $post->content,
+                'caption'       => $post->caption,
+                'media'         => $media_urls,
+                'like_count'    => $post->likes->count(),
+                'comment_count' => $post->comments->count(),
+                'created_at'    => $post->created_at->toDateTimeString(),
+            ];
+
+            $likes = PostLike::with('user')->where('post_id', $request->post_id)->orderBy('created_at', 'desc')->get();
+            $comments = PostComment::with('user')->where('post_id', $request->post_id)->orderBy('created_at', 'desc')->get();
+
+            // Response
+            return response()->json([
+                'message'       => 'Successfully fetched post.',
+                'status'        => true,
+                'base_url'      => asset('storage/app/public/'),
+                'data'          => $formattedPost,
+                'likes'         => $likes,
+                'comments'      => $comments,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong.',
+                'status'  => false,
+                'error'   => $e->getMessage(), // Optional: remove in production
+            ], 500);
+        }
+    }
+
 
 }

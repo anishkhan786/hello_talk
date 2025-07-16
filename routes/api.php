@@ -79,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/translate-caption', [PostApiController::class, 'translate']);
     Route::post('/posts/show-lik-user', [PostApiController::class, 'showLikeUser']);
     Route::post('/posts/show-comment-user', [PostApiController::class, 'showCommentUser']);
+    Route::post('/posts/single-post-details', [PostApiController::class, 'postDetail']);
 
 });
 
