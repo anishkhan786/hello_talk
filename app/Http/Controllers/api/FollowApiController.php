@@ -42,7 +42,7 @@ class FollowApiController extends Controller
         // List of who I follow
     public function followings(Request $request)
     {
-        $users = User::whereIn('id', function ($query) {
+        $users = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->whereIn('id', function ($query) {
             $query->select('following_id')
                 ->from('follows')
                 ->where('follower_id', Auth::id());
@@ -58,7 +58,7 @@ class FollowApiController extends Controller
       // List of who follows me
     public function followers()
     {
-        $users = User::whereIn('id', function ($query) {
+        $users = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->whereIn('id', function ($query) {
             $query->select('follower_id')
                 ->from('follows')
                 ->where('following_id', Auth::id());

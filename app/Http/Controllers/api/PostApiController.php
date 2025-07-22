@@ -32,7 +32,7 @@ class PostApiController extends Controller
     if (!empty($request->type) && $request->type == 'Favorites') {
         $post_ids = PostLike::where('user_id', $user->id)->pluck('post_id');
         $posts = Posts::whereIn('id', $post_ids)
-                    ->with('media', 'user', 'likes', 'comments')
+                    ->with('media', 'user', 'likes', 'comments','user.countryDetail','user.nativeLanguageDetail', 'user.learningLanguageDetail', 'user.knowLanguageDetail')
                      ->when(!empty($searchText), function ($query) use ($searchText) {
                             $query->where(function ($q) use ($searchText) {
                                 $q->where('caption', 'like', '%' . $searchText . '%')
@@ -46,7 +46,10 @@ class PostApiController extends Controller
         // $followingIds = Follow::where('follower_id', $user->id)->pluck('following_id');
 
         // Paginated posts from followed users
-        $posts = Posts::with('media', 'user', 'likes', 'comments')
+        $posts = Posts::with('media', 'user', 'likes', 'comments' ,'user.countryDetail',
+        'user.nativeLanguageDetail',
+        'user.learningLanguageDetail',
+        'user.knowLanguageDetail')
                         ->when(!empty($searchText), function ($query) use ($searchText) {
                             $query->where(function ($q) use ($searchText) {
                                 $q->where('caption', 'like', '%' . $searchText . '%')
@@ -70,7 +73,9 @@ class PostApiController extends Controller
                 return asset('storage/app/public/' . $media->media_path);
             });
         }
-
+        if(isset($post->user->avatar)){
+            $post->user->avatar = $post->user->avatar ? asset('storage/app/public/' . $post->user->avatar) : null;
+        }
         return [
             'id' => $post->id,
             'user' => $post->user,
