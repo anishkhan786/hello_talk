@@ -10,6 +10,7 @@ use App\Http\Controllers\InquirieController;
 use App\Http\Controllers\TroopersTogetherController;
 use App\Http\Controllers\LmsQuestionController;
 use App\Http\Controllers\PostsController;
+use App\Http\Controllers\MarketingItemController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -114,6 +115,17 @@ Route::controller(LmsQuestionController::class)->group(function() {
 Route::controller(PostsController::class)->group(function() {
         Route::get('/posts/view', 'index')->name('post.view');
         Route::get('/posts/delete/{id}', 'delete')->name('posts-destroy');
+
+    });
+
+    //marketing
+    Route::controller(MarketingItemController::class)->group(function() {
+        Route::get('/marketing', 'index')->name('marketing');
+        Route::get('/marketing/new', 'create')->name('marketing.add');
+        Route::post('/marketing/new', 'store')->name('marketing.store');
+        Route::get('/marketing/edit/{id}', 'edit')->name('marketing-edit');
+        Route::post('/marketing/edit/{id}', 'update')->name('marketing-edit.update');
+        Route::get('/marketing/delete/{id}', 'destroy')->name('marketing-destroy');
 
     });
 

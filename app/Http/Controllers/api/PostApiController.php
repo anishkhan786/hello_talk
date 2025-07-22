@@ -11,6 +11,8 @@ use App\Models\PostShare;
 use App\Models\Follow;
 use App\Models\PostMedia;
 use App\Models\User;
+use App\Models\PostReports;
+use App\Models\PostBlock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -75,7 +77,6 @@ class PostApiController extends Controller
             'post_type' => $post->post_type,
             'content' => $post->content,
             'caption' => $post->caption,
-
             'media' => $media_urls,
             'like_count' => $post->likes->count(),
             'comment_count' => $post->comments->count(),
@@ -479,6 +480,84 @@ class PostApiController extends Controller
                 'comments'      => $comments,
             ], 200);
 
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong.',
+                'status'  => false,
+                'error'   => $e->getMessage(), // Optional: remove in production
+            ], 500);
+        }
+    }
+
+    public function PostReportSubmit(Request $request){
+        try {
+            $request->validate([
+                'post_id' => 'required|exists:posts,id',
+                'reason' => 'required|string|max:255',
+            ]);
+
+            // Optional: prevent duplicate reports from same user
+            $existingReport = PostReports::where('user_id', $request->user_id)
+                                    ->where('post_id', $request->post_id)
+                                    ->first();
+
+            if ($existingReport) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You have already reported this post.'
+                ], 409);
+            }
+
+            $report = PostReports::create([
+                'user_id' => $request->user_id,
+                'post_id' => $request->post_id,
+                'reason' => $request->reason,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Post reported successfully.',
+                'data' => $report
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong.',
+                'status'  => false,
+                'error'   => $e->getMessage(), // Optional: remove in production
+            ], 500);
+        }
+    }
+
+    public function BlockPostContent(Request $request){
+        try {
+            $request->validate([
+                'post_id' => 'required|exists:posts,id',
+            ]);
+
+            // check if already blocked
+            $already = PostBlock::where('user_id', $request->user_id)
+                                ->where('post_id', $request->post_id)
+                                ->first();
+
+            if ($already) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Post already blocked.'
+                ], 409);
+            }
+
+            $block = PostBlock::create([
+                'user_id' => $request->user_id,
+                'post_id' => $request->post_id,
+                'text' => $request->text??'',
+
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Post blocked successfully.',
+                'data' => $block
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong.',

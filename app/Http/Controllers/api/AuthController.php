@@ -55,6 +55,7 @@ class AuthController extends Controller
             'gender'  => $request->gender,
             'country'=>$request->country,
             'source'=>$request->source,
+            'introduction'=>'A new member just joined',
         ];
 
         if($request->login_with == 'mobile'){
@@ -86,9 +87,10 @@ class AuthController extends Controller
     {
         try{
             $request->validate([
-            'login_id'    => 'required',
-            'login_with' => 'required|string',
-        ]);
+                'login_id'    => 'required',
+                'login_with' => 'required|string',
+            ]);
+            
         }catch(ValidationException $e){
              return response()->json([
                 'message' => 'Validation failed',
@@ -97,9 +99,9 @@ class AuthController extends Controller
         }
 
          if($request->login_with == 'mobile'){
-            $user = User::where('social_login_type', $request->login_with)->where('phone_no', $request->login_id)->first();
+            $user = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->where('social_login_type', $request->login_with)->where('phone_no', $request->login_id)->first();
          } else{
-            $user = User::where('social_login_type', $request->login_with)->where('email', $request->login_id)->first();
+            $user = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->where('social_login_type', $request->login_with)->where('email', $request->login_id)->first();
          } 
 
         if (empty($user)) {

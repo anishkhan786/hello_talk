@@ -57,6 +57,9 @@
             </li>
              <li class=" nav-item {{ request()->routeIs('post.view') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('post.view')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Posts</span></a>
             </li>
+            
+            <li class=" nav-item {{ request()->routeIs('marketing') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('marketing')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Marketing</span></a>
+            </li>
 
 
             

@@ -81,6 +81,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/show-comment-user', [PostApiController::class, 'showCommentUser']);
     Route::post('/posts/single-post-details', [PostApiController::class, 'postDetail']);
 
+    Route::post('/posts/report_submit', [PostApiController::class, 'PostReportSubmit']);
+    Route::post('/posts/block', [PostApiController::class, 'BlockPostContent']);
+
+
+
 });
 
 Route::middleware('auth:sanctum')->group(function () {

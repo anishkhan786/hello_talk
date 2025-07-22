@@ -73,6 +73,21 @@ class User extends Authenticatable
         return $this->belongsTo(contry::class, 'country', 'name');
     }
 
+    public function nativeLanguageDetail()
+    {
+        return $this->belongsTo(languag::class, 'native_language', 'name');
+    }
+
+     public function knowLanguageDetail()
+    {
+        return $this->belongsTo(languag::class, 'know_language', 'name');
+    }
+
+    public function learningLanguageDetail()
+    {
+        return $this->belongsTo(languag::class, 'learning_language', 'name');
+    }
+
             // Who follows me
     public function followers()
         {

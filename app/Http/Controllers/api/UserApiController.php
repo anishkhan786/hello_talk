@@ -18,7 +18,7 @@ class UserApiController extends Controller
     public function get_user_detail(Request $request)
     {
         $id = $request->user_id;
-        $data = User::withCount(['followers', 'favorites', 'posts'])->where('id', $id)->first();
+        $data = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->withCount(['followers', 'favorites', 'posts',])->where('id', $id)->first();
         if (!$data) {
             return response()->json([
                 'message' => 'Unauthorized',
@@ -125,7 +125,7 @@ class UserApiController extends Controller
     public function user_list(Request $request)
 {
     $user = auth()->user();
-    $users = User::with('countryDetail')
+    $users = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')
             ->where('type', 'user')
             ->where('id', '!=', $user->id)
             ->where('is_active', '1');
@@ -135,7 +135,7 @@ class UserApiController extends Controller
         }
 
         if ($request->has('for_you') && !empty($request->for_you)) {
-            $users = $users->where('country', $request->for_you);
+            $users = $users->where('native_language', $request->for_you);
         }
 
         if ($request->has('name') && !empty($request->name)) {
@@ -149,10 +149,14 @@ class UserApiController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'introduction' => $user->introduction,
+            'introduction' => $user->introduction??'A new member just joined',
             'gender' => $user->gender,
             'avatar' => $user->avatar ? asset('storage/app/public/' . $user->avatar) : null,
             'countryDetail' => $user->countryDetail,
+            'nativeLanguageDetail' => $user->nativeLanguageDetail,
+            'learningLanguageDetail' => $user->learningLanguageDetail,
+            'knowLanguageDetail' => $user->knowLanguageDetail,
+
 
             // add any other fields you need
         ];
