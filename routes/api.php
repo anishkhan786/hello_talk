@@ -10,6 +10,7 @@ use App\Http\Controllers\api\GroupApiController;
 use App\Http\Controllers\api\LmsQuestionApiController;
 use App\Http\Controllers\api\PostApiController;
 use App\Http\Controllers\api\FollowApiController;
+use App\Http\Controllers\api\AdvertisementApiController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -83,8 +84,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/posts/report_submit', [PostApiController::class, 'PostReportSubmit']);
     Route::post('/posts/block', [PostApiController::class, 'BlockPostContent']);
+});
 
-
+// P
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/ads/get', [AdvertisementApiController::class, 'ads_get']);
+    Route::post('/ads/clicks', [AdvertisementApiController::class, 'ads_click']);
 
 });
 

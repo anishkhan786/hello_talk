@@ -348,11 +348,11 @@ class PostApiController extends Controller
                 $translated = translateMessageWithOpenAI($request->caption, $request->target_lang, '');
 
                 // Not condition add kar rakha hoonn mene jaab translate ki api aa jayegi taab me hata dunga 
-                if (!$translated) {
+                if ($translated) {
                     return response()->json([
                         'status'     => true,
                         'original'   => $request->caption,
-                        'translated' => $request->caption, //!$translated
+                        'translated' => $translated, //!$translated
                         'lang'       => $request->target_lang,
                     ], 200);
                 } else {
