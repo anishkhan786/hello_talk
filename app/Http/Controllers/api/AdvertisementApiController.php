@@ -6,45 +6,123 @@ use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\MarketingItem;
 use App\Models\MarketingView;
+use App\Models\MarketingUserView;
+use App\Models\MarketingUserEventLogs;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use DB;
+use Carbon\Carbon;
 class AdvertisementApiController extends Controller
 {
+   
+
     public function ads_get(Request $request)
-    {
-        $user = auth()->user();
-        $perPage =  $request->per_page??1; // You can change this as needed
-        $ads = MarketingItem::where('status', '1')->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        {
+            $user = auth()->user();
+            $page_name = $request->page_name;
+            $userId = $request->user_id;
+            $today = date('Y-m-d');
 
-        // Format posts
-        $formattedPosts = $ads->getCollection()->map(function ($ads) {
-        $media_url = asset('storage/app/public/' . $ads->media_file);;
-            return [
-                'id' => $ads->id,
-                'title' => $ads->title,
-                'click_url' => $ads->url,
-                'media_file' =>  $media_url,
-                'type'=>$ads->file_type?'video':'image'
+            // Handle ads block conditions for different pages
+            $eventLogConditions = [
+                'landing' => function () use ($user) {
+                    return Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view');
+                },
+                'audio_call' => function () use ($userId, $page_name, $today) {
+                    return MarketingUserEventLogs::where('event_type', $page_name)
+                        ->where('user_id', $userId)
+                        ->where('view_date', $today)
+                        ->count() === 0;
+                },
+                'profile_view' => function () use ($userId, $page_name, $today) {
+                    return MarketingUserEventLogs::where('event_type', $page_name)
+                        ->where('user_id', $userId)
+                        ->where('view_date', $today)
+                        ->count() < env('ads_check_users_view_per_day');
+                },
+                'translation' => function () use ($userId, $page_name, $today) {
+                    return MarketingUserEventLogs::where('event_type', $page_name)
+                        ->where('user_id', $userId)
+                        ->where('view_date', $today)
+                        ->count() < env('ads_translate_per_day');
+                },
             ];
-        });
 
-        return response()->json([
-            'message' => 'Ads fetched successfully',
-            'status' => true,
-            'data' => [
-                'posts' => $formattedPosts,
-                'current_page' => $ads->currentPage(),
-                'last_page' => $ads->lastPage(),
-                'per_page' => $ads->perPage(),
-                'total' => $ads->total(),
-                'has_more' => $ads->currentPage() < $ads->lastPage()
-            ]
-        ], 200);
-    }
+            if (isset($eventLogConditions[$page_name]) && $eventLogConditions[$page_name]()) {
+                // Log the first event only if not already logged
+                MarketingUserEventLogs::create([
+                    'user_id' => $userId,
+                    'event_type' => $page_name,
+                    'view_date' => $today,
+                ]);
+
+                return response()->json([
+                    'message' => 'Ads was not applied.',
+                    'status' => false,
+                    'data' => [],
+                ], 200);
+            }
+
+            // Get the current view round or default to 1
+            $currentRound = MarketingUserView::where('user_id', $userId)->max('view_round') ?? 1;
+
+            // Fetch all active ad IDs
+            $allAdIds = MarketingItem::where('status', 1)->pluck('id')->toArray();
+
+            // Fetch already viewed ads in current round
+            $viewedAdIds = MarketingUserView::where('user_id', $userId)
+                ->where('view_round', $currentRound)
+                ->pluck('marketing_item_id')
+                ->toArray();
+
+            // Determine unseen ads
+            $unseenAdIds = array_diff($allAdIds, $viewedAdIds);
+
+            if (!empty($unseenAdIds)) {
+                // Pick the next unseen ad
+                $nextAd = MarketingItem::whereIn('id', $unseenAdIds)
+                    ->orderBy('id', 'asc')
+                    ->first();
+
+                $roundToUse = $currentRound;
+            } else {
+                // All ads seen, move to next round
+                $nextAd = MarketingItem::where('status', 1)
+                    ->orderBy('id', 'asc')
+                    ->first();
+
+                $roundToUse = $currentRound + 1;
+            }
+
+            if (!empty($nextAd)) {
+                // Log ad view
+                MarketingUserView::create([
+                    'user_id' => $userId,
+                    'marketing_item_id' => $nextAd->id,
+                    'view_round' => $roundToUse,
+                    'view_date' => $today,
+                ]);
+
+                // Log event
+                MarketingUserEventLogs::create([
+                    'user_id' => $userId,
+                    'event_type' => $page_name,
+                    'view_date' => $today,
+                ]);
+
+                // Prepare media URL
+                $nextAd->media_file = asset('storage/app/public/' . $nextAd->media_file);
+            }
+
+            return response()->json([
+                'message' => 'Ads fetched successfully',
+                'status' => true,
+                'data' => $nextAd ?? [],
+            ], 200);
+        }
+
 
     public function ads_click(Request $request)
         {
