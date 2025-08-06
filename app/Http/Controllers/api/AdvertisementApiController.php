@@ -63,6 +63,8 @@ class AdvertisementApiController extends Controller
                     'status' => false,
                     'data' => [],
                 ], 200);
+            } else {
+                MarketingUserEventLogs::where('event_type', $page_name)->where('user_id', $userId)->where('view_date', $today)->delete();
             }
 
             // Get the current view round or default to 1

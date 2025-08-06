@@ -55,13 +55,13 @@
                                         <td>
                                             @if(!empty($item->media_file))
                                                     @if($item->file_type=='2')
-                                                        <a href="{{ asset('storage/' . $item->media_file) }}" target="_blank">
+                                                        <a href="{{ asset('storage/app/public/' . $item->media_file) }}" target="_blank">
                                                             <video width="200" controls>
-                                                            <source src="{{ asset('storage/' . $item->media_file) }}" type="video/mp4">
+                                                            <source src="{{ asset('storage/app/public/' . $item->media_file) }}" type="video/mp4">
                                                         </video></a>
                                                     @else
-                                                     <a href="{{ asset('storage/' . $item->media_file) }}" target="_blank">
-                                                        <img src="{{ asset('storage/' . $item->media_file) }}" width="100">
+                                                     <a href="{{ asset('storage/app/public/' . $item->media_file) }}" target="_blank">
+                                                        <img src="{{ asset('storage/app/public/' . $item->media_file) }}" width="100">
                                                     </a>
                                                     @endif
                                                 @endif
