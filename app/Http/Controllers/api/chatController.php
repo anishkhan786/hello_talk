@@ -56,10 +56,7 @@ class chatController extends Controller
 
         $conversation = Conversation::with(['userOne', 'userTwo'])->findOrFail($request->conversation_id);
 
-        $receiver = $conversation->user_one_id === $sender->id
-            ? $conversation->userTwo
-            : $conversation->userOne;
-
+        $receiver = $conversation->user_one_id === $sender->id ? $conversation->userTwo : $conversation->userOne;
         $translated = null;
 
         if ($request->type === 'text' && $request->message && $receiver) {
@@ -94,9 +91,9 @@ class chatController extends Controller
 
 
     // Fetch messages
-    public function getMessages($conversation_id)
+    public function getMessages(Request $request)
     {
-        $messages = Message::with('sender:id,name')->where('conversation_id', $conversation_id)
+        $messages = Message::with('sender:id,name')->where('conversation_id', $request->conversation_id)
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -113,7 +110,7 @@ class chatController extends Controller
             ];
         });
 
-        return response()->json($messages);
+        return response()->json(['message' => 'success', 'status' => true,'data'=>$messages], 200);
     }
 
     public function get_chat_list(Request $request)

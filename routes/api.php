@@ -41,7 +41,7 @@ Route::post('/update_user_details',[UserApiController::class,'update_user_detail
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversation/{receiver_id}', [chatController::class, 'getOrCreateConversation']);
     Route::post('/send-message', [chatController::class, 'sendMessage']);
-    Route::get('/messages/{conversation_id}', [chatController::class, 'getMessages']);
+    Route::post('/messages', [chatController::class, 'getMessages']);
     Route::post('/get_chat_list', [chatController::class, 'get_chat_list']);
     Route::post('/generate-agora-token', [chatController::class, 'generateAgoraToken']);
     Route::post('/agora/end-call', [chatController::class, 'endCall']);
