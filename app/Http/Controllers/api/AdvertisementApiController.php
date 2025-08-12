@@ -25,6 +25,15 @@ class AdvertisementApiController extends Controller
             $userId = $request->user_id;
             $today = date('Y-m-d');
 
+            $log_letest_data = MarketingUserEventLogs::where('user_id', $userId)
+                        ->where('view_date', $today)
+                        ->orderBy('id', 'desc')
+                        ->first();
+            if(!empty($log_letest_data) AND $log_letest_data->data == 'menuaal'){
+                $ads_type = 'meta';
+            } else {
+                $ads_type = 'menuaal';
+            }
             // Handle ads block conditions for different pages
             $eventLogConditions = [
                 'landing' => function () use ($user) {
@@ -56,14 +65,38 @@ class AdvertisementApiController extends Controller
                     'user_id' => $userId,
                     'event_type' => $page_name,
                     'view_date' => $today,
+                    'data' => $ads_type,
+
                 ]);
 
                 return response()->json([
                     'message' => 'Ads was not applied.',
+                    'type' => $ads_type,
                     'status' => false,
                     'data' => [],
                 ], 200);
             } else {
+                if(!empty($log_letest_data) AND $log_letest_data->data == 'meta'){
+                    $ads_type = 'menuaal';
+
+                     // Log event
+                        MarketingUserEventLogs::create([
+                            'user_id' => $userId,
+                            'event_type' => $page_name,
+                            'view_date' => $today,
+                            'data' => 'meta',
+                        ]);
+
+                    return response()->json([
+                        'message' => 'Ads fetched successfully',
+                        'ads_type' => 'meta',
+                        'status' => true,
+                        'data' => $nextAd ?? [],
+                    ], 200);
+            
+                } else {
+                    $ads_type = 'menuaal';
+                }
                 MarketingUserEventLogs::where('event_type', $page_name)->where('user_id', $userId)->where('view_date', $today)->delete();
             }
 
@@ -112,6 +145,7 @@ class AdvertisementApiController extends Controller
                     'user_id' => $userId,
                     'event_type' => $page_name,
                     'view_date' => $today,
+                    'data' => $ads_type,
                 ]);
 
                 // Prepare media URL
@@ -120,6 +154,7 @@ class AdvertisementApiController extends Controller
 
             return response()->json([
                 'message' => 'Ads fetched successfully',
+                'ads_type' => $ads_type,
                 'status' => true,
                 'data' => $nextAd ?? [],
             ], 200);
