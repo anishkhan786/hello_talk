@@ -16,10 +16,10 @@ use Carbon\Carbon;
 class chatController extends Controller
 {
     // Fetch or create a conversation
-    public function getOrCreateConversation($receiver_id)
+    public function getOrCreateConversation(Request $request)
     {
         $user_id = Auth::id();
-
+        $receiver_id = $request->receiver_id;
         $conversation = Conversation::where(function ($query) use ($user_id, $receiver_id) {
             $query->where('user_one_id', $user_id)->where('user_two_id', $receiver_id);
         })->orWhere(function ($query) use ($user_id, $receiver_id) {
