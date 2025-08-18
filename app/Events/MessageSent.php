@@ -8,10 +8,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Broadcasting\InteractsWithSockets;
 
 class MessageSent implements ShouldBroadcast
 {
-    use Dispatchable, SerializesModels;
+    use InteractsWithSockets, Dispatchable, SerializesModels;
 
     public $message;
 
