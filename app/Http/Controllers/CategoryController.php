@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Category;
-use App\Models\Course;
+use App\Models\learningLevel;
 
 class CategoryController extends Controller
 {
@@ -17,7 +17,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $course = Course::get();
+        $course = learningLevel::get();
         return view('admin.category.add', compact('course'));
     }
 
@@ -40,7 +40,7 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        $course = Course::get();
+        $course = learningLevel::get();
         $data = Category::find($id);
         return view('admin.category.edit', compact('data','course'));
     }

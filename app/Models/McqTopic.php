@@ -5,15 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Course extends Model
+class McqTopic extends Model
 {
     use HasFactory;
-    public $table = "course";
+    public $table = "mcq_topics";
 
     protected $fillable = [
-        'id',
-        'name',
-        'created_at',
-        'updated_at',
+        'id','name', 'description','learning_level','language_id'
     ];
+
 }

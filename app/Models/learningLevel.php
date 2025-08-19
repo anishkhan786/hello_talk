@@ -5,19 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class learningLevel extends Model
 {
     use HasFactory;
-    public $table = "category";
+    public $table = "learning_level";
 
     protected $fillable = [
         'id',
-        'course_id',
         'name',
+        'created_at',
+        'updated_at',
     ];
-
-    public function course()
-    {
-        return $this->belongsTo(learningLevel::class, 'course_id');
-    }
 }

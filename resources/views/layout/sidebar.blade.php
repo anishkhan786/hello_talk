@@ -45,10 +45,10 @@
             </li>
 
             
-            <li class=" nav-item  {{ request()->routeIs('course.index') ? 'active' : '' }}" ><a class="d-flex align-items-center" href="{{route('course.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Course</span></a>
+            <li class=" nav-item  {{ request()->routeIs('course.index') ? 'active' : '' }}" ><a class="d-flex align-items-center" href="{{route('course.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Learning level</span></a>
             </li>
-            <li class=" nav-item {{ request()->routeIs('category') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('category')}}"><i data-feather='triangle'></i><span class="menu-title text-truncate" data-i18n="Email">Category</span></a>
-            </li>
+            <!-- <li class=" nav-item {{ request()->routeIs('category') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('category')}}"><i data-feather='triangle'></i><span class="menu-title text-truncate" data-i18n="Email">Category</span></a>
+            </li> -->
              <li class=" nav-item {{ request()->routeIs('LMSQuestion') ? 'active':''}}"><a class="d-flex align-items-center" href="{{route('LMSQuestion')}}"><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
             </li>
             <li class=" nav-item {{ request()->routeIs('trooper-together') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('trooper-together')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Troopers Together</span></a>
@@ -59,6 +59,9 @@
             </li>
             
             <li class=" nav-item {{ request()->routeIs('marketing') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('marketing')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Marketing</span></a>
+            </li>
+
+             <li class=" nav-item {{ request()->routeIs('course-demo-details') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('course-demo-details')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Course Demo Details</span></a>
             </li>
 
 

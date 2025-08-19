@@ -7,6 +7,7 @@ use App\Models\Posts;
 use App\Models\PostLike;
 use App\Models\PostComment;
 use App\Models\PostShare;
+use App\Models\CourseDemoDetails;
 
 use App\Models\PostMedia;
 use Illuminate\Http\Request;
@@ -18,6 +19,11 @@ class PostsController extends Controller
         $data = Posts::with('media', 'user')->paginate(10);
        
         return view('admin/post/index',compact('data'));
+    }
+
+     public function courseDemoDetails(){
+        $data = CourseDemoDetails::with('user','learningLevel', 'language','country')->paginate(10);
+        return view('admin/post/course_demo_details',compact('data'));
     }
 
     public function delete($id){

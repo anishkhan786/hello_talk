@@ -115,6 +115,8 @@ Route::controller(LmsQuestionController::class)->group(function() {
 Route::controller(PostsController::class)->group(function() {
         Route::get('/posts/view', 'index')->name('post.view');
         Route::get('/posts/delete/{id}', 'delete')->name('posts-destroy');
+        Route::get('/course-demo-details', 'courseDemoDetails')->name('course-demo-details');
+
 
     });
 

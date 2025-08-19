@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Category;
-use App\Models\Course;
+use App\Models\learningLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -189,10 +189,10 @@ class UserApiController extends Controller
         }
     }
 
-        public function course_list(Request $request)
+        public function learning_level(Request $request)
         {
             try {
-                $response = Course::select('id','name')->get();
+                $response = learningLevel::select('id','name')->get();
                 if(!empty($response)){
                     $response = ['message'=> 'success.','status'=>true,'data' => $response];
                     return response($response, 200);

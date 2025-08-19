@@ -53,7 +53,7 @@ Route::get('/country',[CountryController::class,'contry']);
 Route::get('/language',[CountryController::class,'language']);
 Route::post('/inquirie-add',[InquirieApiController::class,'store']);
 Route::post('/category-list',[UserApiController::class,'category_list']);
-Route::get('/course-list',[UserApiController::class,'course_list']);
+Route::get('/learning-level',[UserApiController::class,'learning_level']);
 
 // GroupApiController
 Route::post('/group-list',[GroupApiController::class,'group_list']);
@@ -61,8 +61,14 @@ Route::post('/user-group-add',[GroupApiController::class,'user_group_add']);
 Route::post('/user-group-remove',[GroupApiController::class,'user_group_remove']);
 
 // LmsQuestionApiController
-Route::post('/lms-question-list',[LmsQuestionApiController::class,'lms_question_list']);
-Route::post('/lms-question-submit',[LmsQuestionApiController::class,'lms_question_submit']);
+
+// Route::post('/mcq-answers',[LmsQuestionApiController::class,'mcq_answers']);
+Route::post('/mcq-answers-submit',[LmsQuestionApiController::class,'mcq_answers_submit']);
+Route::post('/mcq-topics',[LmsQuestionApiController::class,'topics']);
+Route::post('/mcq-questions',[LmsQuestionApiController::class,'mcq_questions']);
+Route::post('/course-demo-details',[LmsQuestionApiController::class,'course_demo_details']);
+
+
 
 // POST API
 Route::middleware('auth:sanctum')->group(function () {
