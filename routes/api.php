@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
-use App\Http\Controllers\api\chatController;
+use App\Http\Controllers\api\ChatApiController;
 use App\Http\Controllers\api\GoogleAuthController;
 use App\Http\Controllers\api\CountryController;
 use App\Http\Controllers\api\UserApiController;
@@ -42,13 +42,13 @@ Route::post('/notification-send',[UserApiController::class,'notification_send'])
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/conversation', [chatController::class, 'getOrCreateConversation']);
-    Route::post('/send-message', [chatController::class, 'sendMessage']);
-    Route::post('/messages', [chatController::class, 'getMessages']);
-    Route::post('/get_chat_list', [chatController::class, 'get_chat_list']);
-    Route::post('/generate-agora-token', [chatController::class, 'generateAgoraToken']);
-    Route::post('/agora/end-call', [chatController::class, 'endCall']);
-    Route::get('/agora/history', [chatController::class, 'callHistory']);
+    Route::post('/conversation', [ChatApiController::class, 'getOrCreateConversation']);
+    Route::post('/send-message', [ChatApiController::class, 'sendMessage']);
+    Route::post('/messages', [ChatApiController::class, 'getMessages']);
+    Route::post('/get_chat_list', [ChatApiController::class, 'get_chat_list']);
+    Route::post('/generate-agora-token', [ChatApiController::class, 'generateAgoraToken']);
+    Route::post('/agora/end-call', [ChatApiController::class, 'endCall']);
+    Route::get('/agora/history', [ChatApiController::class, 'callHistory']);
 });
 
 //CountryController

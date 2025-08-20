@@ -12,13 +12,21 @@ use Lcobucci\JWT\Configuration;
 use App\Helpers\RtcTokenBuilder2;
 use App\Models\agora_call;
 use Carbon\Carbon;
+use App\Models\User;
+// firebase
 
-class chatController extends Controller
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Exception\FirebaseException;
+
+class ChatApiController extends Controller
 {
     // Fetch or create a conversation
     public function getOrCreateConversation(Request $request)
     {
         $user_id = Auth::id();
+        
         $receiver_id = $request->receiver_id;
         $conversation = Conversation::where(function ($query) use ($user_id, $receiver_id) {
             $query->where('user_one_id', $user_id)->where('user_two_id', $receiver_id);
@@ -31,6 +39,15 @@ class chatController extends Controller
                 'user_one_id' => $user_id,
                 'user_two_id' => $receiver_id,
             ]);
+           $user = User::where('id', $receiver_id)->first();
+            if(!empty($user->fcm_token)){
+                $device_token = $user->fcm_token;
+                $title = 'New Chat Request';
+                $msg = 'Someone wants to chat with you!';
+                $key= 'chat_connect';
+                $this->notification_send($device_token,$title,$msg,$key);
+            }
+           
         }
 
         return response()->json($conversation);
@@ -78,6 +95,16 @@ class chatController extends Controller
             'translated_message' => $translated,
             'file'               => $filePath,
         ]);
+
+         $user = User::where('id', $receiver->id)->first();
+
+          if(!empty($user->fcm_token) AND $receiver->id != $sender->id){
+                $device_token =$sender->fcm_token;
+                $title = 'New Message';
+                $msg = 'You have a new message from '.$user->name;
+                $key= 'chat_messages';
+                $this->notification_send($device_token,$title,$msg,$key);
+            }
 
         // Broadcast the message
         // event(new \App\Events\MessageSent($message));
@@ -241,4 +268,42 @@ class chatController extends Controller
 
         return response()->json($calls);
     }
+
+    public function notification_send($device_token,$title,$msg,$key)
+    {
+       
+        $messaging = app('firebase.messaging');
+        
+       $message = CloudMessage::withTarget('token', $device_token)
+        ->withNotification(Notification::create(
+            $title,
+            $msg
+        ))
+        ->withData([
+            'screen' => 'ChatScreen',   // example key
+            'custom_key' => $key
+        ]);
+
+        try {
+            $response = $messaging->send($message);
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification sent successfully!',
+                'response' => $response
+            ]);
+        } catch (MessagingException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Messaging error',
+                'error' => $e->getMessage()
+            ], 400);
+        } catch (FirebaseException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firebase error',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
 }
