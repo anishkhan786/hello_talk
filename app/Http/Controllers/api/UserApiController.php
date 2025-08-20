@@ -12,9 +12,19 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+// firebase 
+
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Exception\FirebaseException;
 
 class UserApiController extends Controller
 {
+
+   
+
+
     public function get_user_detail(Request $request)
     {
         $id = $request->user_id;
@@ -79,7 +89,7 @@ class UserApiController extends Controller
             $user->dob = $request->dob;
         }
 
-         if ($request->has('introduction')) {
+        if ($request->has('introduction')) {
             $user->introduction = $request->introduction;
         } 
         
@@ -205,5 +215,102 @@ class UserApiController extends Controller
                 return response($response, 400);
             }
         }
+
+    public function application_setting(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
+
+            // Update the fields only if they are present in the request
+            if ($request->has('data_deletion')) {
+                $user->data_deletion = $request->data_deletion;
+            }
+
+            if ($request->has('multimedia')) {
+                $user->multimedia = $request->multimedia;
+            }
+
+            if ($request->has('translate_language')) {
+                $user->translate_language = $request->translate_language;
+            }
+
+             if ($request->has('interface_language')) {
+                $user->interface_language = $request->interface_language;
+            }
+
+             if ($request->has('online_status')) {
+                $user->online_status = $request->online_status;
+            }
+
+             if ($request->has('location')) {
+                $user->location = $request->location;
+            }
+
+             if ($request->has('notification')) {
+                $user->notification = $request->notification;
+            }
+            $user->save();
+
+            $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+            $user['profession'] = stringConvertToArray($user->profession);
+            $user['personality'] = stringConvertToArray($user->personality);
+            $user['interest'] = stringConvertToArray($user->interest);
+
+
+            return response()->json([
+                'message' => 'User details updated successfully',
+                'user'    => $user,
+                'status'    => 200,
+            ]);
+
+        } catch(\Exception $e)  {
+            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
+            return response($response, 400);
+        }
+    }
+
+
+public function notification_send(Request $request)
+    {
+        $messaging = app('firebase.messaging');
+
+       $message = CloudMessage::withTarget('token', $request->device_token)
+        ->withNotification(Notification::create(
+            'New Message',
+            'Hello from Firebase with extra data!'
+        ))
+        ->withData([
+            'screen' => 'ChatScreen',   // example key
+            'custom_key' => 'notification_key_user'
+        ]);
+
+        try {
+            $response = $messaging->send($message);
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification sent successfully!',
+                'response' => $response
+            ]);
+        } catch (MessagingException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Messaging error',
+                'error' => $e->getMessage()
+            ], 400);
+        } catch (FirebaseException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firebase error',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 
 }

@@ -35,10 +35,10 @@ class LmsQuestionApiController extends Controller
             $correctAnswer = 0;
 
                 foreach ($res->mcqOptions as $key => $value) {
-                    $options[$value->id] = $value->option_text;
+                    $options[++$key] = $value->option_text;
 
                     if($value->is_correct == '1'){
-                        $correctAnswer = $value->id;
+                        $correctAnswer = $key;
                     }
                 }
 
@@ -49,12 +49,13 @@ class LmsQuestionApiController extends Controller
                     'correctAnswer' => $correctAnswer
                 ];
             });
+            // $response = json_decode($response, true);
 
              return response()->json([
                         'message' => 'Questions fetched successfully',
                         'status' => true,
-                        'data' =>$formattedQuestions,
-                        'next_page_url'=>$response['next_page_url'],
+                        'data' => $formattedQuestions,
+                        'next_page_url'=> $response->nextPageUrl(),
                         'current_page' => $response->currentPage(),
                         'last_page' => $response->lastPage(),
                         'per_page' => $response->perPage(),

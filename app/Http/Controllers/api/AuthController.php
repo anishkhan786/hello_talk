@@ -55,6 +55,7 @@ class AuthController extends Controller
             'gender'  => $request->gender,
             'country'=>$request->country,
             'source'=>$request->source,
+            'fcm_token'=>$request->has('fcm_token')?$request->fcm_token:'',
             'introduction'=>'A new member just joined',
         ];
 
@@ -108,6 +109,10 @@ class AuthController extends Controller
             $response = ["message" =>'User does not exist','status'=>FALSE];
             return response([$response, 422,'status'=>FALSE]);
         }
+
+        if ($request->has('fcm_token') AND !empty($request->has('fcm_token'))) {
+                $user->update(['fcm_token' => $request->has('fcm_token')?$request->fcm_token:'']);
+            }
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $user['profession'] = stringConvertToArray($user->profession);

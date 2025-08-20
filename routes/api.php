@@ -36,6 +36,9 @@ Route::get('/auth/facebook/callback', [GoogleAuthController::class, 'handleFaceb
 Route::post('/get_user_detail',[UserApiController::class,'get_user_detail'])->middleware('auth:sanctum');
 Route::post('/get_user_list',[UserApiController::class,'user_list'])->middleware('auth:sanctum');
 Route::post('/update_user_details',[UserApiController::class,'update_user_details'])->middleware('auth:sanctum');
+Route::post('/application-setting',[UserApiController::class,'application_setting'])->middleware('auth:sanctum');
+Route::post('/notification-send',[UserApiController::class,'notification_send']);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
