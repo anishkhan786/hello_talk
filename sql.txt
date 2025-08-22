@@ -1,2 +1,12 @@
 ALTER TABLE `users` ADD `fcm_token` TEXT NULL DEFAULT NULL AFTER `source`;
 ALTER TABLE `users` ADD `data_deletion` INT(5) NOT NULL DEFAULT '0' COMMENT '1=>24 hrs, 2=>7 days ' AFTER `fcm_token`, ADD `multimedia` INT(5) NULL DEFAULT '1' COMMENT '1=>active, 2=>inActive' AFTER `data_deletion`, ADD `translate_language` VARCHAR(50) NULL DEFAULT NULL AFTER `multimedia`, ADD `interface_language` VARCHAR(50) NULL DEFAULT NULL AFTER `translate_language`, ADD `online_status` INT(5) NULL DEFAULT '1' COMMENT '1=>online , 2=>offline' AFTER `interface_language`, ADD `location` INT(5) NOT NULL DEFAULT '1' COMMENT '1=>show, 2=>hide' AFTER `online_status`, ADD `notification` INT(5) NOT NULL DEFAULT '1' COMMENT '1=>show, 2=>hide' AFTER `location`;
+CREATE TABLE `feedbacks` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NULL,
+  `message` text NOT NULL,
+  `attachment` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `feedbacks` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, CHANGE `updated_at` `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;

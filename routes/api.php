@@ -39,6 +39,8 @@ Route::post('/get_user_list',[UserApiController::class,'user_list'])->middleware
 Route::post('/update_user_details',[UserApiController::class,'update_user_details'])->middleware('auth:sanctum');
 Route::post('/application-setting',[UserApiController::class,'application_setting'])->middleware('auth:sanctum');
 Route::post('/notification-send',[UserApiController::class,'notification_send']);
+Route::post('/user-feedback-submit',[UserApiController::class,'feedbackStore'])->middleware('auth:sanctum');
+
 
 
 

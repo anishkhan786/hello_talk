@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use App\Models\UserSubscriptions;
 
 class AuthController extends Controller
 {
@@ -119,7 +120,27 @@ class AuthController extends Controller
         $user['personality'] = stringConvertToArray($user->personality);
         $user['interest'] = stringConvertToArray($user->interest);
         $user['avatar'] = asset('storage/app/public/' . $user->avatar);
-        return response(['user_data'=>$user, 200,"message"=>'User login successfull!','status'=>true,'token'=>$token]);
+
+        $today_date = now();
+        $subscription_res = UserSubscriptions::with('plan')
+                                ->where('end_date', '>=', $today_date)
+                                ->where('user_id', $user->id)
+                                ->where('payment_status', 'success')
+                                ->where('status', 'active')
+                                ->first();
+
+        if(!empty($subscription_res)){
+            $subscription_plan = true;
+            $subscription_details['start_date']=$subscription_res->start_date;
+            $subscription_details['end_date']= $subscription_res->end_date;
+            $subscription_details['plan'] =$subscription_res->plan; 
+
+        } else {
+          $subscription_details = array();
+          $subscription_plan = false;
+
+        }
+        return response(["message"=>'User login successfull!','status'=>true,'token'=>$token ,'user_data'=>$user,'subscription_plan'=>$subscription_plan ,'subscription'=>$subscription_details],200);
     }
 
     public function logout(Request $request)

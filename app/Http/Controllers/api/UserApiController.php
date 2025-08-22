@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\learningLevel;
+use App\Models\UserSubscriptions;
+use App\Models\Feedback;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -36,11 +39,31 @@ class UserApiController extends Controller
         $data['profession'] = stringConvertToArray($data->profession);
         $data['personality'] = stringConvertToArray($data->personality);
         $data['interest'] = stringConvertToArray($data->interest);
+        $today_date = now();
+        $subscription_res = UserSubscriptions::with('plan')
+                                ->where('end_date', '>=', $today_date)
+                                ->where('user_id', $data->id)
+                                ->where('payment_status', 'success')
+                                ->where('status', 'active')
+                                ->first();
 
+        if(!empty($subscription_res)){
+            $subscription_plan = true;
+            $subscription_details['start_date']=$subscription_res->start_date;
+            $subscription_details['end_date']= $subscription_res->end_date;
+            $subscription_details['plan'] =$subscription_res->plan; 
+
+        } else {
+          $subscription_details = array();
+          $subscription_plan = false;
+
+        }
 
         return response()->json([
             'message' => 'User Details get successfully',
             'user'    => $data,
+            'subscription_plan'=>$subscription_plan ,
+            'subscription'=>$subscription_details,
             'avatar_url' => asset($data->avatar),
         ]);
     }
@@ -279,6 +302,50 @@ class UserApiController extends Controller
         }
     }
 
+ public function feedbackStore(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
+             if (empty($request->message)) {
+                 return response()->json([
+                        'status' => false,
+                        'error'  => 'Please enter some text — content is required.',
+                    ], 500);
+            }
+
+            
+            if ($request->hasFile('attachment')) {
+                $mediaPath = $request->file('attachment')->store('feedbacks', 'public');
+            } else {
+                $mediaPath = '';
+            }
+
+          
+            $feedback = Feedback::create([
+                'user_id'    => auth()->id(), // अगर authentication है
+                'message'    => $request->message,
+                'attachment' => $mediaPath,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'status'    => 200,
+                'message' => 'Feedback submitted successfully',
+                'data'    => $feedback
+            ]);
+
+        } catch(\Exception $e)  {
+            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
+            return response($response, 400);
+        }
+    }
 
 public function notification_send(Request $request)
     {
