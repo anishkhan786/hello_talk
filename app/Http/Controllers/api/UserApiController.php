@@ -160,6 +160,8 @@ class UserApiController extends Controller
             'email' => $user->email,
             'introduction' => $user->introduction??'A new member just joined',
             'gender' => $user->gender,
+            'fcm_token' => $user->fcm_token,
+
             'avatar' => $user->avatar ? asset('storage/app/public/' . $user->avatar) : null,
             'countryDetail' => $user->countryDetail,
             'nativeLanguageDetail' => $user->nativeLanguageDetail,
