@@ -110,7 +110,7 @@ class AuthController extends Controller
             return response([$response, 422,'status'=>FALSE]);
         }
 
-        if ($request->has('fcm_token') AND !empty($request->has('fcm_token'))) {
+        if ($request->has('fcm_token') AND !empty($request->fcm_token)) {
                 $user->update(['fcm_token' => $request->has('fcm_token')?$request->fcm_token:'']);
             }
 
