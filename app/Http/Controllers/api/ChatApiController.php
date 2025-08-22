@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Models\conversation;
 use App\Models\message;
 use Illuminate\Http\Request;
@@ -99,9 +100,9 @@ class ChatApiController extends Controller
          $user = User::where('id', $receiver->id)->first();
 
           if(!empty($user->fcm_token) AND $receiver->id != $sender->id){
-                $device_token =$sender->fcm_token;
+                $device_token =$receiver->fcm_token;
                 $title = 'New Message';
-                $msg = 'You have a new message from '.$user->name;
+                $msg = 'You have a new message from '.$sender->name;
                 $key= 'chat_messages';
                 $this->notification_send($device_token,$title,$msg,$key);
             }
@@ -268,6 +269,69 @@ class ChatApiController extends Controller
 
         return response()->json($calls);
     }
+
+     public function sendCallNotification(Request $request)
+    {
+         $validator = Validator::make($request->all(), [
+            'callerId'     => 'required',
+            'callerName'   => 'required',
+            'callerImage'  => 'nullable',
+            'recipientId'  => 'required',
+            'channelName'  => 'required',
+            'callType'     => 'required', // audio / video
+           
+        ]);
+
+        // Step 2: If basic validation fails
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+        $user = User::where('id', $request->recipientId)->first();
+        
+        $messaging = app('firebase.messaging');
+        $message = CloudMessage::withTarget('token', $user->fcm_token)
+        ->withNotification(Notification::create(
+           ' is calling...',
+          " Call",
+        ))
+        ->withData([
+            'custom_key' => 'call_invitation',
+             'callerId'    => $request->callerId,
+                'callerName'  => $request->callerName,
+                'callerImage' => $request->callerImage,
+                'recipientId' => $request->recipientId,
+                'channelName' => $request->channelName,
+                'callType'    => $request->callType,
+                'timestamp'   => now()->toIso8601String(),
+        ]);
+
+        try {
+            $response = $messaging->send($message);
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification sent successfully!',
+                'response' => $response
+            ],200);
+        } catch (MessagingException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Messaging error',
+                'error' => $e->getMessage()
+            ], 400);
+        } catch (FirebaseException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firebase error',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+
+    }
+
 
     public function notification_send($device_token,$title,$msg,$key)
     {

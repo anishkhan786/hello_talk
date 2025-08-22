@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\learningLevel;
@@ -21,9 +22,6 @@ use Kreait\Firebase\Exception\FirebaseException;
 
 class UserApiController extends Controller
 {
-
-   
-
 
     public function get_user_detail(Request $request)
     {
@@ -69,6 +67,7 @@ class UserApiController extends Controller
 
         if ($request->has('learning_language')) {
             $user->learning_language = $request->learning_language;
+            $user->translate_language = $request->learning_language;
         }
 
         if ($request->has('know_language')) {
@@ -238,7 +237,9 @@ class UserApiController extends Controller
             }
 
             if ($request->has('translate_language')) {
+                // learning language hee translate language  hai 
                 $user->translate_language = $request->translate_language;
+                $user->learning_language = $request->translate_language;
             }
 
              if ($request->has('interface_language')) {

@@ -11,6 +11,7 @@ use App\Http\Controllers\api\LmsQuestionApiController;
 use App\Http\Controllers\api\PostApiController;
 use App\Http\Controllers\api\FollowApiController;
 use App\Http\Controllers\api\AdvertisementApiController;
+use App\Http\Controllers\api\SubscriptionApiController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -49,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/generate-agora-token', [ChatApiController::class, 'generateAgoraToken']);
     Route::post('/agora/end-call', [ChatApiController::class, 'endCall']);
     Route::get('/agora/history', [ChatApiController::class, 'callHistory']);
+    Route::post('/agora/send-call-notification', [ChatApiController::class, 'sendCallNotification']);
+
 });
 
 //CountryController
@@ -109,6 +112,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/followings', [FollowApiController::class, 'followings']);
     Route::post('/follow-back', [FollowApiController::class, 'followBack']);
 });
+
+// subscription
+Route::post('/subscription-plan', [SubscriptionApiController::class, 'get_plans']);
+Route::post('/subscription-privileges', [SubscriptionApiController::class, 'subscription_features']);
+Route::post('/get-star-subscription-plan-features', [SubscriptionApiController::class, 'getSubscriptionPlanFeatures']);
+Route::post('/plan-subscription-submit', [SubscriptionApiController::class, 'user_subscription_submit']);
 
 
 
