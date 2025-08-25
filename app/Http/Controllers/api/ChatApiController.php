@@ -332,6 +332,64 @@ class ChatApiController extends Controller
 
     }
 
+         public function respondToCall(Request $request)
+    {
+         $validator = Validator::make($request->all(), [
+            'recipientId'     => 'required',
+            'callId'   => 'required',
+            'response'  => 'nullable',
+            'reason'  => 'nullable',
+           
+        ]);
+
+        // Step 2: If basic validation fails
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+        $user = User::where('id', $request->recipientId)->first();
+        
+        $messaging = app('firebase.messaging');
+        $message = CloudMessage::withTarget('token', $user->fcm_token)
+        ->withNotification(Notification::create(
+           $request->reason,
+          $request->response,
+        ))
+        ->withData([
+            'custom_key' => 'call_invitation',
+            'recipientId'    => $request->recipientId,
+            'callId'  => $request->callId,
+            'response' => $request->response,
+            'reason' => $request->reason,
+            'timestamp'   => now()->toIso8601String(),
+        ]);
+
+        try {
+            $response = $messaging->send($message);
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification sent successfully!',
+                'response' => $response
+            ],200);
+        } catch (MessagingException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Messaging error',
+                'error' => $e->getMessage()
+            ], 400);
+        } catch (FirebaseException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firebase error',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+
+    }
+
 
     public function notification_send($device_token,$title,$msg,$key)
     {

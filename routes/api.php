@@ -53,6 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/agora/end-call', [ChatApiController::class, 'endCall']);
     Route::get('/agora/history', [ChatApiController::class, 'callHistory']);
     Route::post('/agora/send-call-notification', [ChatApiController::class, 'sendCallNotification']);
+    Route::post('/agora/response-call-notification', [ChatApiController::class, 'respondToCall']);
+
 
 });
 
