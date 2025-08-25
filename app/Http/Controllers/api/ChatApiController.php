@@ -306,6 +306,8 @@ class ChatApiController extends Controller
                 'recipientId' => $request->recipientId,
                 'channelName' => $request->channelName,
                 'callType'    => $request->callType,
+                'channelToken'    => $request->channelToken,
+                'channeluuid'    => $request->channeluuid,
                 'timestamp'   => now()->toIso8601String(),
         ]);
 
@@ -355,8 +357,8 @@ class ChatApiController extends Controller
         $messaging = app('firebase.messaging');
         $message = CloudMessage::withTarget('token', $user->fcm_token)
         ->withNotification(Notification::create(
-           $request->reason,
-          $request->response,
+           '',
+          '',
         ))
         ->withData([
             'custom_key' => 'end_invitation',
