@@ -359,7 +359,7 @@ class ChatApiController extends Controller
           $request->response,
         ))
         ->withData([
-            'custom_key' => 'call_invitation',
+            'custom_key' => 'end_invitation',
             'recipientId'    => $request->recipientId,
             'callId'  => $request->callId,
             'response' => $request->response,
