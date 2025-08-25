@@ -9,6 +9,8 @@ use App\Models\MarketingView;
 use App\Models\MarketingUserView;
 use App\Models\MarketingUserEventLogs;
 use App\Models\User;
+use App\Models\UserSubscriptions;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -24,6 +26,22 @@ class AdvertisementApiController extends Controller
             $page_name = $request->page_name;
             $userId = $request->user_id;
             $today = date('Y-m-d');
+
+            $today_date = now();
+            $subscription_res = UserSubscriptions::with('plan')
+                                ->where('end_date', '>=', $today_date)
+                                ->where('user_id', $userId)
+                                ->where('payment_status', 'success')
+                                ->where('status', 'active')
+                                ->first();
+            if(!empty($subscription_res)){
+                return response()->json([
+                    'message' => 'Ads was not applied.',
+                    'type' => '',
+                    'status' => false,
+                    'data' => [],
+                ], 200);
+            }
 
             $log_letest_data = MarketingUserEventLogs::where('user_id', $userId)
                         ->where('view_date', $today)
