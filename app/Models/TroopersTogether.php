@@ -15,4 +15,15 @@ class TroopersTogether extends Model
         'group_title',
         'group_description'
     ];
+
+    public function language()
+    {
+        return $this->belongsTo(languag::class, 'language_id');
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(GroupSettings::class);
+    }
+
 }

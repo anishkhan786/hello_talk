@@ -69,6 +69,9 @@ Route::get('/learning-level',[UserApiController::class,'learning_level']);
 Route::post('/group-list',[GroupApiController::class,'group_list']);
 Route::post('/user-group-add',[GroupApiController::class,'user_group_add']);
 Route::post('/user-group-remove',[GroupApiController::class,'user_group_remove']);
+Route::post('/user-group-setting',[GroupApiController::class,'user_group_setting']);
+Route::post('/user-group-chat-clear',[GroupApiController::class,'user_group_chat_clear']);
+
 
 // LmsQuestionApiController
 
