@@ -37,6 +37,7 @@
                                         <th>ID</th>
                                         <th>Title</th>
                                         <th>Description</th>
+                                        <th>Language</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -45,7 +46,9 @@
                                     <tr>
                                         <td>{{ ++$index }}</td>
                                         <td>{{ $item->group_title }}</td>
+                                       
                                         <td>{{ $item->group_description }}</td>
+                                         <td>{{$item->language->name??''}}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-sm dropdown-toggle hide-arrow" data-toggle="dropdown">

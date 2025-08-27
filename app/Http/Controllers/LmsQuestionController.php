@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\LmsQuestions;
 use App\Models\Category;
-use App\Models\Course;
+use App\Models\learningLevel;
 
 class LmsQuestionController extends Controller
 {
@@ -18,7 +18,7 @@ class LmsQuestionController extends Controller
 
     public function create()
     {
-        $course = Course::get();
+        $course = learningLevel::get();
         return view('admin.LmsQuestion.add', compact('course'));
     }
 
@@ -50,7 +50,7 @@ class LmsQuestionController extends Controller
     {
        
         $data = LmsQuestions::find($id);
-        $course = Course::get();
+        $course = learningLevel::get();
         $Category = Category::where('course_id', $data->course_id)->get();
         return view('admin.LmsQuestion.edit', compact('data','course','Category'));
     }

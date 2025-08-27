@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\TroopersTogether;
 use App\Models\Category;
+use App\Models\languag;
 
 class TroopersTogetherController extends Controller
 {
@@ -17,7 +18,8 @@ class TroopersTogetherController extends Controller
 
     public function create()
     {
-        return view('admin.TrooperTogether.add');
+        $language = languag::get();
+        return view('admin.TrooperTogether.add',compact('language'));
     }
 
     public function store(Request $request)
@@ -28,6 +30,7 @@ class TroopersTogetherController extends Controller
 
         TroopersTogether::create([
             'group_title' => $attributes['group_title'],
+            'language_id'=>$request->get('language_id'),
             'group_description' => $request->get('group_description'),
         ]);
 
@@ -38,7 +41,8 @@ class TroopersTogetherController extends Controller
     {
        
         $data = TroopersTogether::find($id);
-        return view('admin.TrooperTogether.edit', compact('data'));
+        $language = languag::get();
+        return view('admin.TrooperTogether.edit', compact('data','language'));
     }
 
     public function update(Request $request, $id)
@@ -46,6 +50,7 @@ class TroopersTogetherController extends Controller
         $category = TroopersTogether::find($id);
         $request_data = array(
                 'group_title' => $request->get('group_title'),
+                'language_id'=>$request->get('language_id'),
                 'group_description' => $request->get('group_description')
             );
         $category->update($request_data);

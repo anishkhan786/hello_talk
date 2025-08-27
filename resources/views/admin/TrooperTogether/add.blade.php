@@ -35,7 +35,20 @@
                                     <form class="form" action="{{route('trooper-together.store')}}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
-                                            <div class="col-md-12 col-12">
+
+                                           <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">Language</label>
+                                                    <select name="language_id"  class="form-control" id="course_id" required>
+                                                        <option value="">--Select Language--</option>
+                                                        @foreach($language  as $val)
+                                                            <option value="{{$val->id}}">{{$val->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-12">
                                                 <div class="form-group">
                                                     <label for="first-name-column">Title</label>
                                                     <input type="text" id="first-name-column" class="form-control"

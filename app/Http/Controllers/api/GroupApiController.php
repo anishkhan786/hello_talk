@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
+use App\Models\languag;
 use Carbon\Carbon;
 class GroupApiController extends Controller
 {
@@ -38,7 +39,7 @@ class GroupApiController extends Controller
                     'g.id as group_id',
                     'g.group_title',
                     'g.group_description',
-                
+                    'g.language_id',
                     DB::raw('CASE WHEN ug.user_id IS NOT NULL THEN 1 ELSE 0 END as is_joined')
                 )
                 ->get();
@@ -64,11 +65,13 @@ class GroupApiController extends Controller
                 $members = $allMembers[$group->group_id] ?? collect();
 
                 $membersData = $members->pluck('user');
-
+                $language_data = languag::where('id',$group->language_id)->first();
                 return [
                     'group_id'        => $group->group_id,
                     'group_title'     => $group->group_title,
                     'group_description' => $group->group_description,
+                    'group_language' => $language_data,
+
                     'is_joined'       => $group->is_joined,
                     'total_members'   => $membersData->count(),
                     'online_members'  => $membersData->where('online_status', 1)->count(),

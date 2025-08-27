@@ -29,7 +29,7 @@ class LmsQuestions extends Model
     
     public function course()
     {
-        return $this->belongsTo(Course::class, 'course_id');
+        return $this->belongsTo(learningLevel::class, 'course_id');
     }
     
     public function category()

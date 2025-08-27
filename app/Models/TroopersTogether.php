@@ -13,7 +13,8 @@ class TroopersTogether extends Model
     protected $fillable = [
         'id',
         'group_title',
-        'group_description'
+        'group_description',
+        'language_id'
     ];
 
     public function language()
