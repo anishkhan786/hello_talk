@@ -24,6 +24,15 @@ class McqQuestion extends Model
         return $this->hasMany(McqOption::class ,'question_id')->select('id', 'question_id','option_text','match_key','is_correct');
     }
 
+     public function options()
+    {
+        return $this->hasMany(McqOption::class,'question_id');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(McqUserAnswer::class);
+    }
     // public function userAnswers()
     // {
     //     return $this->hasMany(UserAnswer::class ,'post_id');

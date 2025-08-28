@@ -49,7 +49,10 @@
             </li>
             <!-- <li class=" nav-item {{ request()->routeIs('category') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('category')}}"><i data-feather='triangle'></i><span class="menu-title text-truncate" data-i18n="Email">Category</span></a>
             </li> -->
-             <li class=" nav-item {{ request()->routeIs('LMSQuestion') ? 'active':''}}"><a class="d-flex align-items-center" href="{{route('LMSQuestion')}}"><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
+             <li class=" nav-item {{ request()->routeIs('question_topic') ? 'active':''}}"><a class="d-flex align-items-center" href="{{route('question_topic')}}"><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS Topics</span></a>
+
+             <li class=" nav-item {{ request()->routeIs('questions') ? 'active':''}}"><a class="d-flex align-items-center" href="{{route('questions')}}"><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
+
             </li>
             <li class=" nav-item {{ request()->routeIs('trooper-together') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('trooper-together')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Troopers Together</span></a>
             </li>

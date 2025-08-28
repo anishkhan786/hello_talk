@@ -11,6 +11,9 @@ use App\Http\Controllers\TroopersTogetherController;
 use App\Http\Controllers\LmsQuestionController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\MarketingItemController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuestionTopicController;
+
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -117,7 +120,6 @@ Route::controller(PostsController::class)->group(function() {
         Route::get('/posts/delete/{id}', 'delete')->name('posts-destroy');
         Route::get('/course-demo-details', 'courseDemoDetails')->name('course-demo-details');
 
-
     });
 
     //marketing
@@ -129,6 +131,28 @@ Route::controller(PostsController::class)->group(function() {
         Route::post('/marketing/edit/{id}', 'update')->name('marketing-edit.update');
         Route::get('/marketing/delete/{id}', 'destroy')->name('marketing-destroy');
 
+    });
+
+    //questions
+    Route::controller(QuestionController::class)->group(function() {
+        Route::get('/questions', 'index')->name('questions');
+        Route::get('/questions/new', 'create')->name('questions.add');
+        Route::post('/questions/new', 'store')->name('questions.store');
+        Route::get('/questions/edit/{id}', 'edit')->name('questions.edit');
+        Route::get('/questions/show/{id}', 'show')->name('questions.show');
+        Route::post('/questions/edit/{id}', 'update')->name('questions-edit.update');
+        Route::get('/questions/delete/{id}', 'destroy')->name('questions.destroy');
+
+    });
+
+     //marketing
+    Route::controller(QuestionTopicController::class)->group(function() {
+        Route::get('/question_topic', 'index')->name('question_topic');
+        Route::get('/question_topic/new', 'create')->name('question_topic.add');
+        Route::post('/question_topic/new', 'store')->name('question_topic.store');
+        Route::get('/question_topic/edit/{id}', 'edit')->name('question_topic-edit');
+        Route::post('/question_topic/edit/{id}', 'update')->name('question_topic-edit.update');
+        Route::get('/question_topic/delete/{id}', 'delete')->name('question_topic-destroy');
     });
 
 });

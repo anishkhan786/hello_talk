@@ -14,4 +14,13 @@ class McqTopic extends Model
         'id','name', 'description','learning_level','language_id'
     ];
 
+    public function language()
+    {
+        return $this->belongsTo(languag::class ,'language_id');
+    }
+
+    public function learninglevel()
+    {
+        return $this->belongsTo(learningLevel::class ,'learning_level');
+    }
 }
