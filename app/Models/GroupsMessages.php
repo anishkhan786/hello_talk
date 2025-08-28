@@ -16,6 +16,10 @@ class GroupsMessages extends Model
         'user_id',
         'message_type',
         'content',
-        'blocked',
     ];
+
+     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

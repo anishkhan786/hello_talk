@@ -9,6 +9,7 @@ use App\Models\UserGroup;
 use App\Models\GroupsMessages;
 use App\Models\GroupSettings;
 use App\Models\User;
+use App\Events\GroupMessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
@@ -173,6 +174,51 @@ class GroupApiController extends Controller
                 'status'  => true,
                 'data'    => $settings
             ], 200);
+    }
+
+    public function group_message(Request $request)
+    {
+        $messages = GroupsMessages::with('user')->where('group_id', $request->group_id)->latest()->get();
+       
+        return response([
+                'message' => 'Get Group Messages successfully',
+                'status'  => true,
+                'base_url'=>asset('storage/app/public/'),
+                'data'    =>  $messages
+            ], 200);
+    }
+
+    public function group_message_store(Request $request)
+    {
+
+        if(!empty($request->message_type) AND ( $request->message_type == 'image' || $request->message_type == 'audio' )){
+             $filePath = null;
+                if ($request->hasFile('file')) {
+                    $filePath = $request->file('file')->store('messages', 'public');
+                }
+            $message = $filePath;
+        } else {
+            $message = $request->message;
+        }
+
+        $message = GroupsMessages::create([
+            'group_id' => $request->group_id,
+            'user_id' => $request->user_id,
+            'message_type' => $request->message_type,
+            'content' => $message,
+
+        ]);
+
+        broadcast(new GroupMessageSent($message));
+
+         return response([
+                'message' => 'Store Group Messages successfully',
+                'status'  => true,
+                'data'    =>  $message,
+                'base_url'=>asset('storage/app/public/')
+            ], 200);
+
+       
     }
 
 
