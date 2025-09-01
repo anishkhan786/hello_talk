@@ -61,7 +61,6 @@ class ChatApiController extends Controller
             'conversation_id' => 'required|exists:conversations,id',
             'type'            => 'required|in:text,image,audio',
             'message'         => 'nullable|string',
-            'file'            => 'nullable|file',
         ]);
 
         $filePath = null;
@@ -209,7 +208,7 @@ class ChatApiController extends Controller
         // 🔐 Agora credentials
         $appID = config('services.agora.app_id');
         $appCertificate = config('services.agora.certificate');
-        $uid = rand(100000, 999999);
+        $uid = 0;
 
         $token = RtcTokenBuilder2::buildTokenWithUid(
             $appID,
@@ -295,7 +294,7 @@ class ChatApiController extends Controller
         $messaging = app('firebase.messaging');
         $message = CloudMessage::withTarget('token', $user->fcm_token)
         ->withNotification(Notification::create(
-           ' is calling...',
+           'Incoming Call',
           " Call",
         ))
         ->withData([
