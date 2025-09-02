@@ -14,5 +14,6 @@ class languag extends Model
         'name',
         'code',
         'flag_emoji',
+        'arb_url',
     ];
 }

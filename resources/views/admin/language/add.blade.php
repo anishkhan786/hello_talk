@@ -43,12 +43,27 @@
                                                 </div>
                                             </div>
 
-
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
                                                     <label for="country-floating">Language Code</label>
                                                     <input type="text" id="country-floating" class="form-control"
                                                         name="code" placeholder="Code" required/>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="language-file">Flag emoji Url (https://flagcdn.com/w320/ph.png)</label>
+                                                    <input type="url"  class="form-control"
+                                                        name="flag_emoji"  required />
+                                                </div>
+                                            </div>
+
+                                          <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="language-file">Upload Language File (.arb)</label>
+                                                    <input type="file" id="language-file" class="form-control"
+                                                        name="language_file" accept=".arb" required />
                                                 </div>
                                             </div>
 

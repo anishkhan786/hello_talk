@@ -50,6 +50,20 @@
                                                         name="code" placeholder="Image" value="{{$data->code}}" />
                                                 </div>
                                             </div>
+                                             <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="language-file">Flag emoji Url (https://flagcdn.com/w320/ph.png)</label>
+                                                    <input type="url"  class="form-control"
+                                                        name="flag_emoji" value="{{$data->flag_emoji}}"  required />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="language-file">Upload Language File (.arb)</label>
+                                                    <input type="file" id="language-file" class="form-control"
+                                                        name="language_file" accept=".arb"  />
+                                                </div>
+                                            </div>
 
                                             <div class="col-12">
                                                 <button type="submit" class="btn btn-primary mr-1">Submit</button>

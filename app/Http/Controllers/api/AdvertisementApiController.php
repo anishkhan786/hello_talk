@@ -63,6 +63,12 @@ class AdvertisementApiController extends Controller
                         ->where('view_date', $today)
                         ->count() === 0;
                 },
+                 'exercise' => function () use ($userId, $page_name, $today) {
+                    return MarketingUserEventLogs::where('event_type', $page_name)
+                        ->where('user_id', $userId)
+                        ->where('view_date', $today)
+                        ->count() === 0;
+                },
                 'profile_view' => function () use ($userId, $page_name, $today) {
                     return MarketingUserEventLogs::where('event_type', $page_name)
                         ->where('user_id', $userId)

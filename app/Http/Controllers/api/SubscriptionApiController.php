@@ -8,7 +8,7 @@ use App\Models\UserSubscriptions;
 use App\Models\SubscriptionPrivileges;
 use App\Models\SubscriptionPlan;
 use App\Models\SubscriptionPlanPrivileges;
-
+use App\Models\AppNotification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -120,6 +120,15 @@ class SubscriptionApiController extends Controller
             'transaction_id' => $request->transaction_id,
             'status'         => 'active'
         ]);
+
+         AppNotification::create([
+                'user_id' => $request->user_id,
+                'type' => 'in_app',
+                'title' => 'Welcome to Premium 🚀',
+                'body' => 'Your subscription is now active. Enjoy all premium features!',
+                'channel' => 'in_app',
+                'data' =>$subscriptionId,
+            ]);
 
         return response()->json([
             'success' => true,

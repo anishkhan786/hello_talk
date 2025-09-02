@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use App\Models\UserSubscriptions;
+use App\Models\HelperLanguage;
 
 class AuthController extends Controller
 {
@@ -17,22 +18,30 @@ class AuthController extends Controller
         // dd('test');
         try {
             $validated = $request->validate([
-                'name'     => 'required|string|max:255',
-                'login_with' =>'required',
-                'native_language' => 'required|string',
+                'name'              => 'required|string|max:255',
+                'login_with'        => 'required',
+                'native_language'   => 'required|string',
                 'learning_language' => 'required|string',
-                'know_language' => 'required|string',
-                'dob' =>'required',
-                'gender' =>'required',
-
+                'know_language'     => 'required|string',
+                'dob'               => 'required',
+                'gender'            => 'required',
+            ], [
+                'name.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_name_required') ?? 'Name is required',
+                'login_with.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_login_required') ?? 'Login method is required',
+                'native_language.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_native_language_required') ?? 'Native language is required',
+                'learning_language.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_learning_language_required') ?? 'Learning language is required',
+                'know_language.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_know_language_required') ?? 'Known language is required',
+                'dob.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_dob_required') ?? 'Date of birth is required',
+                'gender.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_gender_required') ?? 'Gender is required',
             ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'message' => 'Validation failed',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_validation_failed') ?? '11 Validation failed',
                 'errors' => $e->errors(),
                 'status' => false
             ]);
         }
+
          
             if($request->login_with == 'mobile'){
                 $user = User::where('social_login_type', $request->login_with)->where('phone_no', $request->phone_no)->first();
@@ -91,11 +100,15 @@ class AuthController extends Controller
             $request->validate([
                 'login_id'    => 'required',
                 'login_with' => 'required|string',
+            ],
+             [
+                'login_id.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_login_id_required') ?? 'A valid login ID is required: Email, Phone Number, or Apple ID.',
+                'login_with.required' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_login_required') ?? 'Login method is required',
             ]);
             
         }catch(ValidationException $e){
              return response()->json([
-                'message' => 'Validation failed',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_validation_failed')?? 'Validation failed',
                 'errors' => $e->errors(),
             ]);
         }
@@ -107,7 +120,7 @@ class AuthController extends Controller
          } 
 
         if (empty($user)) {
-            $response = ["message" =>'User does not exist','status'=>FALSE];
+            $response = ["message" => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_user_not_found') ?? 'No account found for the provided details.','status'=>FALSE];
             return response([$response, 422,'status'=>FALSE]);
         }
 
@@ -140,7 +153,7 @@ class AuthController extends Controller
           $subscription_plan = false;
 
         }
-        return response(["message"=>'User login successfull!','status'=>true,'token'=>$token ,'user_data'=>$user,'subscription_plan'=>$subscription_plan ,'subscription'=>$subscription_details],200);
+        return response(["message"=> HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'user_login_success') ??'You have logged in successfully.','status'=>true,'token'=>$token ,'user_data'=>$user,'subscription_plan'=>$subscription_plan ,'subscription'=>$subscription_details],200);
     }
 
     public function logout(Request $request)
@@ -149,7 +162,7 @@ class AuthController extends Controller
     $request->user()->currentAccessToken()->delete();
 
     return response()->json([
-        'message' => 'Logged out successfully',
+        'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_user_logged_out') ??'You have been logged out successfully.',
     ]);
 }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\api\PostApiController;
 use App\Http\Controllers\api\FollowApiController;
 use App\Http\Controllers\api\AdvertisementApiController;
 use App\Http\Controllers\api\SubscriptionApiController;
+use App\Http\Controllers\api\NotificationApiController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -120,6 +121,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/followers', [FollowApiController::class, 'followers']);
     Route::get('/followings', [FollowApiController::class, 'followings']);
     Route::post('/follow-back', [FollowApiController::class, 'followBack']);
+});
+// Notification 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/notification-list', [NotificationApiController::class, 'get_list']);
+    Route::post('/notification-count', [NotificationApiController::class, 'notification_count']);
 });
 
 // subscription

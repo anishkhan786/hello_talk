@@ -9,6 +9,7 @@ use App\Models\UserGroup;
 use App\Models\GroupsMessages;
 use App\Models\GroupSettings;
 use App\Models\User;
+use App\Models\AppNotification;
 use App\Events\GroupMessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -104,6 +105,16 @@ class GroupApiController extends Controller
                 'user_id' => $request['user_id'],
                 'group_id' => $request['group_id']
             ]);
+
+            AppNotification::create([
+                'user_id' =>$request['user_id'],
+                'type' => 'message',
+                'title' => 'You joined the group',
+                'body' => 'Say hello 👋 and make them feel welcome.',
+                'channel' => 'in_app',
+                'data' =>$request['group_id'],
+            ]);
+
             $response = ['message'=> 'success', 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
@@ -117,6 +128,13 @@ class GroupApiController extends Controller
         try {
 
             $category = UserGroup::where('user_id', $request->user_id)->where('group_id', $request->group_id)->delete();
+
+            AppNotification::where('user_id', $request->user_id)
+                            ->where('type', 'message')
+                            ->where('channel', 'in_app')
+                            ->where('data', $request->group_id)
+                            ->delete();
+            
             $response = ['message'=> 'success', 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {

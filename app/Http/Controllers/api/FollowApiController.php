@@ -6,7 +6,7 @@ use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Follow;
 use App\Models\User;
-
+use App\Models\AppNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -23,6 +23,17 @@ class FollowApiController extends Controller
             'following_id' => $request->following_id,
         ]);
 
+        $user = User::where('id', Auth::id())->first();
+
+            AppNotification::firstOrCreate([
+                'user_id' => $request->following_id,
+                'type' => 'message',
+                'title' => 'New Follower',
+                'body' => $user->name.' just followed you.',
+                'channel' => 'in_app',
+                'data'=>Auth::id()
+            ]);
+
         return response()->json(['message' => 'User followed successfully.'],200);
     }
 
@@ -35,6 +46,12 @@ class FollowApiController extends Controller
             'follower_id' => Auth::id(),
             'following_id' => $request->following_id,
         ])->delete();
+
+        AppNotification::where('user_id',  $request->following_id)
+                            ->where('type', 'message')
+                            ->where('channel', 'in_app')
+                            ->where('data', Auth::id())
+                            ->delete();
 
         return response()->json(['message' => 'User unfollowed successfully.'],200);
     }
@@ -97,6 +114,14 @@ class FollowApiController extends Controller
             'following_id' => $request->follower_id,
         ]);
         
+         AppNotification::firstOrCreate([
+                'user_id' => $request->following_id,
+                'type' => 'message',
+                'title' => 'Followed You Back',
+                'body' => ' You’ve got a follow back! Time to connect',
+                'channel' => 'in_app',
+                'data'=>Auth::id()
+            ]);
 
         return response()->json(['message' => 'Followed back successfully.'],200);
     }

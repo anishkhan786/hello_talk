@@ -39,6 +39,8 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Code</th>
+                                        <th>ARB</th>
+                                        
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -46,8 +48,15 @@
                                     @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
-                                        <td>{{ $item->name }}</td>
+                                        <td><img src="{{ $item->flag_emoji }}" width="15" height="15">  {{ $item->name }}</td>
                                         <td>{{ $item->code }}</td>
+                                        
+                                        <td> @if(!empty($item->arb_url))
+                                                    <a class="me-3" target="_blank" href="{{ asset('storage/app/public/' . $item->arb_url)}}" title="ARB file Download">
+                                                        ARB file Download
+                                                    </a>
+                                            @endif</td>
+
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-sm dropdown-toggle hide-arrow" data-toggle="dropdown">

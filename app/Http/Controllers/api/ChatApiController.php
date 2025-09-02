@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Models\conversation;
 use App\Models\message;
+use App\Models\AppNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Lcobucci\JWT\Configuration;
@@ -48,6 +49,15 @@ class ChatApiController extends Controller
                 $key= 'chat_connect';
                 $this->notification_send($device_token,$title,$msg,$key);
             }
+
+            $user = User::where('id', $user_id)->first();
+            AppNotification::create([
+                'user_id' => $user_id,
+                'type' => 'message',
+                'title' => 'New Chat Request',
+                'body' => $user->name.' wants to chat with you!',
+                'channel' => 'push'
+            ]);
            
         }
 
