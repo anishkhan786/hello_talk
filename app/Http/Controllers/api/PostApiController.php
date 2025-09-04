@@ -74,7 +74,8 @@ class PostApiController extends Controller
             });
         }
         if(isset($post->user->avatar)){
-            $post->user->avatar = $post->user->avatar;
+            $img = $post->user->avatar;
+            $post->user->avatar = asset('storage/' . $img);
         }
         return [
             'id' => $post->id,
