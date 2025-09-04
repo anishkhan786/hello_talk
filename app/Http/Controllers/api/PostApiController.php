@@ -66,15 +66,15 @@ class PostApiController extends Controller
 
         if ($post->post_type === 'photo' || $post->post_type === 'video') {
             if ($post->media_path) {
-                $media_urls[] = asset('storage/app/public/' . $post->media_path);
+                $media_urls[] = asset('storage/' . $post->media_path);
             }
         } elseif ($post->post_type === 'carousel') {
             $media_urls = $post->media->map(function ($media) {
-                return asset('storage/app/public/' . $media->media_path);
+                return asset('storage/' . $media->media_path);
             });
         }
         if(isset($post->user->avatar)){
-            $post->user->avatar = $post->user->avatar ? asset('storage/app/public/' . $post->user->avatar) : null;
+            $post->user->avatar = $post->user->avatar ? asset('storage/' . $post->user->avatar) : null;
         }
         return [
             'id' => $post->id,
@@ -120,11 +120,11 @@ class PostApiController extends Controller
                 // Handle media based on post_type
                 if ($post->post_type === 'photo' || $post->post_type === 'video') {
                     if ($post->media_path) {
-                        $media_urls[] = asset('storage/app/public/' . $post->media_path);
+                        $media_urls[] = asset('storage/' . $post->media_path);
                     }
                 } elseif ($post->post_type === 'carousel') {
                     $media_urls = $post->media->map(function ($media) {
-                        return asset('storage/app/public/' . $media->media_path);
+                        return asset('storage/' . $media->media_path);
                     });
                 }
 
@@ -451,11 +451,11 @@ class PostApiController extends Controller
             $media_urls = [];
             if ($post->post_type === 'photo' || $post->post_type === 'video') {
                 if ($post->media_path) {
-                    $media_urls[] = asset('storage/app/public/' . $post->media_path);
+                    $media_urls[] = asset('storage/' . $post->media_path);
                 }
             } elseif ($post->post_type === 'carousel') {
                 $media_urls = $post->media->map(function ($media) {
-                    return asset('storage/app/public/' . $media->media_path);
+                    return asset('storage/' . $media->media_path);
                 });
             }
 
@@ -479,7 +479,7 @@ class PostApiController extends Controller
             return response()->json([
                 'message'       => 'Successfully fetched post.',
                 'status'        => true,
-                'base_url'      => asset('storage/app/public/'),
+                'base_url'      => asset('storage/'),
                 'data'          => $formattedPost,
                 'likes'         => $likes,
                 'comments'      => $comments,

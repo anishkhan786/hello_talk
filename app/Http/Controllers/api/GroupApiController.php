@@ -201,7 +201,7 @@ class GroupApiController extends Controller
         return response([
                 'message' => 'Get Group Messages successfully',
                 'status'  => true,
-                'base_url'=>asset('storage/app/public/').'/',
+                'base_url'=>asset('storage/').'/',
                 'data'    =>  $messages
             ], 200);
     }
@@ -235,7 +235,7 @@ class GroupApiController extends Controller
                 'message' => 'Store Group Messages successfully',
                 'status'  => true,
                 'data'    =>  $message,
-                'base_url'=>asset('storage/app/public/').'/'
+                'base_url'=>asset('storage/').'/'
             ], 200);
 
        

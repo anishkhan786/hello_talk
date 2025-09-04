@@ -35,7 +35,7 @@ class UserApiController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
-        $data['avatar'] = asset('storage/app/public/' . $data->avatar);
+        $data['avatar'] = asset('storage/' . $data->avatar);
         $data['profession'] = stringConvertToArray($data->profession);
         $data['personality'] = stringConvertToArray($data->personality);
         $data['interest'] = stringConvertToArray($data->interest);
@@ -141,7 +141,7 @@ class UserApiController extends Controller
         }
 
         $user->save();
-        $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+        $user['avatar'] = asset('storage/' . $user->avatar);
         $user['profession'] = stringConvertToArray($user->profession);
         $user['personality'] = stringConvertToArray($user->personality);
         $user['interest'] = stringConvertToArray($user->interest);
@@ -185,7 +185,7 @@ class UserApiController extends Controller
             'gender' => $user->gender,
             'fcm_token' => $user->fcm_token,
 
-            'avatar' => $user->avatar ? asset('storage/app/public/' . $user->avatar) : null,
+            'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
             'countryDetail' => $user->countryDetail,
             'nativeLanguageDetail' => $user->nativeLanguageDetail,
             'learningLanguageDetail' => $user->learningLanguageDetail,
@@ -284,7 +284,7 @@ class UserApiController extends Controller
             }
             $user->save();
 
-            $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+            $user['avatar'] = asset('storage/' . $user->avatar);
             $user['profession'] = stringConvertToArray($user->profession);
             $user['personality'] = stringConvertToArray($user->personality);
             $user['interest'] = stringConvertToArray($user->interest);

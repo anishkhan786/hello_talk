@@ -51,7 +51,7 @@ class AuthController extends Controller
 
         if (!empty($user)) {
             $token = $user->createToken('auth_token')->plainTextToken;
-            $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+            $user['avatar'] = asset('storage/' . $user->avatar);
             return response(['user_data'=>$user,"message"=>'User already exists.','status'=>true,'token'=>$token],200);
         }
 
@@ -90,7 +90,7 @@ class AuthController extends Controller
 
         $user = User::create( $request_data);
         $token = $user->createToken('auth_token')->plainTextToken;
-        $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+        $user['avatar'] = asset('storage/' . $user->avatar);
          return response(['user_data'=>$user, "message"=>'User registered successfully','status'=>true,'token'=>$token],200);
     }
 
@@ -132,7 +132,7 @@ class AuthController extends Controller
         $user['profession'] = stringConvertToArray($user->profession);
         $user['personality'] = stringConvertToArray($user->personality);
         $user['interest'] = stringConvertToArray($user->interest);
-        $user['avatar'] = asset('storage/app/public/' . $user->avatar);
+        $user['avatar'] = asset('storage/' . $user->avatar);
 
         $today_date = now();
         $subscription_res = UserSubscriptions::with('plan')

@@ -15,6 +15,7 @@ use App\Helpers\RtcTokenBuilder2;
 use App\Models\agora_call;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\HelperLanguage;
 // firebase
 
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -52,11 +53,12 @@ class ChatApiController extends Controller
 
             $user = User::where('id', $user_id)->first();
             AppNotification::create([
-                'user_id' => $user_id,
+                'user_id' => $receiver_id,
                 'type' => 'message',
                 'title' => 'New Chat Request',
                 'body' => $user->name.' wants to chat with you!',
-                'channel' => 'push'
+                'channel' => 'push',
+                'data' =>$user_id,
             ]);
            
         }
@@ -143,6 +145,9 @@ class ChatApiController extends Controller
                 'sender_name' => $message->sender->name ?? null,
                 'message' => $message->message,
                 'translated_message' => $message->translated_message,
+                'type' => $message->type,
+                'file' => asset('storage/' .$message->file),
+
                 'created_at' => $message->created_at->toDateTimeString(),
             ];
         });

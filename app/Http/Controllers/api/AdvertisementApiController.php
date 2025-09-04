@@ -10,7 +10,7 @@ use App\Models\MarketingUserView;
 use App\Models\MarketingUserEventLogs;
 use App\Models\User;
 use App\Models\UserSubscriptions;
-
+use App\Models\HelperLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -173,7 +173,7 @@ class AdvertisementApiController extends Controller
                 ]);
 
                 // Prepare media URL
-                $nextAd->media_file = asset('storage/app/public/' . $nextAd->media_file);
+                $nextAd->media_file = asset('storage/' . $nextAd->media_file);
             }
 
             return response()->json([
@@ -210,11 +210,11 @@ class AdvertisementApiController extends Controller
                     $ads->update(['status' => 2]);
                 }
 
-                return response()->json(['message' => 'Ad clicked', 'status' => true], 200);
+                return response()->json(['message' => 'Ads clicked', 'status' => true], 200);
 
             } catch (\Exception $e) {
                 return response()->json([
-                    'message' => 'Some internal error occurred.',
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
                     'status' => false,
                     'error' => $e->getMessage()
                 ], 400);
