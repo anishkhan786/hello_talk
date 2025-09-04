@@ -74,7 +74,7 @@ class PostApiController extends Controller
             });
         }
         if(isset($post->user->avatar)){
-            $post->user->avatar = asset('storage/').$post->user->avatar;
+            $post->user->avatar = $post->user->avatar;
         }
         return [
             'id' => $post->id,
@@ -93,6 +93,7 @@ class PostApiController extends Controller
     return response()->json([
         'message' => 'Feed fetched successfully',
         'status' => true,
+        'base_url'=>asset('storage'),
         'data' => [
             'posts' => $formattedPosts,
             'current_page' => $posts->currentPage(),
