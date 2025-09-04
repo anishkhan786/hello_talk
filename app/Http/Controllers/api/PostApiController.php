@@ -73,10 +73,17 @@ class PostApiController extends Controller
                 return asset('storage/' . $media->media_path);
             });
         }
-        if(isset($post->user->avatar)){
-            $img = $post->user->avatar;
-            $post->user->avatar = asset('storage/'.$img);
-        }
+        if (isset($post->user->avatar)) {
+    $img = $post->user->avatar;
+
+    if (strpos($img, 'storage/') === false) {
+        // Agar storage/ missing hai tabhi lagao
+        $post->user->avatar = asset('storage/' . $img);
+    } else {
+        // Agar storage/ already hai to direct asset() call kar do
+        $post->user->avatar = asset($img);
+    }
+}
         return [
             'id' => $post->id,
             'user' => $post->user,
