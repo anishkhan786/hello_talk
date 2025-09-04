@@ -38,6 +38,8 @@ class GroupMessageSent implements ShouldBroadcast
             'group_id' => $this->message->group_id,
             'user_id' => $this->message->user_id,
             'message_type' => $this->message->message_type,
+            'created_at' => $this->message->created_at,
+            'updated_at' => $this->message->updated_at,
             'user' => $this->message->user
 
         ];
