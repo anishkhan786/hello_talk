@@ -383,4 +383,22 @@ public function notification_send(Request $request)
         }
     }
 
+
+    public function userAccountDelete(Request $request)
+    {
+        
+        try {
+            User::where('id',auth()->id())->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully',
+            ]);
+        } catch (MessagingException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Messaging error',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

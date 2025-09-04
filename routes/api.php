@@ -41,8 +41,7 @@ Route::post('/update_user_details',[UserApiController::class,'update_user_detail
 Route::post('/application-setting',[UserApiController::class,'application_setting'])->middleware('auth:sanctum');
 Route::post('/notification-send',[UserApiController::class,'notification_send']);
 Route::post('/user-feedback-submit',[UserApiController::class,'feedbackStore'])->middleware('auth:sanctum');
-
-
+Route::post('/user/account/delete',[UserApiController::class,'userAccountDelete'])->middleware('auth:sanctum');
 
 
 Route::middleware('auth:sanctum')->group(function () {
