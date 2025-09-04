@@ -1,6 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
+use App\Models\languag;
+
+function language_code($code){
+    $language = languag::where('name', $code)->first();
+    return $language->code??'en';
+}
 
 if (!function_exists('detectLanguage')) {
     function detectLanguage($text)
