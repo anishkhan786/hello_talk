@@ -55,7 +55,7 @@ class MessageSent implements ShouldBroadcast
             'translated_message' => $this->message->translated_message,
             'sender_id' => $this->message->sender_id,
             'type' => $this->message->type,
-            'file' => $this->message->file,
+            'file' => asset('storage/' .$this->message->file),
             'conversation_id' => $this->message->conversation_id,
             'created_at' => $this->message->created_at,
             'updated_at' => $this->message->updated_at,
