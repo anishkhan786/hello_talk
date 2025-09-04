@@ -44,22 +44,23 @@ class ChatApiController extends Controller
             ]);
            $user = User::where('id', $receiver_id)->first();
             if(!empty($user->fcm_token)){
+                $language_code = language_code($user->interface_language);
+
                 $device_token = $user->fcm_token;
-                $title = 'New Chat Request';
-                $msg = 'Someone wants to chat with you!';
+                $title = HelperLanguage::retrieve_message_from_arb_file($language_code, 'web_push_new_title') ??'New Chat Request';
+                $msg = HelperLanguage::retrieve_message_from_arb_file($language_code, 'web_push_new_message') ??'Someone wants to chat with you!';
                 $key= 'chat_connect';
                 $this->notification_send($device_token,$title,$msg,$key);
-            }
 
-            $user = User::where('id', $user_id)->first();
-            AppNotification::create([
-                'user_id' => $receiver_id,
-                'type' => 'message',
-                'title' => 'New Chat Request',
-                'body' => $user->name.' wants to chat with you!',
-                'channel' => 'push',
-                'data' =>$user_id,
-            ]);
+                AppNotification::create([
+                        'user_id' => $receiver_id,
+                        'type' => 'message',
+                        'title' => $title,
+                        'body' => $msg ,
+                        'channel' => 'push',
+                        'data' =>$user_id,
+                    ]);
+            }           
            
         }
 
@@ -111,16 +112,19 @@ class ChatApiController extends Controller
          $user = User::where('id', $receiver->id)->first();
 
           if(!empty($user->fcm_token) AND $receiver->id != $sender->id){
+                $language_code = language_code($user->interface_language);
+
                 $device_token =$receiver->fcm_token;
-                $title = 'New Message';
-                $msg = 'You have a new message from '.$sender->name;
+                $title = HelperLanguage::retrieve_message_from_arb_file($language_code, 'web_push_new_title') ??'New Message';
+                $msg = HelperLanguage::retrieve_message_from_arb_file($language_code, 'push_new_message_from') ?? 'You have a new message from ';
+                $msg = $msg.$sender->name;
                 $key= 'chat_messages';
                 $this->notification_send($device_token,$title,$msg,$key);
             }
 
         // Broadcast the message
         // event(new \App\Events\MessageSent($message));
-        broadcast(new MessageSent($message))->toOthers();
+        broadcast(new MessageSent($message));
 
         return response()->json([
             'message' => 'Message sent successfully',
@@ -147,7 +151,6 @@ class ChatApiController extends Controller
                 'translated_message' => $message->translated_message,
                 'type' => $message->type,
                 'file' => asset('storage/' .$message->file),
-
                 'created_at' => $message->created_at->toDateTimeString(),
             ];
         });

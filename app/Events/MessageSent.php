@@ -9,7 +9,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Broadcasting\InteractsWithSockets;
-
+use Illuminate\Broadcasting\Channel;
 class MessageSent implements ShouldBroadcast
 {
     use InteractsWithSockets, Dispatchable, SerializesModels;
@@ -28,9 +28,14 @@ class MessageSent implements ShouldBroadcast
     /**
      * The name of the channel to broadcast on.
      */
-    public function broadcastOn(): PrivateChannel
+    // public function broadcastOn(): PrivateChannel
+    // {
+    //     return new PrivateChannel('chat.' . $this->message->conversation_id);
+    // }
+
+     public function broadcastOn()
     {
-        return new PrivateChannel('chat.' . $this->message->conversation_id);
+        return new Channel('chat.' . $this->message->conversation_id);
     }
 
     /**
@@ -52,6 +57,9 @@ class MessageSent implements ShouldBroadcast
             'type' => $this->message->type,
             'file' => $this->message->file,
             'conversation_id' => $this->message->conversation_id,
+            'created_at' => $this->message->created_at,
+            'updated_at' => $this->message->updated_at,
+
         ];
     }
 }
