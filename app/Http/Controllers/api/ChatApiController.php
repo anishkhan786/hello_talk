@@ -129,6 +129,7 @@ class ChatApiController extends Controller
         return response()->json([
             'message' => 'Message sent successfully',
             'data'    => $message,
+            'base_url' => asset('storage/')
         ]);
     }
 
@@ -155,7 +156,7 @@ class ChatApiController extends Controller
             ];
         });
 
-        return response()->json(['message' => 'success', 'status' => true,'data'=>$messages], 200);
+        return response()->json(['message' => 'success', 'status' => true, 'base_url' => asset('storage/'), 'data'=>$messages], 200);
     }
 
     public function get_chat_list(Request $request)
