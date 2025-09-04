@@ -227,6 +227,8 @@ class GroupApiController extends Controller
 
         ]);
 
+        $message = GroupsMessages::with('user')->where('id',  $message->id)->first();
+
         broadcast(new GroupMessageSent($message));
 
          return response([
