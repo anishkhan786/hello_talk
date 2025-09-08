@@ -21,9 +21,11 @@ class CountryController extends Controller
     public function language(){
         $data = languag::all();
         return response()->json([
-            'language'=> $data,
+            
             'status'=> true,
-            'code'=>'200'
+            'code'=>'200',
+            'base_url'=>asset('storage'),
+            'language'=> $data,
         ]);
     }
 }
