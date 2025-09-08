@@ -25,6 +25,45 @@ use Kreait\Firebase\Exception\FirebaseException;
 
 class ChatApiController extends Controller
 {
+
+    public function conversation_list_get(Request $request){
+        $userId = Auth::id();
+        $userId = $request->user_id;
+        $conversation = Conversation::where('user_one_id', $userId)->orWhere('user_two_id', $userId)->get();
+
+         $conversation = $conversation->map(function ($conversation) use($userId) {
+            if($conversation->user_one_id == $userId){
+                $receiver_id = $conversation->user_two_id;
+            } else {
+                $receiver_id = $conversation->user_one_id;
+            }
+
+            $user = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->where('id', $receiver_id)->first();
+            $count = message::where('conversation_id', $conversation->id)->where('sender_id','!=', $userId)->where('is_read', '0')->count();
+             // Latest message
+            $latestMessage = Message::where('conversation_id', $conversation->id)->where('sender_id','!=', $userId)->where('is_read', '0')->latest('created_at')->first();
+            return [
+                'id' => $conversation->id,
+                'user_one_id' => $conversation->user_one_id,
+                'user_two_id' => $conversation->user_two_id,
+
+                'user_data' => $user,
+                'messages_count' => $count,
+                'latestMessage'=>$latestMessage->created_at??$conversation->created_at
+
+            ];
+        });
+
+        $conversation = $conversation->sortByDesc('latestMessage')->values();
+
+         return response()->json([
+            'message' => 'Conversation List',
+            'data'    => $conversation,
+            'base_url' => asset('storage/')
+        ]);
+    }
+
+
     // Fetch or create a conversation
     public function getOrCreateConversation(Request $request)
     {
