@@ -52,7 +52,7 @@
                                         <td>{{ $item->code }}</td>
                                         
                                         <td> @if(!empty($item->arb_url))
-                                                    <a class="me-3" target="_blank" href="{{ asset('storage/app/public/' . $item->arb_url)}}" title="ARB file Download">
+                                                    <a class="me-3" target="_blank" href="{{ asset('storage/' . $item->arb_url)}}" title="ARB file Download">
                                                         ARB file Download
                                                     </a>
                                             @endif</td>
