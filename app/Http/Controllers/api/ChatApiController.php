@@ -195,6 +195,14 @@ class ChatApiController extends Controller
             ];
         });
 
+        $conversation = Conversation::where('id', $request->conversation_id)->first();
+        $userId = Auth::id();
+
+        Message::where('conversation_id', $conversation->id)
+                    ->where('sender_id', '!=', $userId)
+                    ->where('is_read', '0')
+                    ->update(['is_read' => 1]);
+
         return response()->json(['message' => 'success', 'status' => true, 'base_url' => asset('storage/'), 'data'=>$messages], 200);
     }
 
