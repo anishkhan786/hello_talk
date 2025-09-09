@@ -43,11 +43,12 @@
                                         <div class="media">
                                             <div class="avatar bg-light-primary mr-2">
                                                 <div class="avatar-content">
-                                                    <i data-feather="trending-up" class="avatar-icon"></i>
+                                                    <a href="{{route('inquirie.index')}}">
+                                                    <i data-feather="trending-up" class="avatar-icon"></i></a>
                                                 </div>
                                             </div>
                                             <div class="media-body my-auto">
-                                                <h4 class="font-weight-bolder mb-0">5</h4>
+                                                <h4 class="font-weight-bolder mb-0">{{$inquiries}}</h4>
                                                 <p class="card-text font-small-3 mb-0">Inquirie</p>
                                             </div>
                                         </div>
@@ -56,12 +57,13 @@
                                         <div class="media">
                                             <div class="avatar bg-light-info mr-2">
                                                 <div class="avatar-content">
-                                                    <i data-feather="user" class="avatar-icon"></i>
+                                                    <a href="{{route('user.index')}}">
+                                                    <i data-feather="user" class="avatar-icon"></i></a>
                                                 </div>
                                             </div>
                                             <div class="media-body my-auto">
-                                                <h4 class="font-weight-bolder mb-0">5</h4>
-                                                <p class="card-text font-small-3 mb-0">Customers</p>
+                                                <h4 class="font-weight-bolder mb-0">{{$user}}</h4>
+                                                <p class="card-text font-small-3 mb-0">Users</p>
                                             </div>
                                         </div>
                                     </div>
@@ -73,7 +75,7 @@
                                                 </div>
                                             </div>
                                             <div class="media-body my-auto">
-                                                <h4 class="font-weight-bolder mb-0">5</h4>
+                                                <h4 class="font-weight-bolder mb-0">{{$userSubscriptions}}</h4>
                                                 <p class="card-text font-small-3 mb-0">Plan</p>
                                             </div>
                                         </div>
@@ -82,12 +84,13 @@
                                         <div class="media">
                                             <div class="avatar bg-light-success mr-2">
                                                 <div class="avatar-content">
-                                                    <i data-feather="dollar-sign" class="avatar-icon"></i>
+                                                    <a href="{{route('course-demo-details')}}">
+                                                    <i data-feather="dollar-sign" class="avatar-icon"></i></a>
                                                 </div>
                                             </div>
                                             <div class="media-body my-auto">
-                                                <h4 class="font-weight-bolder mb-0">5 ₹</h4>
-                                                <p class="card-text font-small-3 mb-0">Deposit</p>
+                                                <h4 class="font-weight-bolder mb-0">{{$courseDemoDetails}}</h4>
+                                                <p class="card-text font-small-3 mb-0">Course Demo Details</p>
                                             </div>
                                         </div>
                                     </div>
@@ -106,7 +109,7 @@
                                 <div class="card">
                                     <div class="card-body pb-50">
                                         <h6>Orders</h6>
-                                        <h2 class="font-weight-bolder mb-1">2</h2>
+                                        <h2 class="font-weight-bolder mb-1">0</h2>
                                         <div id="statistics-order-chart"></div>
                                     </div>
                                 </div>
@@ -118,7 +121,7 @@
                                 <div class="card card-tiny-line-stats">
                                     <div class="card-body pb-50">
                                         <h6>Profit</h6>
-                                        <h2 class="font-weight-bolder mb-1">5 ₹</h2>
+                                        <h2 class="font-weight-bolder mb-1">0</h2>
                                         <div id="statistics-profit-chart"></div>
                                     </div>
                                 </div>
@@ -131,9 +134,9 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-6">
-                                                <h4 class="card-title mb-1">Earnings</h4>
+                                                <h4 class="card-title mb-1">Coming Soon</h4>
                                                 <div class="font-small-2">This Month</div>
-                                                <h5 class="mb-1">5 ₹</h5>
+                                                <h5 class="mb-1">00 ₹</h5>
                                                 {{-- <p class="card-text text-muted font-small-2">
                                                     <span class="font-weight-bolder">68.2%</span><span> more earnings than last month.</span>
                                                 </p> --}}

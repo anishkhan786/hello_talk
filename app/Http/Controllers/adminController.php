@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Inquiries;
+use App\Models\User;
+use App\Models\CourseDemoDetails;
+use App\Models\UserSubscriptions;
 
 class adminController extends Controller
 {
@@ -39,7 +43,18 @@ public function login(Request $request)
 }
 
 public function dashboard(){
-    return view('/dashboard');
+
+    $today_date = now();
+    $userSubscriptions = UserSubscriptions::where('end_date', '>=', $today_date)
+                                ->where('payment_status', 'success')
+                                ->where('status', 'active')
+                                ->count()??'00';
+
+    $inquiries = Inquiries::where('status', 'new')->count()??'00';
+    $user = User::where('type','user')->count()??'00';
+    $courseDemoDetails =CourseDemoDetails::count()??'00';
+      
+    return view('/dashboard', compact('userSubscriptions','inquiries','user','courseDemoDetails'));
 }
 
 public function logout(Request $request)
