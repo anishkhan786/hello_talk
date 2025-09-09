@@ -55,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/agora/send-call-notification', [ChatApiController::class, 'sendCallNotification']);
     Route::post('/agora/response-call-notification', [ChatApiController::class, 'respondToCall']);
     Route::post('/conversation-list-get', [ChatApiController::class, 'conversation_list_get']);
-
+    Route::post('/user-one-to-one-typing', [ChatApiController::class, 'userOneToOneTyping']);
 
 });
 

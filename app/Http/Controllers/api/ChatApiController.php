@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Events\MessageSent;
+use App\Events\UserTyping;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Models\conversation;
@@ -546,6 +547,34 @@ class ChatApiController extends Controller
                 'message' => 'Firebase error',
                 'error' => $e->getMessage()
             ], 400);
+        }
+    }
+    
+    public function userOneToOneTyping(Request $request)
+    {
+        try{
+
+           $conversation_id = $request->conversation_id??'';
+           $user_id = $request->user_id;
+           $type = $request->type;
+
+           $data = [
+                    'conversation_id' => $conversation_id,
+                    'user_id' => $user_id,
+                    'type' => $type
+                 ];
+
+            broadcast(new UserTyping($data));
+            return response()->json([
+                'status'   => true,
+                'code'     => 200,
+            ]);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
