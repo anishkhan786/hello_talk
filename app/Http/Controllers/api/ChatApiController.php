@@ -4,6 +4,8 @@ namespace App\Http\Controllers\api;
 
 use App\Events\MessageSent;
 use App\Events\UserTyping;
+use App\Events\UserOnlineOffline;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Models\conversation;
@@ -565,6 +567,34 @@ class ChatApiController extends Controller
                  ];
 
             broadcast(new UserTyping($data));
+            return response()->json([
+                'status'   => true,
+                'code'     => 200,
+            ]);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
+    }
+
+        public function userOnlineOffline(Request $request)
+    {
+        try{
+
+           $user_id = $request->user_id;
+           $is_online = $request->is_online??2;
+
+           $data = [
+                    'user_id' => $user_id,
+                    'is_online' => $is_online
+                 ];
+
+            User::where('id', $user_id)->update(['online_status' => $is_online]);
+
+            broadcast(new UserOnlineOffline($data));
             return response()->json([
                 'status'   => true,
                 'code'     => 200,
