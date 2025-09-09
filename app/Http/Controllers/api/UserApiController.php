@@ -185,6 +185,21 @@ class UserApiController extends Controller
         $users = $users->get();
 
     $data = $users->map(function ($user) {
+
+        $today_date = now();
+        $subscription_res = UserSubscriptions::with('plan')
+                                ->where('end_date', '>=', $today_date)
+                                ->where('user_id', $user->id)
+                                ->where('payment_status', 'success')
+                                ->where('status', 'active')
+                                ->first();
+        
+        if(!empty($subscription_res)){
+          $subscription_plan = true;
+        } else {
+          $subscription_plan = false;
+        }
+
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -198,7 +213,7 @@ class UserApiController extends Controller
             'nativeLanguageDetail' => $user->nativeLanguageDetail,
             'learningLanguageDetail' => $user->learningLanguageDetail,
             'knowLanguageDetail' => $user->knowLanguageDetail,
-
+            'subscription_plan'=>$subscription_plan,
 
             // add any other fields you need
         ];
