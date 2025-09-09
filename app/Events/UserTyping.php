@@ -23,7 +23,7 @@ class UserTyping implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('usertyping.' . $this->data['conversation_id'] . '.' . $this->data['user_id']);
+        return new Channel('chat.' . $this->data['conversation_id']);
     }
 
     public function broadcastAs()
