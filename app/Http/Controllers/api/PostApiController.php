@@ -13,6 +13,7 @@ use App\Models\PostMedia;
 use App\Models\User;
 use App\Models\PostReports;
 use App\Models\PostBlock;
+use App\Models\HelperLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -23,9 +24,6 @@ class PostApiController extends Controller
   public function feedPage(Request $request)
 {
     $user = auth()->user();
-
-   
-
     $perPage =  $request->per_page??10; // You can change this as needed
     $searchText =  $request->searchText??''; // You can change this as needed
 
@@ -161,59 +159,62 @@ class PostApiController extends Controller
     public function store(Request $request)
         {
             try{
-            $request->validate([
-                'post_type' => 'required|in:text,photo,video,carousel'
-            ]);
+                $request->validate([
+                    'post_type' => 'required|in:text,photo,video,carousel'
+                ]);
 
-            if ($request->post_type == 'text' AND empty($request->content)) {
-                 return response()->json([
-                        'status' => false,
-                        'error'  => 'Please enter some text — content is required.',
-                    ], 500);
-            } 
-
-            if ($request->post_type == 'photo' OR $request->post_type == 'video' OR $request->post_type == 'carousel') {
-                if (empty($request->hasFile('media'))) {
-
+                if ($request->post_type == 'text' AND empty($request->content)) {
                     return response()->json([
-                        'status' => false,
-                        'error'  => 'Please select some media — media is required.',
-                    ], 500);
-                }
-             }
+                            'status' => false,
+                            'error'  => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_content_required') ?? 'Please enter some text — content is required.',
+                        ], 500);
+                } 
 
-            $post = Posts::create([
-                'user_id' => $request->user_id,
-                'post_type' => $request->post_type,
-                'content' => $request->content??'',
-                'caption' => $request->caption??'',
-                'location' => $request->location??'',
+                if ($request->post_type == 'photo' OR $request->post_type == 'video' OR $request->post_type == 'carousel') {
+                    if (empty($request->hasFile('media'))) {
 
-            ]);
-
-            if ($request->post_type === 'photo' || $request->post_type === 'video') {
-                if ($request->hasFile('media')) {
-                    $mediaPath = $request->file('media')->store('posts', 'public');
-                    $post->update(['media_path' => $mediaPath]);
-                }
-            }
-
-            if ($request->post_type === 'carousel') {
-                if ($request->hasFile('media')) {
-                    foreach ($request->file('media') as $file) {
-                        $mediaPath = $file->store('posts/carousel', 'public');
-                        PostMedia::create([
-                            'post_id' => $post->id,
-                            'media_path' => $mediaPath
-                        ]);
+                        return response()->json([
+                            'status' => false,
+                            'error'  => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_media_required') ?? 'Please select some media — media is required.',
+                        ], 500);
                     }
                 }
-            }
 
-            return response()->json(['message' => 'Post created','status'=>true],200);
+                $post = Posts::create([
+                    'user_id' => $request->user_id,
+                    'post_type' => $request->post_type,
+                    'content' => $request->content??'',
+                    'caption' => $request->caption??'',
+                    'location' => $request->location??'',
+
+                ]);
+
+                if ($request->post_type === 'photo' || $request->post_type === 'video') {
+                    if ($request->hasFile('media')) {
+                        $mediaPath = $request->file('media')->store('posts', 'public');
+                        $post->update(['media_path' => $mediaPath]);
+                    }
+                }
+
+                if ($request->post_type === 'carousel') {
+                    if ($request->hasFile('media')) {
+                        foreach ($request->file('media') as $file) {
+                            $mediaPath = $file->store('posts/carousel', 'public');
+                            PostMedia::create([
+                                'post_id' => $post->id,
+                                'media_path' => $mediaPath
+                            ]);
+                        }
+                    }
+                }
+
+                return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_created_successfully') ??'Post created successfully.','status'=>true],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                 return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
 
@@ -231,10 +232,13 @@ class PostApiController extends Controller
                 'location' => $request->location ?? $post->location,
             ]);
 
-            return response()->json(['message' => 'Post updated','status'=>true, 'post' => $post],200);
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_updated_successfully') ?? 'Post updated successfully','status'=>true, 'post' => $post],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                 return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
 
@@ -257,10 +261,13 @@ class PostApiController extends Controller
 
                 $post->delete();
 
-                return response()->json(['message' => 'Post deleted','status'=>true],200);
+                return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_deleted_successfully') ?? 'Post deleted successfully','status'=>true],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
 
@@ -272,10 +279,13 @@ class PostApiController extends Controller
                 'post_id' => $request->post_id,
             ]);
 
-            return response()->json(['message' => 'Post liked','status'=>true],200);
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_liked_successfully') ?? 'Post liked successfully','status'=>true],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
 
@@ -292,10 +302,13 @@ class PostApiController extends Controller
                 'comment' => $request->comment,
             ]);
 
-            return response()->json(['message' => 'Comment added','status'=>true, 'comment' => $comment]);
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_comment_added_successfully') ?? 'Comment added successfully','status'=>true, 'comment' => $comment]);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
 
@@ -307,10 +320,13 @@ class PostApiController extends Controller
                 'post_id' => $request->post_id,
             ]);
 
-            return response()->json(['message' => 'Post shared','status'=>true],200);
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_shared_successfully') ?? 'Post shared successfully','status'=>true],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
     public function unlike(Request $request)
@@ -318,14 +334,17 @@ class PostApiController extends Controller
             try {
             $like = PostLike::where('post_id', $request->post_id)->where('user_id', $request->user_id)->first();
             if (!$like) {
-                return response()->json(['message' => 'Like not found','status'=>false], 400);
+                return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_like_not_found') ?? 'Like not found','status'=>false], 400);
             }
 
             $like->delete();
-            return response()->json(['message' => 'Post unliked successfully','status'=>true],200);
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_unliked_successfully') ?? 'Post unliked successfully','status'=>true],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
     public function deleteComment(Request $request)
@@ -333,14 +352,17 @@ class PostApiController extends Controller
             try {
             $comment = PostComment::find($request->comment_id);
             if (!$comment) {
-                return response()->json(['message' => 'Comment not found','status'=>false], 400);
+                return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ??'Comment not found','status'=>false], 400);
             }
            
             $comment->delete();
-            return response()->json(['message' => 'Comment deleted successfully','status'=>true],200);
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_comment_deleted_successfully') ??'Comment deleted successfully','status'=>true],200);
             } catch(\Exception $e)  {
-                $response = ['message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
     
@@ -355,7 +377,7 @@ class PostApiController extends Controller
             try {
                 // ✅ Call translation helper/service
                 $translated = translateMessageWithOpenAI($request->caption, $request->target_lang, '');
-
+                
                 // Not condition add kar rakha hoonn mene jaab translate ki api aa jayegi taab me hata dunga 
                 if ($translated) {
                     return response()->json([
@@ -367,15 +389,15 @@ class PostApiController extends Controller
                 } else {
                     return response()->json([
                         'status' => false,
-                        'error'  => 'Translation failed.',
+                        'error'  => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_translation_failed') ?? 'Translation failed.',
                     ], 500);
                 }
             } catch (\Exception $e) {
-                return response()->json([
+                 return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
                     'status' => false,
-                    'error'  => 'Internal server error.',
-                    'debug'  => $e->getMessage(), // Optional: remove in production
-                ], 500);
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
     
@@ -388,7 +410,7 @@ class PostApiController extends Controller
 
                 if ($comments->isEmpty()) {
                     return response()->json([
-                        'message' => 'No comments found for this post.',
+                        'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_no_comments_found') ?? 'No comments found for this post.',
                         'status' => false,
                         'data' => []
                     ], 404);
@@ -401,10 +423,10 @@ class PostApiController extends Controller
                 ], 200);
 
             } catch(\Exception $e) {
-                return response()->json([
-                    'message' => 'Some internal error occurred.',
+                 return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
                     'status' => false,
-                    'error' => $e->getMessage() // Optional: remove in production
+                    'error' => $e->getMessage()
                 ], 400);
             }
         }
@@ -419,25 +441,24 @@ class PostApiController extends Controller
 
             if ($likes->isEmpty()) {
                 return response()->json([
-                    'message' => 'No likes found for this post.',
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_no_likes_found') ?? 'No likes found for this post.',
                     'status' => false,
                     'data' => []
                 ], 404);
             }
 
             return response()->json([
-                'message' => 'Successfully fetched likes.',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_likes_fetched_successfully') ?? 'Successfully fetched likes.',
                 'status' => true,
                 'data' => $likes
             ], 200);
 
         } catch(\Exception $e)  {
-            $response = [
-                'message' => 'Some internal error occurred.',
-                'status' => false,
-                'error' => $e->getMessage() // Optional: remove in production
-            ];
-            return response()->json($response, 400);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -495,11 +516,11 @@ class PostApiController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong.',
-                'status'  => false,
-                'error'   => $e->getMessage(), // Optional: remove in production
-            ], 500);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -518,7 +539,7 @@ class PostApiController extends Controller
             if ($existingReport) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'You have already reported this post.'
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_already_reported') ?? 'You have already reported this post.'
                 ], 409);
             }
 
@@ -530,15 +551,15 @@ class PostApiController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Post reported successfully.',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_reported_successfully') ?? 'Post reported successfully.',
                 'data' => $report
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong.',
-                'status'  => false,
-                'error'   => $e->getMessage(), // Optional: remove in production
-            ], 500);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -556,7 +577,7 @@ class PostApiController extends Controller
             if ($already) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Post already blocked.'
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_already_blocked') ?? 'Post already blocked.'
                 ], 409);
             }
 
@@ -569,15 +590,15 @@ class PostApiController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Post blocked successfully.',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_blocked_successfully') ?? 'Post blocked successfully.',
                 'data' => $block
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong.',
-                'status'  => false,
-                'error'   => $e->getMessage(), // Optional: remove in production
-            ], 500);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 

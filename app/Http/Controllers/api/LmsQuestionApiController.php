@@ -16,6 +16,7 @@ use App\Models\McqOption;
 use App\Models\McqUserAnswer;
 use App\Models\McqCompleteTopicPage;
 use App\Models\CourseDemoDetails;
+use App\Models\HelperLanguage;
 
 class LmsQuestionApiController extends Controller
 {
@@ -63,12 +64,15 @@ class LmsQuestionApiController extends Controller
                         'has_more' => $response->currentPage() < $response->lastPage()
                     ], 200);
         } else {
-            $response = ["message" => "topic not exit",'status'=>FALSE];
+            $response = ["message" => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_topic_does_not_exist') ??"Topic does not exist",'status'=>FALSE];
             return response($response, 422);
         }
     } catch(\Exception $e)  {
-        $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-        return response($response, 400);
+        return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
     }
  }
 
@@ -111,15 +115,18 @@ class LmsQuestionApiController extends Controller
             return response($response, 200);
         } else {
             return response([
-                'message' => 'No topics found.',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_no_topics_found') ?? 'No topics found.',
                 'status'  => false,
                 'data'    => [],
             ], 200);
         }
 
     } catch(\Exception $e)  {
-        $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-        return response($response, 400);
+        return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
     }
  }
  
@@ -146,44 +153,55 @@ class LmsQuestionApiController extends Controller
             $response = ['message'=> 'success', 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
     public function course_demo_details(Request $request){
 
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|integer',
-            'email' => 'required|email',
-            'mobile_number' => 'required|string|max:15',
-            'dob' => 'required|string',
-            'learn_language_id' => 'required|integer',
-            'learning_level_id' => 'required|integer',
-            'why_are_you_learing_this_language_id' => 'required|integer',
-            'country_id' => 'required|integer',
-        ]);
-
-        // Step 2: If basic validation fails
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-        $detail = CourseDemoDetails::create([
-                'user_id' => $request->has('user_id')?$request->user_id:'',
-                'email' =>  $request->has('email')?$request->email:'',
-                'mobile_number'=> $request->has('mobile_number')?$request->mobile_number:'',
-                'dob'=> $request->has('dob')?$request->dob:'',
-                'learn_language_id'=> $request->has('learn_language_id')?$request->learn_language_id:'',
-                'learning_level_id'=> $request->has('learning_level_id')?$request->learning_level_id:'',
-                'why_are_you_learing_this_language_id'=>$request->has('why_are_you_learing_this_language_id')?$request->why_are_you_learing_this_language_id:'',
-                'country_id'=>$request->has('country_id')?$request->country_id:'',
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer',
+                'email' => 'required|email',
+                'mobile_number' => 'required|string|max:15',
+                'dob' => 'required|string',
+                'learn_language_id' => 'required|integer',
+                'learning_level_id' => 'required|integer',
+                'why_are_you_learing_this_language_id' => 'required|integer',
+                'country_id' => 'required|integer',
             ]);
 
-        return response()->json(['status' => true, 'message' => 'Created successfully', 'data' => $detail], 200);
+            // Step 2: If basic validation fails
+                if ($validator->fails()) {
+                    return response()->json([
+                        'status' => false,
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+
+            $detail = CourseDemoDetails::create([
+                    'user_id' => $request->has('user_id')?$request->user_id:'',
+                    'email' =>  $request->has('email')?$request->email:'',
+                    'mobile_number'=> $request->has('mobile_number')?$request->mobile_number:'',
+                    'dob'=> $request->has('dob')?$request->dob:'',
+                    'learn_language_id'=> $request->has('learn_language_id')?$request->learn_language_id:'',
+                    'learning_level_id'=> $request->has('learning_level_id')?$request->learning_level_id:'',
+                    'why_are_you_learing_this_language_id'=>$request->has('why_are_you_learing_this_language_id')?$request->why_are_you_learing_this_language_id:'',
+                    'country_id'=>$request->has('country_id')?$request->country_id:'',
+                ]);
+
+            return response()->json(['status' => true, 'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_created_successfully') ??'Created successfully', 'data' => $detail], 200);
+        } catch(\Exception $e)  {
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
 //  public function mcq_answers(Request $request)

@@ -109,6 +109,8 @@ class ChatApiController extends Controller
     // Send message
     public function sendMessage(Request $request)
     {
+     try {
+
         $request->validate([
             'conversation_id' => 'required|exists:conversations,id',
             'type'            => 'required|in:text,image,audio',
@@ -155,8 +157,8 @@ class ChatApiController extends Controller
 
                 $device_token =$receiver->fcm_token;
                 $title = HelperLanguage::retrieve_message_from_arb_file($language_code, 'web_push_new_title') ??'New Message';
-                $msg = HelperLanguage::retrieve_message_from_arb_file($language_code, 'push_new_message_from') ?? 'You have a new message from ';
-                $msg = $msg.$sender->name;
+                $msg = HelperLanguage::retrieve_message_from_arb_file($language_code, 'push_new_message_from') ?? 'You have a new message from';
+                $msg = $msg.' '.$sender->name;
                 $key= 'chat_messages';
                 $this->notification_send($device_token,$title,$msg,$key);
             }
@@ -170,12 +172,21 @@ class ChatApiController extends Controller
             'data'    => $message,
             'base_url' => asset('storage/')
         ]);
+
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
 
     // Fetch messages
     public function getMessages(Request $request)
     {
+        try {
         $messages = Message::with('sender:id,name')->where('conversation_id', $request->conversation_id)
             ->orderBy('created_at', 'asc')
             ->get();
@@ -204,10 +215,20 @@ class ChatApiController extends Controller
                     ->update(['is_read' => 1]);
 
         return response()->json(['message' => 'success', 'status' => true, 'base_url' => asset('storage/'), 'data'=>$messages], 200);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
+   
+   
     }
 
     public function get_chat_list(Request $request)
     {
+        try {
         $userId = Auth::id();
 
         $conversations = Conversation::with(['userOne', 'userTwo', 'messages' => function ($q) {
@@ -237,10 +258,19 @@ class ChatApiController extends Controller
             'status' => true,
             'data' => $chatList
         ]);
+
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
     public function generateAgoraToken(Request $request)
     {
+        try {
         $request->validate([
             'receiver_id' => 'required|exists:users,id',
         ]);
@@ -301,42 +331,66 @@ class ChatApiController extends Controller
             'channel_name' => $channelName,
             'existing' => false,
         ]);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
     public function endCall(Request $request)
     {
-        $request->validate([
-            'channel_name' => 'required',
-        ]);
+        try {
+            $request->validate([
+                'channel_name' => 'required',
+            ]);
 
-        $call = agora_call::where('channel_name', $request->channel_name)
-            ->whereNull('ended_at')
-            ->latest()
-            ->first();
+            $call = agora_call::where('channel_name', $request->channel_name)
+                ->whereNull('ended_at')
+                ->latest()
+                ->first();
 
-        if (!$call) {
-            return response()->json(['message' => 'Call not found or already ended.'], 404);
+            if (!$call) {
+                return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_call_not_found_or_already_ended') ??'Call not found or already ended.'], 404);
+            }
+
+            $call->ended_at = Carbon::now();
+            $call->save();
+
+            return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_call_ended_successfully') ??'Call ended successfully']);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
-
-        $call->ended_at = Carbon::now();
-        $call->save();
-
-        return response()->json(['message' => 'Call ended successfully']);
     }
 
     public function callHistory()
     {
-        $userId = auth()->id();
-        $calls = agora_call::where('caller_id', $userId)
-            ->orWhere('receiver_id', $userId)
-            ->latest()
-            ->get();
+        try{
+            $userId = auth()->id();
+            $calls = agora_call::where('caller_id', $userId)
+                ->orWhere('receiver_id', $userId)
+                ->latest()
+                ->get();
 
-        return response()->json($calls);
+            return response()->json($calls);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
      public function sendCallNotification(Request $request)
     {
+        
          $validator = Validator::make($request->all(), [
             'callerId'     => 'required',
             'callerName'   => 'required',

@@ -8,6 +8,7 @@ use App\Models\AppNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\HelperLanguage;
 use DB;
 class NotificationApiController extends Controller
 {
@@ -17,34 +18,28 @@ class NotificationApiController extends Controller
             $response = AppNotification::with('user')->where('user_id', $user_id)->get();
 
             if(!empty($response)){
-
-                AppNotification::where('user_id', $user_id)->update([
-                                        'is_read' => 1,
-                                        'read_at' => now(),
-                                    ]);
-
+                AppNotification::where('user_id', $user_id)->update(['is_read' => 1,'read_at' => now()]);
                 return response([
                     'message' => 'success.',
                     'status'  => true,
                     'data'    => $response
                 ], 200);
             } else {
-                $response = ["message" => "Notification not found",'status'=>false];
+                $response = ["message" => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_notification_not_found') ?? "Notification not found",'status'=>false];
                 return response($response, 422);
             }
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
  }
 
  public function notification_count(Request $request){
     $user_id =  $request->user_id??'';
     $response = AppNotification::where('is_read', '0')->where('user_id', $user_id)->count();
-    return response([
-                    'message' => 'success.',
-                    'status'  => true,
-                    'notification' => $response
-                ], 200);
+    return response(['message' => 'success.', 'status'  => true, 'notification' => $response], 200);
  }
 }

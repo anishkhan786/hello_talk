@@ -9,7 +9,7 @@ use App\Models\Category;
 use App\Models\learningLevel;
 use App\Models\UserSubscriptions;
 use App\Models\Feedback;
-
+use App\Models\HelperLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -70,88 +70,96 @@ class UserApiController extends Controller
 
     public function update_user_details(Request $request)
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        if (!$user) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
-
-        // Update the fields only if they are present in the request
-        if ($request->has('name')) {
-            $user->name = $request->name;
-        }
-
-        if ($request->has('native_language')) {
-            $user->native_language = $request->native_language;
-        }
-
-        if ($request->has('learning_language')) {
-            $user->learning_language = $request->learning_language;
-            $user->translate_language = $request->learning_language;
-        }
-
-        if ($request->has('know_language')) {
-            $user->know_language = $request->know_language;
-        }
-        if ($request->has('country')) {
-            $user->country = $request->country;
-        }
-        if ($request->has('gender')) {
-            $user->gender = $request->gender;
-        }
-
-        if ($request->has('source')) {
-            $user->source = $request->source;
-        }
-
-        if ($request->has('dob')) {
-            $user->dob = $request->dob;
-        }
-
-        if ($request->has('introduction')) {
-            $user->introduction = $request->introduction;
-        } 
-        
-        if ($request->has('profession')) {
-            $user->profession = implode(", ", $request->profession);
-        } 
-        
-        if ($request->has('personality')) {
-            $user->personality = implode(", ", $request->personality);
-        } 
-        
-        if ($request->has('interest')) {
-            $user->interest = implode(", ", $request->interest);
-        }
-       
-        // Handle avatar upload
-
-
-        if ($request->hasFile('avatar')) {
-            // Delete old image if exists
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 401);
             }
 
-            $mediaPath = $request->file('avatar')->store('avatar', 'public');
-            $user['avatar'] = $mediaPath;
+
+            // Update the fields only if they are present in the request
+            if ($request->has('name')) {
+                $user->name = $request->name;
+            }
+
+            if ($request->has('native_language')) {
+                $user->native_language = $request->native_language;
+            }
+
+            if ($request->has('learning_language')) {
+                $user->learning_language = $request->learning_language;
+                $user->translate_language = $request->learning_language;
+            }
+
+            if ($request->has('know_language')) {
+                $user->know_language = $request->know_language;
+            }
+            if ($request->has('country')) {
+                $user->country = $request->country;
+            }
+            if ($request->has('gender')) {
+                $user->gender = $request->gender;
+            }
+
+            if ($request->has('source')) {
+                $user->source = $request->source;
+            }
+
+            if ($request->has('dob')) {
+                $user->dob = $request->dob;
+            }
+
+            if ($request->has('introduction')) {
+                $user->introduction = $request->introduction;
+            } 
+            
+            if ($request->has('profession')) {
+                $user->profession = implode(", ", $request->profession);
+            } 
+            
+            if ($request->has('personality')) {
+                $user->personality = implode(", ", $request->personality);
+            } 
+            
+            if ($request->has('interest')) {
+                $user->interest = implode(", ", $request->interest);
+            }
+        
+            // Handle avatar upload
+
+
+            if ($request->hasFile('avatar')) {
+                // Delete old image if exists
+                if ($user->avatar) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+
+                $mediaPath = $request->file('avatar')->store('avatar', 'public');
+                $user['avatar'] = $mediaPath;
+            }
+
+            $user->save();
+            $user['avatar'] = asset('storage/' . $user->avatar);
+            $user['profession'] = stringConvertToArray($user->profession);
+            $user['personality'] = stringConvertToArray($user->personality);
+            $user['interest'] = stringConvertToArray($user->interest);
+
+
+            return response()->json([
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_user_details_updated_successfully') ??'User details updated successfully',
+                'user'    => $user,
+                'status'    => 200,
+            ]);
+        } catch(\Exception $e)  {
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
-
-        $user->save();
-        $user['avatar'] = asset('storage/' . $user->avatar);
-        $user['profession'] = stringConvertToArray($user->profession);
-        $user['personality'] = stringConvertToArray($user->personality);
-        $user['interest'] = stringConvertToArray($user->interest);
-
-
-        return response()->json([
-            'message' => 'User details updated successfully',
-            'user'    => $user,
-            'status'    => 200,
-        ]);
     }
 
     public function user_list(Request $request)
@@ -181,7 +189,7 @@ class UserApiController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'introduction' => $user->introduction??'A new member just joined',
+            'introduction' => $user->introduction?? ' A new member just joined',
             'gender' => $user->gender,
             'fcm_token' => $user->fcm_token,
 
@@ -214,12 +222,15 @@ class UserApiController extends Controller
                 $response = ['message'=> 'success.','status'=>true,'data' => $response];
                 return response($response, 200);
             } else {
-                $response = ["message" => "Category does not exit",'status'=>FALSE];
+                $response = ["message" => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_category_does_not_exist') ?? "Category does not exit",'status'=>FALSE];
                 return response($response, 422);
             }
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -231,12 +242,15 @@ class UserApiController extends Controller
                     $response = ['message'=> 'success.','status'=>true,'data' => $response];
                     return response($response, 200);
                 } else {
-                    $response = ["message" => "Course does not exit",'status'=>FALSE];
+                    $response = ["message" => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_course_does_not_exist') ?? "Course does not exit",'status'=>FALSE];
                     return response($response, 422);
                 }
             } catch(\Exception $e)  {
-                $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-                return response($response, 400);
+               return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
             }
         }
 
@@ -291,14 +305,17 @@ class UserApiController extends Controller
 
 
             return response()->json([
-                'message' => 'User details updated successfully',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_user_details_updated_successfully') ?? 'User details updated successfully',
                 'user'    => $user,
                 'status'    => 200,
             ]);
 
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -316,7 +333,7 @@ class UserApiController extends Controller
              if (empty($request->message)) {
                  return response()->json([
                         'status' => false,
-                        'error'  => 'Please enter some text — content is required.',
+                        'error'  => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_content_required') ?? 'Please enter some text — content is required.',
                     ], 500);
             }
 
@@ -337,13 +354,16 @@ class UserApiController extends Controller
             return response()->json([
                 'success' => true,
                 'status'    => 200,
-                'message' => 'Feedback submitted successfully',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_feedback_submitted_successfully') ?? 'Feedback submitted successfully',
                 'data'    => $feedback
             ]);
 
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -391,14 +411,14 @@ public function notification_send(Request $request)
             User::where('id',auth()->id())->delete();
             return response()->json([
                 'success' => true,
-                'message' => 'User deleted successfully',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_user_deleted_successfully') ??'User deleted successfully',
             ]);
         } catch (MessagingException $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Messaging error',
-                'error' => $e->getMessage()
-            ], 400);
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 }

@@ -12,6 +12,7 @@ use App\Models\AppNotification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\HelperLanguage;
 use DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,8 +25,11 @@ class SubscriptionApiController extends Controller
             $response = ['message'=> 'success','data'=>$data, 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+           return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -36,8 +40,11 @@ class SubscriptionApiController extends Controller
             $response = ['message'=> 'success','data'=>$data, 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -67,8 +74,11 @@ class SubscriptionApiController extends Controller
                     ];
             return response($response, 200);
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+            return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -120,12 +130,14 @@ class SubscriptionApiController extends Controller
             'transaction_id' => $request->transaction_id,
             'status'         => 'active'
         ]);
+        $title = HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_welcome_to_premium') ??'Welcome to Premium 🚀';
+        $body = HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_subscription_activated') ??'Your subscription is now active. Enjoy all premium features!';
 
          AppNotification::create([
                 'user_id' => $request->user_id,
                 'type' => 'in_app',
-                'title' => 'Welcome to Premium 🚀',
-                'body' => 'Your subscription is now active. Enjoy all premium features!',
+                'title' =>  $title,
+                'body' => $body,
                 'channel' => 'in_app',
                 'data' =>$subscriptionId,
             ]);

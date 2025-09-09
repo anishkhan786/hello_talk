@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
 use App\Models\languag;
+use App\Models\HelperLanguage;
 use Carbon\Carbon;
 class GroupApiController extends Controller
 {
@@ -48,7 +49,7 @@ class GroupApiController extends Controller
 
             if ($groups->isEmpty()) {
                 return response([
-                    "message" => "Group does not exist",
+                    "message" => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_group_does_not_exist') ??"Group does not exist",
                     "status"  => false
                 ], 422);
             }
@@ -89,12 +90,11 @@ class GroupApiController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            return response([
-                'response' => [],
-                'message'  => 'Some internal error occurred.',
-                'status'   => false,
-                'error'    => $e->getMessage()
-            ], 400);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -106,11 +106,13 @@ class GroupApiController extends Controller
                 'group_id' => $request['group_id']
             ]);
 
+            $body = HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_say_hello_welcome') ?? 'Say hello 👋 and make them feel welcome.';
+            $title = HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_joined_group') ?? 'You joined the group';
             AppNotification::create([
                 'user_id' =>$request['user_id'],
                 'type' => 'message',
-                'title' => 'You joined the group',
-                'body' => 'Say hello 👋 and make them feel welcome.',
+                'title' =>  $title,
+                'body' => $body,
                 'channel' => 'in_app',
                 'data' =>$request['group_id'],
             ]);
@@ -118,8 +120,11 @@ class GroupApiController extends Controller
             $response = ['message'=> 'success', 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
@@ -138,49 +143,60 @@ class GroupApiController extends Controller
             $response = ['message'=> 'success', 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
-            $response = ['response' => array(),'message'=>'Some internal error occurred.','status'=>false,'error'=>$e];
-            return response($response, 400);
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
     }
 
     // Update or create settings for a user in a group
     public function user_group_setting(Request $request)
         {
-            // Validate incoming values
-            $validated = $request->validate([
-                'mute'          => 'nullable|in:1,2',
-                'notifications' => 'nullable|in:1,2',
-                'blocked'       => 'nullable|in:1,2',
-                
-            ]);
+            try {
+                // Validate incoming values
+                $validated = $request->validate([
+                    'mute'          => 'nullable|in:1,2',
+                    'notifications' => 'nullable|in:1,2',
+                    'blocked'       => 'nullable|in:1,2',
+                    
+                ]);
 
-            // Prepare update data
-            $data = [];
-            if ($request->has('mute')) {
-                $data['mute'] = $request->mute;
-            }
-            if ($request->has('notifications')) {
-                $data['notifications'] = $request->notifications;
-            }
-            if ($request->has('blocked')) {
-                $data['blocked'] = $request->blocked;
-            }
+                // Prepare update data
+                $data = [];
+                if ($request->has('mute')) {
+                    $data['mute'] = $request->mute;
+                }
+                if ($request->has('notifications')) {
+                    $data['notifications'] = $request->notifications;
+                }
+                if ($request->has('blocked')) {
+                    $data['blocked'] = $request->blocked;
+                }
 
-            // Update or create in single call
-            $settings = GroupSettings::updateOrCreate(
-                ['group_id' => $request->group_id, 'user_id' => $request->user_id],
-                $data
-            );
-            $settings = GroupSettings::where('id',  $settings->id)->first();
-            return response([
-                'message' => 'Settings saved successfully',
-                'status'  => true,
-                'data'    => $settings
-            ], 200);
+                // Update or create in single call
+                $settings = GroupSettings::updateOrCreate(
+                    ['group_id' => $request->group_id, 'user_id' => $request->user_id],
+                    $data
+                );
+                $settings = GroupSettings::where('id',  $settings->id)->first();
+                return response([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_settings_saved_successfully') ??'Settings saved successfully',
+                    'status'  => true,
+                    'data'    => $settings
+                ], 200);
+            } catch(\Exception $e)  {
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+            }
         }
  // Update or create settings for a user in a group
     public function user_group_chat_clear(Request $request){
-
+        try{
         // Update or create in single call
             $settings = GroupSettings::updateOrCreate(
                 ['group_id' => $request->group_id, 'user_id' => $request->user_id],
@@ -188,14 +204,22 @@ class GroupApiController extends Controller
             );
             $settings = GroupSettings::where('id',  $settings->id)->first();
             return response([
-                'message' => 'Settings saved successfully',
+                'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_chat_cleared_successfully') ?? 'Chat Cleared successfully',
                 'status'  => true,
                 'data'    => $settings
             ], 200);
+        } catch(\Exception $e)  {
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
     public function group_message(Request $request)
     {
+        try {
         $messages = GroupsMessages::with('user')->where('group_id', $request->group_id)->latest()->get();
        
         return response([
@@ -204,41 +228,55 @@ class GroupApiController extends Controller
                 'base_url'=>asset('storage/').'/',
                 'data'    =>  $messages
             ], 200);
+        } catch(\Exception $e)  {
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+        }
     }
 
     public function group_message_store(Request $request)
     {
+        try{
 
-        if(!empty($request->message_type) AND ( $request->message_type == 'image' || $request->message_type == 'audio' )){
-             $filePath = null;
-                if ($request->hasFile('file')) {
-                    $filePath = $request->file('file')->store('messages', 'public');
-                }
-            $message = $filePath;
-        } else {
-            $message = $request->message;
+            if(!empty($request->message_type) AND ( $request->message_type == 'image' || $request->message_type == 'audio' )){
+                $filePath = null;
+                    if ($request->hasFile('file')) {
+                        $filePath = $request->file('file')->store('messages', 'public');
+                    }
+                $message = $filePath;
+            } else {
+                $message = $request->message;
+            }
+
+            $message = GroupsMessages::create([
+                'group_id' => $request->group_id,
+                'user_id' => $request->user_id,
+                'message_type' => $request->message_type,
+                'content' => $message,
+
+            ]);
+
+            $message = GroupsMessages::with('user')->where('id',  $message->id)->first();
+
+            broadcast(new GroupMessageSent($message));
+
+            return response([
+                    'message' => 'Store Group Messages successfully',
+                    'status'  => true,
+                    'data'    =>  $message,
+                    'base_url'=>asset('storage/').'/'
+                ], 200);
+
+       } catch(\Exception $e)  {
+             return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
+                    'status' => false,
+                    'error' => $e->getMessage()
+                ], 400);
         }
-
-        $message = GroupsMessages::create([
-            'group_id' => $request->group_id,
-            'user_id' => $request->user_id,
-            'message_type' => $request->message_type,
-            'content' => $message,
-
-        ]);
-
-        $message = GroupsMessages::with('user')->where('id',  $message->id)->first();
-
-        broadcast(new GroupMessageSent($message));
-
-         return response([
-                'message' => 'Store Group Messages successfully',
-                'status'  => true,
-                'data'    =>  $message,
-                'base_url'=>asset('storage/').'/'
-            ], 200);
-
-       
     }
 
 
