@@ -36,7 +36,7 @@ class UserTyping implements ShouldBroadcast
         return [
             'conversation_id' => $this->data['conversation_id'],
             'user_id' => $this->data['user_id'],
-            'type' => $this->data['type']
+            'is_typing' => $this->data['is_typing']
         ];
     }
 }

@@ -556,12 +556,12 @@ class ChatApiController extends Controller
 
            $conversation_id = $request->conversation_id??'';
            $user_id = $request->user_id;
-           $type = $request->type;
+           $is_typing = $request->is_typing;
 
            $data = [
                     'conversation_id' => $conversation_id,
                     'user_id' => $user_id,
-                    'type' => $type
+                    'is_typing' => $is_typing
                  ];
 
             broadcast(new UserTyping($data));
