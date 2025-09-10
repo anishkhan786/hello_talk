@@ -52,6 +52,8 @@ class AdvertisementApiController extends Controller
             } else {
                 $ads_type = 'menuaal';
             }
+
+            $ads_type = 'menuaal';// only menuaal all time 
             // Handle ads block conditions for different pages
             $eventLogConditions = [
                 'landing' => function () use ($user) {
