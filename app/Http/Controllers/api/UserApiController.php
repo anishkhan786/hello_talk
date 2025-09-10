@@ -207,13 +207,13 @@ class UserApiController extends Controller
             'introduction' => $user->introduction?? ' A new member just joined',
             'gender' => $user->gender,
             'fcm_token' => $user->fcm_token,
-
             'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
             'countryDetail' => $user->countryDetail,
             'nativeLanguageDetail' => $user->nativeLanguageDetail,
             'learningLanguageDetail' => $user->learningLanguageDetail,
             'knowLanguageDetail' => $user->knowLanguageDetail,
             'subscription_plan'=>$subscription_plan,
+            'online_status'=>$user->online_status,
 
             // add any other fields you need
         ];
