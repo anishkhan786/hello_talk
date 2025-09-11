@@ -86,6 +86,7 @@ class GroupApiController extends Controller
             return response([
                 'message' => 'success.',
                 'status'  => true,
+                 'base_url'=>asset('storage'),
                 'data'    => $data
             ], 200);
 

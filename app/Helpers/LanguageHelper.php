@@ -16,7 +16,7 @@ if (!function_exists('detectLanguage')) {
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
         ])->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-3.5-turbo-0125',
             'messages' => [
                 ['role' => 'user', 'content' => $prompt]
             ],
@@ -43,7 +43,7 @@ if (!function_exists('translateMessageWithOpenAI')) {
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
         ])->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-3.5-turbo-0125',
             'messages' => [
                 ['role' => 'user', 'content' => $prompt]
             ],
