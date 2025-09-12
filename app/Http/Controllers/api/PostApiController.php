@@ -228,7 +228,7 @@ class PostApiController extends Controller
                             'title'      => $title,
                             'body'       => $msg,
                             'channel'    => 'in_app',
-                            'data'       => 'post'.$post->id,
+                            'data'       => $post->id,
                         ];
                     }
 
@@ -289,7 +289,7 @@ class PostApiController extends Controller
                 }
 
                 $post->delete();
-                AppNotification::where('data', 'post' . $request->post_id)->delete();
+                AppNotification::where('data', $request->post_id)->delete();
                 return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_deleted_successfully') ?? 'Post deleted successfully','status'=>true],200);
             } catch(\Exception $e)  {
                 return response()->json([
