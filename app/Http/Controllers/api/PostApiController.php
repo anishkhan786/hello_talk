@@ -13,6 +13,7 @@ use App\Models\PostMedia;
 use App\Models\User;
 use App\Models\PostReports;
 use App\Models\PostBlock;
+use App\Models\AppNotification;
 use App\Models\HelperLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -208,6 +209,34 @@ class PostApiController extends Controller
                     }
                 }
 
+                $followingIds = Follow::where('follower_id', $request->user_id)
+                      ->pluck('following_id')
+                      ->toArray();
+
+                $users = User::whereIn('id', $followingIds)->get();
+                $notifications = [];
+                    foreach ($users as $user) {
+                        $language_code = language_code($user->interface_language);
+                        $title = HelperLanguage::retrieve_message_from_arb_file($language_code, 'web_new_post_title')
+                            ?? 'New Post Alert';
+                        $msg   = HelperLanguage::retrieve_message_from_arb_file($language_code, 'web_new_post_msg')
+                            ?? 'Stay updated! A new post has been created by your favorite user ✨';
+
+                        $notifications[] = [
+                            'user_id'    => $user->id,
+                            'type'       => 'in_app',
+                            'title'      => $title,
+                            'body'       => $msg,
+                            'channel'    => 'in_app',
+                            'data'       => 'post'.$post->id,
+                        ];
+                    }
+
+                    // bulk insert in one query
+                    if (!empty($notifications)) {
+                        AppNotification::insert($notifications);
+                    }
+
                 return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_created_successfully') ??'Post created successfully.','status'=>true],200);
             } catch(\Exception $e)  {
                  return response()->json([
@@ -260,7 +289,7 @@ class PostApiController extends Controller
                 }
 
                 $post->delete();
-
+                AppNotification::where('data', 'post' . $request->post_id)->delete();
                 return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_post_deleted_successfully') ?? 'Post deleted successfully','status'=>true],200);
             } catch(\Exception $e)  {
                 return response()->json([
