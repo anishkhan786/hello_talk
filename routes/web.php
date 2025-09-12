@@ -13,10 +13,17 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\MarketingItemController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionTopicController;
+use App\Http\Controllers\HomeController;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+
+Route::controller(HomeController::class)->group(function() {
+        Route::get('privacy-policy', 'privacy_policy_page');
+
+    });
+
 
 Route::get('/clear-cache', function () {
     Artisan::call('view:clear');
