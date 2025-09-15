@@ -13,4 +13,15 @@ class SubscriptionPlanPrivileges extends Model
     protected $fillable = [
         'id','plan_id','privilege_id', 'access_type','limit_value',
     ];
+
+     // Relations
+    public function plan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'plan_id');
+    }
+
+    public function privilege()
+    {
+        return $this->belongsTo(SubscriptionPrivileges::class, 'privilege_id');
+    }
 }

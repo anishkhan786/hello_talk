@@ -64,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //CountryController
 Route::get('/country',[CountryController::class,'contry']);
 Route::get('/language',[CountryController::class,'language']);
+Route::post('/file-upload',[CountryController::class,'FileUpload']);
+
 Route::post('/inquirie-add',[InquirieApiController::class,'store']);
 Route::post('/category-list',[UserApiController::class,'category_list']);
 Route::get('/learning-level',[UserApiController::class,'learning_level']);

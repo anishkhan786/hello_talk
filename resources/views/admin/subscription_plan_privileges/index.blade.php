@@ -9,11 +9,11 @@
             <div class="content-header-left col-md-9 col-12 mb-2">
                 <div class="row breadcrumbs-top">
                     <div class="col-12">
-                        <h2 class="content-header-title float-left mb-0">Questions Tables</h2>
+                        <h2 class="content-header-title float-left mb-0">Plan Privilege</h2>
                         <div class="breadcrumb-wrapper">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Questions Table</li>
+                                <li class="breadcrumb-item active">Plan Privilege</li>
                             </ol>
                         </div>
                     </div>
@@ -23,61 +23,56 @@
 
         @include('admin.flash')
 
+        <!-- @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif -->
         <div class="content-body">
             <div class="row" id="basic-table">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h4 class="card-title">Questions Table</h4>
-                            <a href="{{ route('questions.add') }}" class="btn btn-info">Create Question</a>
-                        </div>
-                        <div class="container">
-                            @if(session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
-                            @endif
-
-                            @yield('content')
+                            <h4 class="card-title">Plan Privilege</h4>
+                            <a href="{{ route('subscription_plan_privileges.create') }}" class="btn btn-info">Add Plan Privilege</a>
                         </div>
 
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
-                                   <tr>
-                                        <th>#</th>
-                                        <th>Title</th>
-                                        <th>Type</th>
-                                        <th>Marks</th>
-                                        <th>Options</th>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Plan</th>
+                                        <th>Privilege</th>
+                                        <th>Access Type</th>
+                                        <th>Limit Value</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
-                                 @foreach($questions as $q)
+                                    @foreach($planPrivileges as $index  => $privilege)
                                     <tr>
-                                        <td>{{ $q->id }}</td>
-                                        <td>{{ $q->title }}</td>
-                                        <td>{{ $q->type }}</td>
-                                        <td>{{ $q->marks }}</td>
-                                        <td>{{ $q->options->count() }}</td>
+                                        <td>{{  ++$index }}</td>
+                                        <td>{{ $privilege->plan->name }}</td>
+                                        <td>{{ $privilege->privilege->name }}</td>
+                                        <td>{{ $privilege->access_type }}</td>
+                                        <td>{{ $privilege->limit_value??'NA' }}</td>
+
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-sm dropdown-toggle hide-arrow" data-toggle="dropdown">
                                                     <i data-feather="more-vertical"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="{{ route('questions.show', $q) }}">
-                                                        <i data-feather="eye" class="mr-50"></i>
-                                                        <span>View</span>
-                                                    </a>
-                                                     <a class="dropdown-item" href="{{ route('questions.edit', $q) }}">
+                                                    <a class="dropdown-item" href="{{ route('subscription_plan_privileges.edit', $privilege->id) }}">
                                                         <i data-feather="edit-2" class="mr-50"></i>
                                                         <span>Edit</span>
                                                     </a>
-                                                    <a class="dropdown-item" href="{{ route('questions.destroy', $q) }}">
+
+                                                    <a class="dropdown-item" href="{{ route('subscription_plan_privileges.destroy', $privilege->id) }}">
                                                         <i data-feather="trash" class="mr-50"></i>
                                                         <span>Delete</span>
                                                     </a>
+
+
                                                 </div>
                                             </div>
                                         </td>
@@ -89,7 +84,7 @@
 
                         <!-- Laravel Pagination -->
                         <div class="d-flex justify-content-end p-2">
-                            {{ $questions->links('pagination::bootstrap-4') }}
+                            {{ $planPrivileges->links('pagination::bootstrap-4') }}
                         </div>
 
                     </div>

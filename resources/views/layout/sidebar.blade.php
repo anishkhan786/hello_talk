@@ -44,6 +44,15 @@
             <li class="nav-item {{ request()->routeIs('language.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('language.index')}}"><i data-feather="globe"></i><span class="menu-title text-truncate" data-i18n="Email">Languages</span></a>
             </li>
 
+            <li class="nav-item {{ request()->routeIs('subscription_privileges.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('subscription_privileges.index')}}"><i data-feather="book"></i><span class="menu-title text-truncate" data-i18n="Email">Subscription Privileges</span></a>
+            </li>
+
+            <li class="nav-item {{ request()->routeIs('subscription_plans.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('subscription_plans.index')}}"><i data-feather="book"></i><span class="menu-title text-truncate" data-i18n="Email">Subscription Plans</span></a>
+            </li>
+
+            <li class="nav-item {{ request()->routeIs('subscription_plan_privileges.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('subscription_plan_privileges.index')}}"><i data-feather="book"></i><span class="menu-title text-truncate" data-i18n="Email">Subscription Plan Privileges</span></a>
+            </li>
+
             
             <li class=" nav-item  {{ request()->routeIs('course.index') ? 'active' : '' }}" ><a class="d-flex align-items-center" href="{{route('course.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Learning level</span></a>
             </li>

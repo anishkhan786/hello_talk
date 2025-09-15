@@ -7,6 +7,7 @@ use App\Models\contry;
 use App\Models\languag;
 use Illuminate\Http\Request;
 use App\Models\HelperLanguage;
+use Illuminate\Support\Facades\Storage;
 
 class CountryController extends Controller
 {
@@ -46,4 +47,39 @@ class CountryController extends Controller
                 ], 400);
         }
     }
+public function FileUpload(Request $request)
+{
+    try {
+
+        // Upload file to S3 (private by default)
+        $path = $request->file('file')->store('uploads', 's3');
+
+        // Optionally, get public URL
+        // If bucket allows public access:
+        // $url = Storage::disk('s3')->url($path);
+
+        // If bucket is private, generate temporary URL (recommended)
+        $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(60));
+
+        return response()->json([
+            'message' => 'File uploaded successfully!',
+            's3-url' => Storage::disk('s3')->url(''),
+            'path' => $path,
+            'url' => $url
+
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => HelperLanguage::retrieve_message_from_arb_file(
+                $request->language_code,
+                'web_internal_error'
+            ) ?? 'Some internal error occurred. Please try again later.',
+            'status' => false,
+            'error' => $e->getMessage()
+        ], 400);
+    }
+}
+
+
 }

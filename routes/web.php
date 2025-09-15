@@ -14,6 +14,9 @@ use App\Http\Controllers\MarketingItemController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionTopicController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SubscriptionPlanController;
+use App\Http\Controllers\SubscriptionPrivilegeController;
+use App\Http\Controllers\SubscriptionPlanPrivilegeController;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -161,5 +164,27 @@ Route::controller(PostsController::class)->group(function() {
         Route::post('/question_topic/edit/{id}', 'update')->name('question_topic-edit.update');
         Route::get('/question_topic/delete/{id}', 'delete')->name('question_topic-destroy');
     });
+
+        Route::get('subscription_plans', [SubscriptionPlanController::class, 'index'])->name('subscription_plans.index');
+        Route::get('subscription_plans/create', [SubscriptionPlanController::class, 'create'])->name('subscription_plans.create');
+        Route::post('subscription_plans', [SubscriptionPlanController::class, 'store'])->name('subscription_plans.store');
+        Route::get('subscription_plans/{subscriptionPlan}', [SubscriptionPlanController::class, 'show'])->name('subscription_plans.show');
+        Route::get('subscription_plans/{subscriptionPlan}/edit', [SubscriptionPlanController::class, 'edit'])->name('subscription_plans.edit');
+        Route::post('subscription_plans/{subscriptionPlan}', [SubscriptionPlanController::class, 'update'])->name('subscription_plans.update');
+        Route::delete('subscription_plans/{subscriptionPlan}', [SubscriptionPlanController::class, 'destroy'])->name('subscription_plans.destroy');
+
+        Route::get('subscription_privileges', [SubscriptionPrivilegeController::class, 'index'])->name('subscription_privileges.index');
+        Route::get('subscription_privileges/create', [SubscriptionPrivilegeController::class, 'create'])->name('subscription_privileges.create');
+        Route::post('subscription_privileges', [SubscriptionPrivilegeController::class, 'store'])->name('subscription_privileges.store');
+        Route::get('subscription_privileges/{subscriptionPrivilege}/edit', [SubscriptionPrivilegeController::class, 'edit'])->name('subscription_privileges.edit');
+        Route::post('subscription_privileges/{subscriptionPrivilege}', [SubscriptionPrivilegeController::class, 'update'])->name('subscription_privileges.update');
+        Route::delete('subscription_privileges/{subscriptionPrivilege}', [SubscriptionPrivilegeController::class, 'destroy'])->name('subscription_privileges.destroy');
+
+        Route::get('subscription_plan_privileges', [SubscriptionPlanPrivilegeController::class, 'index'])->name('subscription_plan_privileges.index');
+        Route::get('subscription_plan_privileges/create', [SubscriptionPlanPrivilegeController::class, 'create'])->name('subscription_plan_privileges.create');
+        Route::post('subscription_plan_privileges', [SubscriptionPlanPrivilegeController::class, 'store'])->name('subscription_plan_privileges.store');
+        Route::get('subscription_plan_privileges/{subscriptionPrivilege}/edit', [SubscriptionPlanPrivilegeController::class, 'edit'])->name('subscription_plan_privileges.edit');
+        Route::post('subscription_plan_privileges/{subscriptionPrivilege}', [SubscriptionPlanPrivilegeController::class, 'update'])->name('subscription_plan_privileges.update');
+        Route::get('/question_topic/delete/{id}', [SubscriptionPlanPrivilegeController::class,'delete'])->name('subscription_plan_privileges.destroy');
 
 });

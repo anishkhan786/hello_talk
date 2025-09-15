@@ -13,4 +13,9 @@ class SubscriptionPlan extends Model
     protected $fillable = [
         'id','name','duration_type', 'duration_value','price','discounted_price','status',
     ];
+
+    public function privileges()
+{
+    return $this->hasMany(SubscriptionPlanPrivileges::class, 'plan_id');
+}
 }
