@@ -175,7 +175,7 @@ class AdvertisementApiController extends Controller
                 ]);
 
                 // Prepare media URL
-                $nextAd->media_file = asset('storage/' . $nextAd->media_file);
+                $nextAd->media_file = Storage::disk('s3')->url($nextAd->media_file);
             }
 
             return response()->json([
