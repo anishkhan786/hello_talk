@@ -58,6 +58,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user-one-to-one-typing', [ChatApiController::class, 'userOneToOneTyping']);
     Route::post('/user-online-offline', [ChatApiController::class, 'userOnlineOffline']);
     Route::post('/user-chat-setting', [ChatApiController::class, 'userChatSetting']);
+    Route::post('/user-chat-setting-get', [ChatApiController::class, 'userChatSettingGet']);
+
 });
 
 //CountryController

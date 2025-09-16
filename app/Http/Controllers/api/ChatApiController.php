@@ -43,15 +43,22 @@ class ChatApiController extends Controller
                 $receiver_id = $conversation->user_one_id;
             }
 
+            $conversation_block = $conversation->user_one_block;
+            if($conversation->user_two_block == '1'){
+                $conversation_block = 1;
+            }
+
             $user = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->where('id', $receiver_id)->first();
             $count = message::where('conversation_id', $conversation->id)->where('sender_id','!=', $userId)->where('is_read', '0')->count();
              // Latest message
             $latestMessage = Message::where('conversation_id', $conversation->id)->where('sender_id','!=', $userId)->where('is_read', '0')->latest('created_at')->first();
+            
+            
             return [
                 'id' => $conversation->id,
                 'user_one_id' => $conversation->user_one_id,
                 'user_two_id' => $conversation->user_two_id,
-
+                'conversation_block' =>$conversation_block,
                 'user_data' => $user,
                 'messages_count' => $count,
                 'latestMessage'=>$latestMessage->created_at??$conversation->created_at
@@ -125,7 +132,7 @@ class ChatApiController extends Controller
         $filePath = null;
 
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('messages', 'public');
+            $filePath = $request->file('file')->store('messages', 's3');
         }
 
         $sender = auth()->user();
@@ -220,12 +227,10 @@ class ChatApiController extends Controller
                 'message' => $message->message,
                 'translated_message' => $message->translated_message,
                 'type' => $message->type,
-                'file' => asset('storage/' .$message->file),
+                'file' => Storage::disk('s3')->url($message->file),
                 'created_at' => $message->created_at->toDateTimeString(),
             ];
         });
-
-        
 
         Message::where('conversation_id', $conversation->id)
                     ->where('sender_id', '!=', $userId)
@@ -663,11 +668,61 @@ class ChatApiController extends Controller
             }
 
             $conversation->save();
-
+            
             return response()->json([
                 'status' => true,
                 'code'   => 200,
                 'message'=> 'User chat settings updated successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 500,
+                'message' => HelperLanguage::retrieve_message_from_arb_file(
+                    $request->language_code,
+                    'web_internal_error'
+                ) ?? 'Some internal error occurred. Please try again later.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+     public function userChatSettingGet(Request $request)
+    {
+        try {
+            $conversation_id = $request->conversation_id;
+            $user_id = $request->user_id;
+
+            // Validate conversation exists
+            $conversation = Conversation::find($conversation_id);
+            if (!$conversation) {
+                return response()->json([
+                    'status'  => false,
+                    'code'    => 404,
+                    'message' => 'Conversation not found.'
+                ], 404);
+            }
+
+            $data = array();
+            if($conversation->user_one_id == $user_id){
+                $data = array(
+                        'user_block'        => $conversation->user_one_block,
+                        'user_notification' => $conversation->one_user_notification,
+                        'user_call'         => $conversation->one_user_call,
+                        );
+            } else {
+                $data = array(
+                        'user_block'        => $conversation->user_two_block,
+                        'user_notification' => $conversation->two_user_notification,
+                        'user_call'         => $conversation->two_user_call,
+                        );
+            }
+            
+            return response()->json([
+                'status' => true,
+                'code'   => 200,
+                'chat_setting'   => $data
             ]);
 
         } catch (\Exception $e) {
