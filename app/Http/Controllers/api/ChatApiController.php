@@ -19,6 +19,8 @@ use App\Models\agora_call;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\HelperLanguage;
+use Illuminate\Support\Facades\Storage;
+
 // firebase
 
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -62,7 +64,7 @@ class ChatApiController extends Controller
          return response()->json([
             'message' => 'Conversation List',
             'data'    => $conversation,
-            'base_url' => asset('storage/')
+            'base_url' => Storage::disk('s3')->url('')
         ]);
     }
 
@@ -173,7 +175,7 @@ class ChatApiController extends Controller
         return response()->json([
             'message' => 'Message sent successfully',
             'data'    => $message,
-            'base_url' => asset('storage/')
+            'base_url' => Storage::disk('s3')->url('')
         ]);
 
         } catch(\Exception $e)  {
@@ -217,7 +219,7 @@ class ChatApiController extends Controller
                     ->where('is_read', '0')
                     ->update(['is_read' => 1]);
 
-        return response()->json(['message' => 'success', 'status' => true, 'base_url' => asset('storage/'), 'data'=>$messages], 200);
+        return response()->json(['message' => 'success', 'status' => true, 'base_url' => Storage::disk('s3')->url(''), 'data'=>$messages], 200);
         } catch(\Exception $e)  {
             return response()->json([
                     'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',

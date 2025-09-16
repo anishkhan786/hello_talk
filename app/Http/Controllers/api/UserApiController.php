@@ -35,7 +35,7 @@ class UserApiController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
-        $data['avatar'] = asset('storage/' . $data->avatar);
+        $data['avatar'] = Storage::disk('s3')->url($data->avatar);
         $data['profession'] = stringConvertToArray($data->profession);
         $data['personality'] = stringConvertToArray($data->personality);
         $data['interest'] = stringConvertToArray($data->interest);
@@ -64,7 +64,7 @@ class UserApiController extends Controller
             'user'    => $data,
             'subscription_plan'=>$subscription_plan ,
             'subscription'=>$subscription_details,
-            'avatar_url' => asset($data->avatar),
+            'avatar_url' => Storage::disk('s3')->url($data->avatar),
         ]);
     }
 
@@ -134,15 +134,14 @@ class UserApiController extends Controller
             if ($request->hasFile('avatar')) {
                 // Delete old image if exists
                 if ($user->avatar) {
-                    Storage::disk('public')->delete($user->avatar);
+                    Storage::disk('s3')->delete($user->avatar);
                 }
-
-                $mediaPath = $request->file('avatar')->store('avatar', 'public');
+                $mediaPath = $request->file('avatar')->store('avatar', 's3');
                 $user['avatar'] = $mediaPath;
             }
 
             $user->save();
-            $user['avatar'] = asset('storage/' . $user->avatar);
+            $user['avatar'] = Storage::disk('s3')->url($user->avatar);
             $user['profession'] = stringConvertToArray($user->profession);
             $user['personality'] = stringConvertToArray($user->personality);
             $user['interest'] = stringConvertToArray($user->interest);
@@ -207,7 +206,7 @@ class UserApiController extends Controller
             'introduction' => $user->introduction?? ' A new member just joined',
             'gender' => $user->gender,
             'fcm_token' => $user->fcm_token,
-            'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+            'avatar' => $user->avatar ? Storage::disk('s3')->url($user->avatar): null,
             'countryDetail' => $user->countryDetail,
             'nativeLanguageDetail' => $user->nativeLanguageDetail,
             'learningLanguageDetail' => $user->learningLanguageDetail,
@@ -313,7 +312,7 @@ class UserApiController extends Controller
             }
             $user->save();
 
-            $user['avatar'] = asset('storage/' . $user->avatar);
+            $user['avatar'] = Storage::disk('s3')->url($user->avatar);
             $user['profession'] = stringConvertToArray($user->profession);
             $user['personality'] = stringConvertToArray($user->personality);
             $user['interest'] = stringConvertToArray($user->interest);
@@ -354,7 +353,7 @@ class UserApiController extends Controller
 
             
             if ($request->hasFile('attachment')) {
-                $mediaPath = $request->file('attachment')->store('feedbacks', 'public');
+                $mediaPath = $request->file('attachment')->store('feedbacks', 's3');
             } else {
                 $mediaPath = '';
             }

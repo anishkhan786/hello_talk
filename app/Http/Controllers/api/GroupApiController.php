@@ -14,6 +14,7 @@ use App\Events\GroupMessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\languag;
 use App\Models\HelperLanguage;
 use Carbon\Carbon;
@@ -86,7 +87,7 @@ class GroupApiController extends Controller
             return response([
                 'message' => 'success.',
                 'status'  => true,
-                 'base_url'=>asset('storage').'/',
+                'base_url' => Storage::disk('s3')->url('').'/',
                 'data'    => $data
             ], 200);
 
@@ -226,7 +227,7 @@ class GroupApiController extends Controller
         return response([
                 'message' => 'Get Group Messages successfully',
                 'status'  => true,
-                'base_url'=>asset('storage/').'/',
+                'base_url' => Storage::disk('s3')->url('').'/',
                 'data'    =>  $messages
             ], 200);
         } catch(\Exception $e)  {
@@ -268,7 +269,7 @@ class GroupApiController extends Controller
                     'message' => 'Store Group Messages successfully',
                     'status'  => true,
                     'data'    =>  $message,
-                    'base_url'=>asset('storage/').'/'
+                     'base_url' => Storage::disk('s3')->url('').'/'
                 ], 200);
 
        } catch(\Exception $e)  {

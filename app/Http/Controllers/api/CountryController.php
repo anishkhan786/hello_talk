@@ -59,13 +59,15 @@ public function FileUpload(Request $request)
         // $url = Storage::disk('s3')->url($path);
 
         // If bucket is private, generate temporary URL (recommended)
-        $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(60));
+        // $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(60));
+
+        Storage::disk('s3')->delete('uploads/28EujYzHfhouPE7wYonzq3ErpLxeQ2o6mzwuETGy.jpg');
 
         return response()->json([
             'message' => 'File uploaded successfully!',
-            's3-url' => Storage::disk('s3')->url(''),
+            's3-url' => Storage::disk('s3')->url( $path),
             'path' => $path,
-            'url' => $url
+            'url' => ''
 
         ], 200);
 

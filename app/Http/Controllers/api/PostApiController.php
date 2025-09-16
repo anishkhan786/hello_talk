@@ -18,6 +18,7 @@ use App\Models\HelperLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+
 use DB;
 class PostApiController extends Controller
 {
@@ -65,11 +66,11 @@ class PostApiController extends Controller
 
         if ($post->post_type === 'photo' || $post->post_type === 'video') {
             if ($post->media_path) {
-                $media_urls[] = asset('storage/' . $post->media_path);
+                $media_urls[] = Storage::disk('s3')->url($post->media_path);
             }
         } elseif ($post->post_type === 'carousel') {
             $media_urls = $post->media->map(function ($media) {
-                return asset('storage/' . $media->media_path);
+                return Storage::disk('s3')->url($media->media_path);
             });
         }
         if (isset($post->user->avatar)) {
@@ -77,10 +78,10 @@ class PostApiController extends Controller
 
     if (strpos($img, 'storage/') === false) {
         // Agar storage/ missing hai tabhi lagao
-        $post->user->avatar = asset('storage/' . $img);
+        $post->user->avatar = Storage::disk('s3')->url($img);
     } else {
         // Agar storage/ already hai to direct asset() call kar do
-        $post->user->avatar = asset($img);
+        $post->user->avatar = Storage::disk('s3')->url($img);
     }
 }
         return [
@@ -100,7 +101,7 @@ class PostApiController extends Controller
     return response()->json([
         'message' => 'Feed fetched successfully',
         'status' => true,
-        'base_url'=>asset('storage'),
+        'base_url'=>Storage::disk('s3')->url(''),
         'data' => [
             'posts' => $formattedPosts,
             'current_page' => $posts->currentPage(),
@@ -128,11 +129,11 @@ class PostApiController extends Controller
                 // Handle media based on post_type
                 if ($post->post_type === 'photo' || $post->post_type === 'video') {
                     if ($post->media_path) {
-                        $media_urls[] = asset('storage/' . $post->media_path);
+                        $media_urls[] = Storage::disk('s3')->url($post->media_path);
                     }
                 } elseif ($post->post_type === 'carousel') {
                     $media_urls = $post->media->map(function ($media) {
-                        return asset('storage/' . $media->media_path);
+                        return Storage::disk('s3')->url($media->media_path);
                     });
                 }
 
@@ -192,7 +193,7 @@ class PostApiController extends Controller
 
                 if ($request->post_type === 'photo' || $request->post_type === 'video') {
                     if ($request->hasFile('media')) {
-                        $mediaPath = $request->file('media')->store('posts', 'public');
+                        $mediaPath = $request->file('media')->store('posts', 's3');
                         $post->update(['media_path' => $mediaPath]);
                     }
                 }
@@ -200,7 +201,7 @@ class PostApiController extends Controller
                 if ($request->post_type === 'carousel') {
                     if ($request->hasFile('media')) {
                         foreach ($request->file('media') as $file) {
-                            $mediaPath = $file->store('posts/carousel', 'public');
+                            $mediaPath = $file->store('posts/carousel', 's3');
                             PostMedia::create([
                                 'post_id' => $post->id,
                                 'media_path' => $mediaPath
@@ -279,12 +280,13 @@ class PostApiController extends Controller
                 // Delete media files
                 if ($post->post_type == 'carousel') {
                     foreach ($post->media as $media) {
-                        Storage::disk('public')->delete($media->media_path);
+                        Storage::disk('s3')->delete($media->media_path);
                         $media->delete();
                     }
                 } else {
                     if(!empty($post->media_path)){
-                        Storage::disk('public')->delete($post->media_path);
+                        Storage::disk('s3')->delete($post->media_path);
+                      
                     }
                 }
 
@@ -510,11 +512,11 @@ class PostApiController extends Controller
             $media_urls = [];
             if ($post->post_type === 'photo' || $post->post_type === 'video') {
                 if ($post->media_path) {
-                    $media_urls[] = asset('storage/' . $post->media_path);
+                    $media_urls[] = Storage::disk('s3')->url($post->media_path);
                 }
             } elseif ($post->post_type === 'carousel') {
                 $media_urls = $post->media->map(function ($media) {
-                    return asset('storage/' . $media->media_path);
+                    return Storage::disk('s3')->url($media->media_path);
                 });
             }
 
@@ -538,7 +540,7 @@ class PostApiController extends Controller
             return response()->json([
                 'message'       => 'Successfully fetched post.',
                 'status'        => true,
-                'base_url'      => asset('storage/'),
+                'base_url'      => Storage::disk('s3')->url(''),
                 'data'          => $formattedPost,
                 'likes'         => $likes,
                 'comments'      => $comments,

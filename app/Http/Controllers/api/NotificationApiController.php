@@ -22,6 +22,7 @@ class NotificationApiController extends Controller
                 return response([
                     'message' => 'success.',
                     'status'  => true,
+                    'base_url'      => Storage::disk('s3')->url(''),
                     'data'    => $response
                 ], 200);
             } else {

@@ -54,12 +54,12 @@
                                         <td>{{ $post->content }}</td>
                                         <td>{{ $post->caption }}</td>
                                         @if ($post->post_type === 'photo' || $post->post_type === 'video')
-                                            <th><a target="_blank" href="/storage/{{$post->media_path}}"><img src="/storage/{{$post->media_path}}" alt="" style="width: 50px;"></a></th>
+                                            <th><a target="_blank" href="{{ Storage::disk('s3')->url($post->media_path) }}"><img src="{{ Storage::disk('s3')->url($post->media_path) }}" alt="" style="width: 50px;"></a></th>
                                         @else
                                         <th>
                                             @if ($post->post_type === 'carousel')
                                                 @foreach ($post->media as $index => $media)
-                                                    <a target="_blank" href="/storage/{{$media->media_path}}"><img src="/storage/{{$media->media_path}}" alt="" style="width: 50px;"></a>
+                                                    <a target="_blank" href="{{ Storage::disk('s3')->url($media->media_path) }}"><img src="{{ Storage::disk('s3')->url($media->media_path) }}" alt="" style="width: 50px;"></a>
                                                 @endforeach
                                             @endif
                                         </th>
