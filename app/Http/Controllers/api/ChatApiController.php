@@ -192,9 +192,23 @@ class ChatApiController extends Controller
     public function getMessages(Request $request)
     {
         try {
-        $messages = Message::with('sender:id,name')->where('conversation_id', $request->conversation_id)
+
+            
+        $conversation = Conversation::where('id', $request->conversation_id)->first();
+        $userId = Auth::id();
+      
+        // Determine prefix (one/two)
+        $delete_data = $conversation->user_one_id == $userId ? $conversation->user_one_chat_delete : $conversation->user_two_chat_delete;
+       
+        if(!empty($delete_data)){
+            $messages = Message::with('sender:id,name')->where('created_at', '>=', $delete_data)->where('conversation_id', $request->conversation_id)
             ->orderBy('created_at', 'asc')
             ->get();
+        } else {
+            $messages = Message::with('sender:id,name')->where('conversation_id', $request->conversation_id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+        }
 
         // Optionally customize response
         $messages = $messages->map(function ($message) {
@@ -211,8 +225,7 @@ class ChatApiController extends Controller
             ];
         });
 
-        $conversation = Conversation::where('id', $request->conversation_id)->first();
-        $userId = Auth::id();
+        
 
         Message::where('conversation_id', $conversation->id)
                     ->where('sender_id', '!=', $userId)
@@ -243,7 +256,7 @@ class ChatApiController extends Controller
             ->orWhere('user_two_id', $userId)
             ->get();
 
-        $chatList = $conversations->map(function ($conv) use ($userId) {
+            $chatList = $conversations->map(function ($conv) use ($userId) {
             $otherUser = $conv->user_one_id == $userId ? $conv->userTwo : $conv->userOne;
             $lastMessage = $conv->messages->first();
 
@@ -582,7 +595,7 @@ class ChatApiController extends Controller
         }
     }
 
-        public function userOnlineOffline(Request $request)
+    public function userOnlineOffline(Request $request)
     {
         try{
 
@@ -609,5 +622,66 @@ class ChatApiController extends Controller
                 ], 400);
         }
     }
+
+    public function userChatSetting(Request $request)
+    {
+        try {
+            $conversation_id = $request->conversation_id;
+            $user_id = $request->user_id;
+
+            // Validate conversation exists
+            $conversation = Conversation::find($conversation_id);
+            if (!$conversation) {
+                return response()->json([
+                    'status'  => false,
+                    'code'    => 404,
+                    'message' => 'Conversation not found.'
+                ], 404);
+            }
+
+            // Determine prefix (one/two)
+            $prefix = $conversation->user_one_id == $user_id ? 'one' : 'two';
+
+            // Mapping request keys to DB fields
+            $fields = [
+                'user_block'        => "user_{$prefix}_block",
+                'user_notification' => "{$prefix}_user_notification",
+                'user_call'         => "{$prefix}_user_call",
+                'user_chat_delete'  => "user_{$prefix}_chat_delete",
+            ];
+
+            // Update only available fields
+            foreach ($fields as $requestKey => $dbField) {
+                if ($request->has($requestKey)) {
+                    if($requestKey == 'user_chat_delete'){
+                        $conversation->$dbField = now();
+                    } else {
+                        $conversation->$dbField = $request->$requestKey;
+                    }
+                    
+                }
+            }
+
+            $conversation->save();
+
+            return response()->json([
+                'status' => true,
+                'code'   => 200,
+                'message'=> 'User chat settings updated successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 500,
+                'message' => HelperLanguage::retrieve_message_from_arb_file(
+                    $request->language_code,
+                    'web_internal_error'
+                ) ?? 'Some internal error occurred. Please try again later.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }
