@@ -41,6 +41,9 @@
 
             <li class="nav-item {{ request()->routeIs('contry.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('contry.index')}}"><i data-feather="flag"></i><span class="menu-title text-truncate" data-i18n="Email">Country</span></a>
             </li>
+            <li class="nav-item {{ request()->routeIs('currencies.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('currencies.index')}}"><i data-feather="flag"></i><span class="menu-title text-truncate" data-i18n="Email">Currencies</span></a>
+            </li>
+
             <li class="nav-item {{ request()->routeIs('language.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('language.index')}}"><i data-feather="globe"></i><span class="menu-title text-truncate" data-i18n="Email">Languages</span></a>
             </li>
 
