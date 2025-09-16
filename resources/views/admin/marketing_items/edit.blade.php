@@ -65,11 +65,11 @@
                                                 @if(!empty($item->media_file))
                                                     @if($item->file_type=='2')
                                                         <video width="300" controls>
-                                                            <source src="{{ asset('storage/app/public/' . $item->media_file) }}" type="video/mp4">
+                                                            <source src="{{ Storage::disk('s3')->url($item->media_file) }}" type="video/mp4">
                                                         </video>
                                                     @else
                                                        
-                                                            <img src="{{ asset('storage/app/public/' . $item->media_file) }}" width="300">
+                                                            <img src="{{ Storage::disk('s3')->url($item->media_file) }}" width="300">
                                                        
                                                     @endif
                                                 @endif
