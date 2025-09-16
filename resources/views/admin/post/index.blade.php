@@ -48,7 +48,7 @@
                                      @foreach ($data as $index => $post)
                                     <tr>
                                         <td>{{ ++$index }}</td>
-                                        <td>{{ $post->user->name }}</td>
+                                        <td>{{ $post->user->name??'NA' }}</td>
                                         <td>{{ ucfirst($post->post_type) }}</td>
                                         <td>{{ $post->location }}</td>
                                         <td>{{ $post->content }}</td>
