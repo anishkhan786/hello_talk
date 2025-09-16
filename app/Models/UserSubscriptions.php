@@ -11,7 +11,7 @@ class UserSubscriptions extends Model
     public $table = "user_subscriptions";
 
     protected $fillable = [
-        'id','user_id','plan_id', 'start_date','end_date','amount','payment_status','payment_method','transaction_id','status'
+        'id','user_id','plan_id','currency_code','start_date','end_date','amount','payment_status','payment_method','transaction_id','status'
     ];
 
     public function plan()

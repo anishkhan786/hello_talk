@@ -42,6 +42,7 @@ class SubscriptionApiController extends Controller
                     'name' => $data->name,
                     'duration_type' => $data->duration_type,
                     'duration_value' => $data->duration_value,
+                    'symbol' => $currencie_data->symbol,
                     'price' => $price,
                     'discounted_price' => $discounted_price,
                 ];
@@ -144,6 +145,7 @@ class SubscriptionApiController extends Controller
         }
 
         // Insert subscription
+
         $subscriptionId = UserSubscriptions::create([
             'user_id'        => $request->user_id,
             'plan_id'        => $plan->id,
@@ -152,6 +154,7 @@ class SubscriptionApiController extends Controller
             'amount'         => $request->amount,
             'payment_status' => $request->payment_status,
             'payment_method' => $request->payment_method,
+            'currency_code'=> $request->currencie_code,
             'transaction_id' => $request->transaction_id,
             'status'         => 'active'
         ]);
