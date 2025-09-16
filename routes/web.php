@@ -17,6 +17,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionPrivilegeController;
 use App\Http\Controllers\SubscriptionPlanPrivilegeController;
+use App\Http\Controllers\CurrencyController;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -186,5 +187,14 @@ Route::controller(PostsController::class)->group(function() {
         Route::get('subscription_plan_privileges/{subscriptionPrivilege}/edit', [SubscriptionPlanPrivilegeController::class, 'edit'])->name('subscription_plan_privileges.edit');
         Route::post('subscription_plan_privileges/{subscriptionPrivilege}', [SubscriptionPlanPrivilegeController::class, 'update'])->name('subscription_plan_privileges.update');
         Route::get('/question_topic/delete/{id}', [SubscriptionPlanPrivilegeController::class,'delete'])->name('subscription_plan_privileges.destroy');
+
+        // List all currencies
+        Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
+        Route::get('currencies/create', [CurrencyController::class, 'create'])->name('currencies.create');
+        Route::post('currencies', [CurrencyController::class, 'store'])->name('currencies.store');
+        Route::get('currencies/{currency}', [CurrencyController::class, 'show'])->name('currencies.show');
+        Route::get('currencies/{currency}/edit', [CurrencyController::class, 'edit'])->name('currencies.edit');
+        Route::post('currencies/{currency}', [CurrencyController::class, 'update'])->name('currencies.update');
+        Route::delete('currencies/{currency}', [CurrencyController::class, 'destroy'])->name('currencies.destroy');
 
 });

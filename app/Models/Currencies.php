@@ -11,6 +11,6 @@ class Currencies extends Model
     public $table = "currencies";
 
     protected $fillable = [
-        'id','currency_name','currency_code', 'symbol','base_price','is_active'
+        'id','country_code','currency_name','currency_code', 'symbol','base_price','is_active'
     ];
 }
