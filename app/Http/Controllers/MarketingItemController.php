@@ -43,9 +43,10 @@ class MarketingItemController extends Controller
                 $mime = $file->getMimeType();
                 
                 if ($request->file_type == '2' AND $mime === 'video/mp4') {
-                    $attachmentPath = $request->file('attachment')->store('marketing', 'public');
+                    $attachmentPath = $request->file('attachment')->store('marketing', 's3');
                 } elseif ($request->file_type == '1' AND $mime != 'video/mp4') {
-                    $attachmentPath = $request->file('attachment')->store('marketing', 'public');
+                    $attachmentPath = $request->file('attachment')->store('marketing', 's3');
+
                 } else {
                     if($request->file_type == '2'){
                         return back()->withErrors(['attachment' => 'Please select a valid file type. The video must be 15 seconds or less.'])->withInput();
@@ -96,9 +97,11 @@ class MarketingItemController extends Controller
                 $mime = $file->getMimeType();
                 
                 if ($request->file_type == '2' AND $mime === 'video/mp4') {
-                    $attachmentPath = $request->file('attachment')->store('marketing', 'public');
+                    
+                     $attachmentPath = $request->file('attachment')->store('marketing', 's3');
                 } elseif ($request->file_type == '1' AND $mime != 'video/mp4') {
-                    $attachmentPath = $request->file('attachment')->store('marketing', 'public');
+                    
+                     $attachmentPath = $request->file('attachment')->store('marketing', 's3');
                 } else {
                     if($request->file_type == '2'){
                         return back()->withErrors(['attachment' => 'Please select a valid file type. The video must be 15 seconds or less.'])->withInput();
