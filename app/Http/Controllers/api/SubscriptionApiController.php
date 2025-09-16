@@ -9,6 +9,7 @@ use App\Models\SubscriptionPrivileges;
 use App\Models\SubscriptionPlan;
 use App\Models\SubscriptionPlanPrivileges;
 use App\Models\AppNotification;
+use App\Models\Currencies;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,31 @@ class SubscriptionApiController extends Controller
     public function get_plans(Request $request)
     {
         try {
-            $data = SubscriptionPlan::where('status','1')->get();
+            $currencie_code = $request->currencie_code??'';
+            $currencie_data = Currencies::where('currency_code', $currencie_code)->first();
+
+            if(empty($currencie_data)){
+                return response()->json([
+                    'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_CURRENCY_NOT_FOUND') ?? 'The requested currency is not available.',
+                    'status' => false,
+                ], 400);
+            }
+
+            $datas = SubscriptionPlan::where('status','1')->get();
+            $data = $datas->map(function ($data) use($currencie_data) {
+                $price = $data->price + $currencie_data->base_price??'0';
+                $discounted_price = $data->discounted_price + $currencie_data->base_price??'0';
+
+                return [
+                    'id' => $data->id,
+                    'name' => $data->name,
+                    'duration_type' => $data->duration_type,
+                    'duration_value' => $data->duration_value,
+                    'price' => $price,
+                    'discounted_price' => $discounted_price,
+                ];
+            });
+
             $response = ['message'=> 'success','data'=>$data, 'status'=>200];
             return response($response, 200);
         } catch(\Exception $e)  {
