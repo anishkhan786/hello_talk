@@ -32,11 +32,16 @@ class PostsController extends Controller
             // Delete media files
             if ($post->post_type == 'carousel') {
                 foreach ($post->media as $media) {
-                    Storage::disk('public')->delete($media->media_path);
+                    if(!empty($post->media_path)){
+                        Storage::disk('s3')->delete($post->media_path);
+                    }
                     $media->delete();
                 }
             } else {
-                Storage::disk('public')->delete($post->media_path);
+                if(!empty($post->media_path)){
+                    Storage::disk('s3')->delete($post->media_path);
+                }
+                
             }
 
             $post->delete();
