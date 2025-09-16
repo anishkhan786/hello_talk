@@ -22,8 +22,8 @@ class SubscriptionApiController extends Controller
     public function get_plans(Request $request)
     {
         try {
-            $currencie_code = $request->currencie_code??'';
-            $currencie_data = Currencies::where('currency_code', $currencie_code)->first();
+            $country_code = $request->country_code??'';
+            $currencie_data = Currencies::where('country_code', $country_code)->first();
 
             if(empty($currencie_data)){
                 return response()->json([
@@ -43,6 +43,7 @@ class SubscriptionApiController extends Controller
                     'duration_type' => $data->duration_type,
                     'duration_value' => $data->duration_value,
                     'symbol' => $currencie_data->symbol,
+                    'currency' => $currencie_data->currency_code,
                     'price' => $price,
                     'discounted_price' => $discounted_price,
                 ];
@@ -154,7 +155,7 @@ class SubscriptionApiController extends Controller
             'amount'         => $request->amount,
             'payment_status' => $request->payment_status,
             'payment_method' => $request->payment_method,
-            'currency_code'=> $request->currencie_code,
+            'country_code'=> $request->country_code,
             'transaction_id' => $request->transaction_id,
             'status'         => 'active'
         ]);
