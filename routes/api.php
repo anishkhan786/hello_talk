@@ -76,7 +76,7 @@ Route::post('/user-group-add',[GroupApiController::class,'user_group_add']);
 Route::post('/user-group-remove',[GroupApiController::class,'user_group_remove']);
 Route::post('/user-group-setting',[GroupApiController::class,'user_group_setting']);
 Route::post('/user-group-chat-clear',[GroupApiController::class,'user_group_chat_clear']);
-Route::post('/groups/messages/list', [GroupApiController::class, 'group_message']); // msg list
+Route::post('/groups/messages/list', [GroupApiController::class, 'group_message'])->middleware('auth:sanctum'); // msg list
 Route::post('/groups/messages/store', [GroupApiController::class, 'group_message_store']); // msg send
 
 
