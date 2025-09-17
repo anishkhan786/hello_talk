@@ -670,6 +670,9 @@ class ChatApiController extends Controller
             $conversation->save();
             
             $data = array();
+
+            
+
             if($conversation->user_one_id == $user_id){
                 $data = array(
                         'user_block'        => $conversation->user_one_block,
@@ -682,6 +685,12 @@ class ChatApiController extends Controller
                         'user_notification' => $conversation->two_user_notification,
                         'user_call'         => $conversation->two_user_call,
                         );
+            }
+
+
+            $data['conversation_block'] = $conversation->user_one_block;
+            if($conversation->user_two_block == '1'){
+                $data['conversation_block'] = 1;
             }
 
             return response()->json([
