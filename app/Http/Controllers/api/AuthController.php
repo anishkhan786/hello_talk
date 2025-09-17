@@ -133,7 +133,7 @@ class AuthController extends Controller
         $user['profession'] = stringConvertToArray($user->profession);
         $user['personality'] = stringConvertToArray($user->personality);
         $user['interest'] = stringConvertToArray($user->interest);
-        $user['avatar'] = Storage::disk('s3')->url($user->avatar);
+        $user['avatar'] = $user->avatar?Storage::disk('s3')->url($user->avatar):$user->avatar;
 
         $today_date = now();
         $subscription_res = UserSubscriptions::with('plan')
