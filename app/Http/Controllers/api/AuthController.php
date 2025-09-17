@@ -91,7 +91,7 @@ class AuthController extends Controller
 
         $user = User::create( $request_data);
         $token = $user->createToken('auth_token')->plainTextToken;
-        $user['avatar'] = Storage::disk('s3')->url($user->avatar);
+        $user['avatar'] = $user->avatar?Storage::disk('s3')->url($user->avatar):$user->avatar;
          return response(['user_data'=>$user, "message"=>'User registered successfully','status'=>true,'token'=>$token],200);
     }
 
