@@ -672,7 +672,7 @@ class ChatApiController extends Controller
             $data = array();
 
             
-
+            $conversation = Conversation::find($conversation_id);
             if($conversation->user_one_id == $user_id){
                 $data = array(
                         'user_block'        => $conversation->user_one_block,
