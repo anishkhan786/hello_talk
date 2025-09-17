@@ -15,7 +15,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        // dd('test');
+       
         try {
             $validated = $request->validate([
                 'name'              => 'required|string|max:255',
@@ -51,7 +51,7 @@ class AuthController extends Controller
 
         if (!empty($user)) {
             $token = $user->createToken('auth_token')->plainTextToken;
-            $user['avatar'] = Storage::disk('s3')->url($user->avatar);
+            $user['avatar'] = $user->avatar?Storage::disk('s3')->url($user->avatar):$user->avatar;
             return response(['user_data'=>$user,"message"=>'User already exists.','status'=>true,'token'=>$token],200);
         }
 
