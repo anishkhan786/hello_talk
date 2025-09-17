@@ -253,7 +253,7 @@ class GroupApiController extends Controller
             if(!empty($request->message_type) AND ( $request->message_type == 'image' || $request->message_type == 'audio' )){
                 $filePath = null;
                     if ($request->hasFile('file')) {
-                        $filePath = $request->file('file')->store('messages', 'public');
+                        $filePath = $request->file('file')->store('messages', 's3');
                     }
                 $message = $filePath;
             } else {
