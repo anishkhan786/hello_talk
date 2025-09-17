@@ -85,6 +85,7 @@ class FollowApiController extends Controller
 
             return response()->json([
                     'success' => true,
+                     'base_url'=>Storage::disk('s3')->url(''),
                     'data' => $users
                 ],200);
         } catch (Exception $e) {
@@ -110,6 +111,7 @@ class FollowApiController extends Controller
             if(!empty( $users)){
                 return response()->json([
                                 'success' => true,
+                                 'base_url'=>Storage::disk('s3')->url(''),
                                 'data' => $users
                             ],200);
             } else {
