@@ -73,17 +73,9 @@ class PostApiController extends Controller
                 return Storage::disk('s3')->url($media->media_path);
             });
         }
-        
-        if (isset($post->user->avatar)) {
-                $img = $post->user->avatar;
 
-                if (strpos($img, 'storage/') === false) {
-                    // Agar storage/ missing hai tabhi lagao
-                    $post->user->avatar = Storage::disk('s3')->url($img);
-                } else {
-                    // Agar storage/ already hai to direct asset() call kar do
-                    $post->user->avatar = Storage::disk('s3')->url($img);
-                }
+        if (isset($post->user->avatar)) {
+               $post->user->avatar = $post->user->avatar?Storage::disk('s3')->url($post->user->avatar):$post->user->avatar;
             }
         return [
             'id' => $post->id,
