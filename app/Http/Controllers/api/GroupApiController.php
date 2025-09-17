@@ -222,12 +222,19 @@ class GroupApiController extends Controller
     public function group_message(Request $request)
     {
         try {
-        $messages = GroupsMessages::with('user')->where('group_id', $request->group_id)->latest()->get();
+
+        $settings = GroupSettings::where('user_id',  Auth::id())->where('group_id', $request->group_id)->first();
+        if(!empty($settings->last_cleared_at)){
+            $messages = GroupsMessages::with('user')->where('created_at', '>=', $settings->last_cleared_at)->where('group_id', $request->group_id)->latest()->get();
+        } else {
+            $messages = GroupsMessages::with('user')->where('group_id', $request->group_id)->latest()->get();
+        }
+        
        
         return response([
                 'message' => 'Get Group Messages successfully',
                 'status'  => true,
-                'base_url' => Storage::disk('s3')->url('').'/',
+                'base_url' => Storage::disk('s3')->url(''),
                 'data'    =>  $messages
             ], 200);
         } catch(\Exception $e)  {
