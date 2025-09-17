@@ -227,7 +227,7 @@ class ChatApiController extends Controller
                 'message' => $message->message,
                 'translated_message' => $message->translated_message,
                 'type' => $message->type,
-                'file' => Storage::disk('s3')->url($message->file),
+                'file' => $message->file?Storage::disk('s3')->url($message->file):'',
                 'created_at' => $message->created_at->toDateTimeString(),
             ];
         });
