@@ -237,7 +237,8 @@ class GroupApiController extends Controller
         } elseif (!empty($settings->block_date) AND $settings->blocked == '2') {
             $messages = GroupsMessages::with('user')->where('created_at', '<=', $settings->block_date)->where('group_id', $request->group_id)->latest()->get();
         } else {
-            $messages = GroupsMessages::with('user')->where('created_at', '>=', $user_group->created_at)->where('group_id', $request->group_id)->latest()->get();
+            $created_at = $user_group->created_at??Carbon::now()->format('Y-m-d H:i:s');
+            $messages = GroupsMessages::with('user')->where('created_at', '>=', $created_at)->where('group_id', $request->group_id)->latest()->get();
         }
         
        
