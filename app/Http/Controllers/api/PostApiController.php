@@ -75,8 +75,15 @@ class PostApiController extends Controller
         }
 
            if (!empty($post->user->avatar)) {
+            if (filter_var($post->user->avatar, FILTER_VALIDATE_URL)) {
+                // Agar already URL hai toh waisa hi rehne do
+                $post->user->avatar = $post->user->avatar;
+            } else {
+                // Agar sirf path hai toh S3 ka URL prefix add karo
                 $post->user->avatar = Storage::disk('s3')->url($post->user->avatar);
             }
+        }
+
         return [
             'id' => $post->id,
             'user' => $post->user,
