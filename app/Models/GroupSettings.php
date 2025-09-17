@@ -17,7 +17,8 @@ class GroupSettings extends Model
         'notifications',
         'mute',
         'blocked',
-        'last_cleared_at'
+        'block_date',
+        'last_cleared_at',
     ];
 
    

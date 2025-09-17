@@ -175,6 +175,12 @@ class GroupApiController extends Controller
                 }
                 if ($request->has('blocked')) {
                     $data['blocked'] = $request->blocked;
+                    if($request->blocked == '1'){
+                        $data['block_date'] = null;
+                    } else {
+                        $data['block_date'] = Carbon::now()->format('Y-m-d H:i:s');
+                    }
+                    
                 }
 
                 // Update or create in single call
@@ -224,10 +230,14 @@ class GroupApiController extends Controller
         try {
 
         $settings = GroupSettings::where('user_id',  Auth::id())->where('group_id', $request->group_id)->first();
-        if(!empty($settings->last_cleared_at)){
+        $user_group = UserGroup::where('user_id', Auth::id())->where('group_id', $request->group_id)->first();
+
+        if(!empty($settings->last_cleared_at) AND $settings->blocked == '1'){
             $messages = GroupsMessages::with('user')->where('created_at', '>=', $settings->last_cleared_at)->where('group_id', $request->group_id)->latest()->get();
+        } elseif (!empty($settings->block_date) AND $settings->blocked == '2') {
+            $messages = GroupsMessages::with('user')->where('created_at', '<=', $settings->block_date)->where('group_id', $request->group_id)->latest()->get();
         } else {
-            $messages = GroupsMessages::with('user')->where('group_id', $request->group_id)->latest()->get();
+            $messages = GroupsMessages::with('user')->where('created_at', '>=', $user_group->created_at)->where('group_id', $request->group_id)->latest()->get();
         }
         
        
