@@ -84,7 +84,7 @@ class AuthController extends Controller
 
          if ($request->hasFile('avatar')) {
 
-                $mediaPath = $request->file('attachment')->store('avatar', 's3');
+                $mediaPath = $request->file('avatar')->store('avatar', 's3');
                 $request_data['avatar'] = $mediaPath;
 
             }
