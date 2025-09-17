@@ -87,7 +87,7 @@ class GroupApiController extends Controller
             return response([
                 'message' => 'success.',
                 'status'  => true,
-                'base_url' => Storage::disk('s3')->url('').'/',
+                'base_url' => Storage::disk('s3')->url(''),
                 'data'    => $data
             ], 200);
 
