@@ -75,7 +75,8 @@ class PostApiController extends Controller
         }
 
             if (isset($post->user->avatar)) {
-               $post->user->avatar = Storage::disk('s3')->url('').$post->user->avatar;
+                $img = Storage::disk('s3')->url('').$post->user->avatar;
+                $post->user->avatar = $img;
             }
         return [
             'id' => $post->id,
