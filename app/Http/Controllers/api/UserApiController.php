@@ -35,7 +35,7 @@ class UserApiController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
-        $data['avatar'] = Storage::disk('s3')->url($data->avatar);
+        $data['avatar'] = $data->avatar?Storage::disk('s3')->url($data->avatar):'';
         $data['profession'] = stringConvertToArray($data->profession);
         $data['personality'] = stringConvertToArray($data->personality);
         $data['interest'] = stringConvertToArray($data->interest);
@@ -64,7 +64,7 @@ class UserApiController extends Controller
             'user'    => $data,
             'subscription_plan'=>$subscription_plan ,
             'subscription'=>$subscription_details,
-            'avatar_url' => Storage::disk('s3')->url($data->avatar),
+            'avatar_url' => $data->avatar?Storage::disk('s3')->url($data->avatar):'',
         ]);
     }
 
