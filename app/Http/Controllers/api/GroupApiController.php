@@ -235,7 +235,7 @@ class GroupApiController extends Controller
                 'message' => 'Get Group Messages successfully',
                 'status'  => true,
                 'base_url' => Storage::disk('s3')->url(''),
-                'settings'=> $settings,
+                'settings'=> Auth::id(),
                 'data'    =>  $messages
             ], 200);
         } catch(\Exception $e)  {
