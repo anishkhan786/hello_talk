@@ -694,7 +694,7 @@ class ChatApiController extends Controller
             }
 
             if($data['conversation_block'] == '1'){
-                 $data['conversation_user_call'] = '1';
+                 $data['conversation_user_call'] = 1;
             } else {
                 $data['conversation_user_call'] = $conversation->one_user_call;
             }
