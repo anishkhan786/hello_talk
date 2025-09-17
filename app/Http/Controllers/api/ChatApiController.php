@@ -669,41 +669,6 @@ class ChatApiController extends Controller
 
             $conversation->save();
             
-            return response()->json([
-                'status' => true,
-                'code'   => 200,
-                'message'=> 'User chat settings updated successfully.'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 500,
-                'message' => HelperLanguage::retrieve_message_from_arb_file(
-                    $request->language_code,
-                    'web_internal_error'
-                ) ?? 'Some internal error occurred. Please try again later.',
-                'error'   => $e->getMessage()
-            ], 500);
-        }
-    }
-
-     public function userChatSettingGet(Request $request)
-    {
-        try {
-            $conversation_id = $request->conversation_id;
-            $user_id = $request->user_id;
-
-            // Validate conversation exists
-            $conversation = Conversation::find($conversation_id);
-            if (!$conversation) {
-                return response()->json([
-                    'status'  => false,
-                    'code'    => 404,
-                    'message' => 'Conversation not found.'
-                ], 404);
-            }
-
             $data = array();
             if($conversation->user_one_id == $user_id){
                 $data = array(
@@ -718,10 +683,11 @@ class ChatApiController extends Controller
                         'user_call'         => $conversation->two_user_call,
                         );
             }
-            
+
             return response()->json([
                 'status' => true,
                 'code'   => 200,
+                'message'=> 'User chat settings updated successfully.',
                 'chat_setting'   => $data
             ]);
 
@@ -737,6 +703,5 @@ class ChatApiController extends Controller
             ], 500);
         }
     }
-
 
 }
