@@ -9,6 +9,11 @@ class Posts extends Model
 {
     use HasFactory;
     public $table = "posts";
+      protected $dates = [
+        'created_at',
+        'updated_at',
+    ];
+
     protected $fillable = ['user_id', 'post_type', 'content', 'media_path','caption','location'];
 
     public function media()
