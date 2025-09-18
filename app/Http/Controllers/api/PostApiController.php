@@ -66,7 +66,7 @@ class PostApiController extends Controller
                                 $q->where('caption', 'like', '%' . $searchText . '%')
                                 ->orWhere('content', 'like', '%' . $searchText . '%')
                                 // ✅ user name search
-                                ->orWhereHas('user', function ($userQuery) use ($searchText) {
+                                ->whereHas('user', function ($userQuery) use ($searchText) {
                                         $userQuery->where('name', 'like', '%' . $searchText . '%');
                                     });
                             });
