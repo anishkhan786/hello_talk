@@ -57,22 +57,29 @@ class PostApiController extends Controller
         // $followingIds = Follow::where('follower_id', $user->id)->pluck('following_id');
 
         // Paginated posts from followed users
-        $posts = Posts::with('media', 'user', 'likes', 'comments' ,'user.countryDetail',
-        'user.nativeLanguageDetail',
-        'user.learningLanguageDetail',
-        'user.knowLanguageDetail')
-                        ->when(!empty($searchText), function ($query) use ($searchText) {
-                            $query->where(function ($q) use ($searchText) {
-                                $q->where('caption', 'like', '%' . $searchText . '%')
-                                ->orWhere('content', 'like', '%' . $searchText . '%')
-                                // ✅ user name search
-                                ->whereHas('user', function ($userQuery) use ($searchText) {
-                                        $userQuery->where('name', 'like', '%' . $searchText . '%');
-                                    });
-                            });
-                        })
-                    ->orderBy('created_at', 'desc')
-                    ->paginate($perPage);
+        $posts = Posts::with(
+            'media',
+            'user',
+            'likes',
+            'comments',
+            'user.countryDetail',
+            'user.nativeLanguageDetail',
+            'user.learningLanguageDetail',
+            'user.knowLanguageDetail'
+        )
+        ->whereHas('user') // ✅ only posts with user
+        ->when(!empty($searchText), function ($query) use ($searchText) {
+            $query->where(function ($q) use ($searchText) {
+                $q->where('caption', 'like', '%' . $searchText . '%')
+                  ->orWhere('content', 'like', '%' . $searchText . '%')
+                  ->orWhereHas('user', function ($userQuery) use ($searchText) {
+                      $userQuery->where('name', 'like', '%' . $searchText . '%');
+                  });
+            });
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate($perPage);
+
     }
 
     // Format posts
