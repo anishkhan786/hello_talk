@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Model::serializeDateUsing(function (\DateTimeInterface $date) {
+            return $date->format('Y-m-d\TH:i:s.v\Z'); // ISO 8601 UTC
+        });
     }
 }
