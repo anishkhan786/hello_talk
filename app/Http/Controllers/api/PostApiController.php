@@ -30,17 +30,28 @@ class PostApiController extends Controller
     $searchText =  $request->searchText??''; // You can change this as needed
 
     if (!empty($request->type) && $request->type == 'Favorites') {
-        $post_ids = PostLike::where('user_id', $user->id)->pluck('post_id');
-        $posts = Posts::whereIn('id', $post_ids)
-                    ->with('media', 'user', 'likes', 'comments','user.countryDetail','user.nativeLanguageDetail', 'user.learningLanguageDetail', 'user.knowLanguageDetail')
-                     ->when(!empty($searchText), function ($query) use ($searchText) {
-                            $query->where(function ($q) use ($searchText) {
-                                $q->where('caption', 'like', '%' . $searchText . '%')
-                                ->orWhere('content', 'like', '%' . $searchText . '%');
-                            });
-                        })
-                    ->orderBy('created_at', 'desc')
-                    ->paginate($perPage);
+
+                    $post_ids = PostLike::where('user_id', $user->id)->pluck('post_id');
+
+                    $posts = Posts::whereIn('id', $post_ids)
+                            ->with('media', 'user', 'likes', 'comments',
+                                'user.countryDetail','user.nativeLanguageDetail',
+                                'user.learningLanguageDetail','user.knowLanguageDetail')
+                            ->when(!empty($searchText), function ($query) use ($searchText) {
+                                $query->where(function ($q) use ($searchText) {
+                                    $q->where('caption', 'like', '%' . $searchText . '%')
+                                    ->orWhere('content', 'like', '%' . $searchText . '%')
+                                    // ✅ user name search
+                                    ->orWhereHas('user', function ($userQuery) use ($searchText) {
+                                        $userQuery->where('name', 'like', '%' . $searchText . '%');
+                                    });
+                                });
+                            })
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+
+
+
     } else {
         // Get all users this user follows
         // $followingIds = Follow::where('follower_id', $user->id)->pluck('following_id');
@@ -53,7 +64,11 @@ class PostApiController extends Controller
                         ->when(!empty($searchText), function ($query) use ($searchText) {
                             $query->where(function ($q) use ($searchText) {
                                 $q->where('caption', 'like', '%' . $searchText . '%')
-                                ->orWhere('content', 'like', '%' . $searchText . '%');
+                                ->orWhere('content', 'like', '%' . $searchText . '%')
+                                // ✅ user name search
+                                ->orWhereHas('user', function ($userQuery) use ($searchText) {
+                                        $userQuery->where('name', 'like', '%' . $searchText . '%');
+                                    });
                             });
                         })
                     ->orderBy('created_at', 'desc')
