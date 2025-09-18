@@ -68,7 +68,7 @@ class GroupApiController extends Controller
             $data = $groups->map(function ($group) use ($allMembers) {
                 $members = $allMembers[$group->group_id] ?? collect();
 
-                $membersData = $members->pluck('user');
+                $membersData = $members->pluck('user')->filter();
                 $language_data = languag::where('id',$group->language_id)->first();
                 return [
                     'group_id'        => $group->group_id,
