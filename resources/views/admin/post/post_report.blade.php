@@ -57,7 +57,7 @@
                                                 </a></th>
                                             @else
                                             <th>
-                                                @if ($item->post->post_type === 'carousel')
+                                                @if (!empty($item->post->post_type) AND $item->post->post_type === 'carousel')
                                                 @php 
                                                     $post_media_get = post_media_get($item->post_id);
                                                 @endphp
