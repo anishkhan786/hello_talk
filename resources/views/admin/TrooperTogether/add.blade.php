@@ -9,12 +9,12 @@
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h2 class="content-header-title float-left mb-0">Troopers Together Add</h2>
+                            <h2 class="content-header-title float-left mb-0">Group Add</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#">Troopers Together Add</a>
+                                    <li class="breadcrumb-item"><a href="#">Group Add</a>
                                     </li>
                                 </ol>
                             </div>
@@ -29,7 +29,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Troopers Together Add</h4>
+                                    <h4 class="card-title">Group Add</h4>
                                 </div>
                                 <div class="card-body">
                                     <form class="form" action="{{route('trooper-together.store')}}" method="post" enctype="multipart/form-data">

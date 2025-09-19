@@ -7,6 +7,10 @@ use Illuminate\Validation\Rule;
 use App\Models\TroopersTogether;
 use App\Models\Category;
 use App\Models\languag;
+use App\Models\UserGroup;
+use App\Models\GroupsMessages;
+use App\Models\GroupSettings;
+use App\Models\User;
 
 class TroopersTogetherController extends Controller
 {
@@ -43,6 +47,21 @@ class TroopersTogetherController extends Controller
         $data = TroopersTogether::find($id);
         $language = languag::get();
         return view('admin.TrooperTogether.edit', compact('data','language'));
+    }
+
+    public function group_member($id)
+    {
+        $group_data = TroopersTogether::find($id);
+        $group_member = UserGroup::where('block_admin', '1')->where('group_id', $id)->pluck('user_id');
+        $data = User::whereIn('id', $group_member)->paginate(20);
+        return view('admin/TrooperTogether/show_group_member',compact('data','group_data'));
+    }
+
+    public function group_member_destroy($id,$UserGroupID)
+    {
+        $UserGroup = UserGroup::where('group_id', $UserGroupID)->where('user_id', $id)->first();
+        $UserGroup->update(array('block_admin' => 2));
+        return redirect()->back()->with('warning','Group member blocked successfully.');
     }
 
     public function update(Request $request, $id)

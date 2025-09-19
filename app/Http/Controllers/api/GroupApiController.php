@@ -30,6 +30,9 @@ class GroupApiController extends Controller
             } else {
                 $languageId = $type;
             }
+
+             $group_member = UserGroup::where('block_admin', '2')->where('user_id',$userId)->pluck('group_id');
+
             // Fetch all groups with join info in one query
             $groups = DB::table('groups as g')
                 ->leftJoin('user_groups as ug', function ($join) use ($userId) {
@@ -38,6 +41,9 @@ class GroupApiController extends Controller
                 })
                 ->when($languageId, function ($query) use ($languageId) {
                     return $query->where('g.language_id', $languageId);
+                })
+                ->when($group_member->isNotEmpty(), function ($query) use ($group_member) {
+                    return $query->whereNotIn('g.id', $group_member); // 👈 exclude
                 })
                 ->select(
                     'g.id as group_id',

@@ -66,7 +66,7 @@
              <li class=" nav-item {{ request()->routeIs('questions') ? 'active':''}}"><a class="d-flex align-items-center" href="{{route('questions')}}"><i data-feather='book'></i><span class="menu-title text-truncate" data-i18n="Email">LMS</span></a>
 
             </li>
-            <li class=" nav-item {{ request()->routeIs('trooper-together') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('trooper-together')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Troopers Together</span></a>
+            <li class=" nav-item {{ request()->routeIs('trooper-together') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('trooper-together')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Groups </span></a>
             </li>
             <li class=" nav-item {{ request()->routeIs('inquirie.index') ? 'active' : '' }}"><a class="d-flex align-items-center" href="{{route('inquirie.index')}}"><i data-feather='image'></i><span class="menu-title text-truncate" data-i18n="Email">Inquiries</span></a>
             </li>

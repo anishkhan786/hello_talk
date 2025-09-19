@@ -105,6 +105,9 @@ Route::get('inquirie',[InquirieController::class,'index'])->name('inquirie.index
 //TroopersTogetherController
 Route::controller(TroopersTogetherController::class)->group(function() {
         Route::get('/trooper-together', 'index')->name('trooper-together');
+        Route::get('/group-member-view/{id}', 'group_member')->name('group-member-view');
+        Route::get('/group-member/delete/{id}/{group_id}', 'group_member_destroy')->name('group-member-destroy');
+
         Route::get('/trooper-together/new', 'create')->name('trooper-together.add');
         Route::post('/trooper-together/new', 'store')->name('trooper-together.store');
         Route::get('/trooper-together/edit/{id}', 'edit')->name('trooper-together-edit');
