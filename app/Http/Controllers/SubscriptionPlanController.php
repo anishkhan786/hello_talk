@@ -15,7 +15,7 @@ class SubscriptionPlanController extends Controller
 
     public function create()
     {
-        return view('admin.subscription_plans.add');
+        return view('admin.subscription_plans.Add');
     }
 
     public function store(Request $request)
