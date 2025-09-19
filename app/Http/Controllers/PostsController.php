@@ -33,7 +33,7 @@ class PostsController extends Controller
     }
 
     public function delete($id){
-        $post = Posts::with('media')->findOrFail($id);
+        $post = Posts::with('media','post_reports')->findOrFail($id);
 
             // Delete media files
             if ($post->post_type == 'carousel') {
