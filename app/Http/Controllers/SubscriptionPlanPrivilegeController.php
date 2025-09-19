@@ -19,7 +19,7 @@ class SubscriptionPlanPrivilegeController extends Controller
         $plans = SubscriptionPlan::pluck('name','id');
         $privileges = SubscriptionPrivileges::pluck('name','id');
         $accessTypes = ['X', 'Limited', 'Unlimited', 'Maximum'];
-        return view('admin.subscription_plan_privileges.add', compact('plans','privileges','accessTypes'));
+        return view('admin.subscription_plan_privileges.Add', compact('plans','privileges','accessTypes'));
     }
 
     public function store(Request $request)
