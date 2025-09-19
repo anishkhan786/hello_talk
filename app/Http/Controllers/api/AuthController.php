@@ -146,9 +146,9 @@ class AuthController extends Controller
                                 ->first();
            
         if(!empty($subscription_res)){
-            
-            $expire_days = Carbon::parse($subscription_res->end_date)->diffInDays();
-         echo 'anish'. $expire_days;
+            $givenDate = Carbon::parse($subscription_res->end_date);
+            $today = Carbon::now();
+            $expire_days =$today->diffInDays($givenDate); // sirf pure din
             if($expire_days == 2){
                  AppNotification::create([
                         'user_id' => $user->id,
