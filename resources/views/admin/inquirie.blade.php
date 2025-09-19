@@ -50,7 +50,7 @@
                                     @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ ++$index }}</td>
-                                        <td>{{ $item->users->name }}</td>
+                                        <td>{{ $item->users->name??'NA' }}</td>
                                         <td>{{ $item->phone }}</td>
                                         <td>{{ $item->subject }}</td>
                                         <td>{{ $item->message }}</td>
