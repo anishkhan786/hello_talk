@@ -348,6 +348,7 @@ class ChatApiController extends Controller
             'started_at' => Carbon::now(),
         ]);
 
+
         return response()->json([
             'token' => $token,
             'uid' => $uid,
@@ -381,6 +382,23 @@ class ChatApiController extends Controller
 
             $call->ended_at = Carbon::now();
             $call->save();
+
+             $conversation = Conversation::where(function ($q) use ($call) {
+                                    $q->where('user_one_id', $call->caller_id)
+                                    ->where('user_two_id', $call->receiver_id);
+                                })
+                                ->orWhere(function ($q) use ($call) {
+                                    $q->where('user_one_id', $call->receiver_id)
+                                    ->where('user_two_id', $call->caller_id);
+                                })
+                                ->first();
+
+             $message = message::create([
+                    'conversation_id'    => $conversation->id,
+                    'sender_id'          => $call->caller_id,
+                    'type'               => 'voice_call',
+                    'message'            => 'Audio call ended',
+                ]);
 
             return response()->json(['message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_call_ended_successfully') ??'Call ended successfully']);
         } catch(\Exception $e)  {
@@ -433,6 +451,7 @@ class ChatApiController extends Controller
             }
 
         $user = User::where('id', $request->recipientId)->first();
+       
         
         $messaging = app('firebase.messaging');
         $message = CloudMessage::withTarget('token', $user->fcm_token)
@@ -454,6 +473,24 @@ class ChatApiController extends Controller
         ]);
 
         try {
+            $conversation = Conversation::where(function ($q) use ($request) {
+                                    $q->where('user_one_id', $request->callerId)
+                                    ->where('user_two_id', $request->recipientId);
+                                })
+                                ->orWhere(function ($q) use ($request) {
+                                    $q->where('user_one_id', $request->recipientId)
+                                    ->where('user_two_id', $request->callerId);
+                                })
+                                ->first();
+
+             $message = message::create([
+                    'conversation_id'    => $conversation->id,
+                    'sender_id'          => $request->callerId,
+                    'type'               => 'voice_call',
+                    'message'            => 'Audio call',
+                ]);
+            
+
             $response = $messaging->send($message);
             return response()->json([
                 'success' => true,
