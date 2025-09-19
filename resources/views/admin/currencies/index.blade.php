@@ -38,7 +38,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Country Code</th>
-                                        <th>Name</th>
+                                        <th>Country Name</th>
                                         <th>Code</th>
                                         <th>Symbol</th>
                                         <th>Base Price</th>

@@ -48,7 +48,7 @@
                                             <!-- Currency Name -->
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
-                                                <label for="currency_name">Currency Name *</label>
+                                                <label for="currency_name">Country Name *</label>
                                                 <input type="text" name="currency_name" id="currency_name" 
                                                     class="form-control" value="{{ old('currency_name') }}" required>
                                                 @error('currency_name') <small class="text-danger">{{ $message }}</small> @enderror

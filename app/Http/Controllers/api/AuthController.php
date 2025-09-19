@@ -10,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use App\Models\UserSubscriptions;
 use App\Models\HelperLanguage;
+use App\Models\AppNotification;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -142,8 +144,22 @@ class AuthController extends Controller
                                 ->where('payment_status', 'success')
                                 ->where('status', 'active')
                                 ->first();
-
+           
         if(!empty($subscription_res)){
+            
+            $expire_days = Carbon::parse($subscription_res->end_date)->diffInDays();
+         echo 'anish'. $expire_days;
+            if($expire_days == 2){
+                 AppNotification::create([
+                        'user_id' => $user->id,
+                        'type' => 'message',
+                        'title' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'subscription_title') ??"Subscription",
+                        'body' =>  HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'subscription_expire_in_days') ??"The subscription will expire in 2 days",
+                        'channel' => 'push',
+                    ]);
+            }
+           
+                    
             $subscription_plan = true;
             $subscription_details['start_date']=$subscription_res->start_date;
             $subscription_details['end_date']= $subscription_res->end_date;
@@ -154,6 +170,7 @@ class AuthController extends Controller
           $subscription_plan = false;
 
         }
+
         return response(["message"=> HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'user_login_success') ??'You have logged in successfully.','status'=>true,'token'=>$token ,'user_data'=>$user,'subscription_plan'=>$subscription_plan ,'subscription'=>$subscription_details],200);
     }
 
