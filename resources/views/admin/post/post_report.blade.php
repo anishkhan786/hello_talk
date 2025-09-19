@@ -9,11 +9,11 @@
             <div class="content-header-left col-md-9 col-12 mb-2">
                 <div class="row breadcrumbs-top">
                     <div class="col-12">
-                        <h2 class="content-header-title float-left mb-0">Posts View</h2>
+                        <h2 class="content-header-title float-left mb-0">Post report View</h2>
                         <div class="breadcrumb-wrapper">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Posts View</li>
+                                <li class="breadcrumb-item active">Posts report View</li>
                             </ol>
                         </div>
                     </div>
@@ -26,8 +26,8 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h4 class="card-title">Posts View</h4>
-                            <a href="{{ route('post.report.view') }}" class="btn btn-info">View Post Report</a>
+                            <h4 class="card-title">Posts report View</h4>
+                            <!-- <a href="{{ route('trooper-together.add') }}" class="btn btn-info">Troopers Together Add</a> -->
                         </div>
 
                         <div class="table-responsive">
@@ -37,33 +37,17 @@
                                         <th>ID</th>
                                         <th>Name </th>
                                         <th>Post Type</th>
-                                        <th>Location</th>
-                                        <th>Content</th>
-                                        <th>Caption</th>
-                                        <th>Media</th>
+                                        <th>Post Report</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                     @foreach ($data as $index => $post)
+                                     @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ ++$index }}</td>
-                                        <td>{{ $post->user->name??'NA' }}</td>
-                                        <td>{{ ucfirst($post->post_type) }}</td>
-                                        <td>{{ $post->location }}</td>
-                                        <td>{{ $post->content }}</td>
-                                        <td>{{ $post->caption }}</td>
-                                        @if ($post->post_type === 'photo' || $post->post_type === 'video')
-                                            <th><a target="_blank" href="{{ Storage::disk('s3')->url($post->media_path) }}"><img src="{{ Storage::disk('s3')->url($post->media_path) }}" alt="" style="width: 50px;"></a></th>
-                                        @else
-                                        <th>
-                                            @if ($post->post_type === 'carousel')
-                                                @foreach ($post->media as $index => $media)
-                                                    <a target="_blank" href="{{ Storage::disk('s3')->url($media->media_path) }}"><img src="{{ Storage::disk('s3')->url($media->media_path) }}" alt="" style="width: 50px;"></a>
-                                                @endforeach
-                                            @endif
-                                        </th>
-                                        @endif
+                                        <td>{{ $item->user->name??'NA' }}</td>
+                                        <td>{{ ucfirst($item->postpost_type??'') }}</td>
+                                        <td>{{ $item->reason }}</td>
 
                                         <td>
                                             <div class="dropdown">
@@ -71,11 +55,7 @@
                                                     <i data-feather="more-vertical"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    <!-- <a class="dropdown-item" href="{{ route('trooper-together-edit', $post->id) }}">
-                                                        <i data-feather="edit-2" class="mr-50"></i>
-                                                        <span>Post View</span>
-                                                    </a> -->
-                                                    <a class="dropdown-item" href="{{ route('posts-destroy', $post->id) }}">
+                                                    <a class="dropdown-item" href="{{ route('posts-destroy', $item->post_id) }}">
                                                         <i data-feather="trash" class="mr-50"></i>
                                                         <span>Delete</span>
                                                     </a>

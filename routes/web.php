@@ -133,6 +133,8 @@ Route::controller(LmsQuestionController::class)->group(function() {
     //post
 Route::controller(PostsController::class)->group(function() {
         Route::get('/posts/view', 'index')->name('post.view');
+        Route::get('/posts/report/view', 'post_report')->name('post.report.view');
+
         Route::get('/posts/delete/{id}', 'delete')->name('posts-destroy');
         Route::get('/course-demo-details', 'courseDemoDetails')->name('course-demo-details');
 
