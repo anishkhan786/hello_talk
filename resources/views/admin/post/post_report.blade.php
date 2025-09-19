@@ -51,7 +51,7 @@
                                         <td>{{ $item->reason }}</td>
                                         
                                       
-                                            @if($item->post->post_type === 'photo' || $item->post->post_type === 'video')
+                                            @if(!empty($item->post->post_type) AND ($item->post->post_type === 'photo' || $item->post->post_type === 'video' ) )
                                                 <th><a target="_blank" href="{{ Storage::disk('s3')->url($item->post->media_path) }}">
                                                     <img src="{{ Storage::disk('s3')->url($item->post->media_path) }}" alt="" style="width: 50px;">
                                                 </a></th>
