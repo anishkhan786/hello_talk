@@ -38,6 +38,7 @@
                                         <th>Name </th>
                                         <th>Post Type</th>
                                         <th>Post Report</th>
+                                        <th>Media</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -49,7 +50,7 @@
                                         <td>{{ ucfirst($item->post->post_type??'') }}</td>
                                         <td>{{ $item->reason }}</td>
                                         
-                                        @if(!empty($post_media_get))
+                                      
                                             @if($item->post->post_type === 'photo' || $item->post->post_type === 'video')
                                                 <th><a target="_blank" href="{{ Storage::disk('s3')->url($item->post->media_path) }}">
                                                     <img src="{{ Storage::disk('s3')->url($item->post->media_path) }}" alt="" style="width: 50px;">
@@ -68,7 +69,7 @@
                                                 @endif
                                             </th>
                                             @endif
-                                        @endif
+                                        
 
                                         <td>
                                             <div class="dropdown">
