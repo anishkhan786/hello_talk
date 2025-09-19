@@ -46,7 +46,7 @@
                                     <tr>
                                         <td>{{ ++$index }}</td>
                                         <td>{{ $item->user->name??'NA' }}</td>
-                                        <td>{{ ucfirst($item->postpost_type??'') }}</td>
+                                        <td>{{ ucfirst($item->post->post_type??'') }}</td>
                                         <td>{{ $item->reason }}</td>
 
                                         <td>
