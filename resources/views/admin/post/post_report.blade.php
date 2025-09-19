@@ -48,6 +48,27 @@
                                         <td>{{ $item->user->name??'NA' }}</td>
                                         <td>{{ ucfirst($item->post->post_type??'') }}</td>
                                         <td>{{ $item->reason }}</td>
+                                        
+                                        @if(!empty($post_media_get))
+                                            @if($item->post->post_type === 'photo' || $item->post->post_type === 'video')
+                                                <th><a target="_blank" href="{{ Storage::disk('s3')->url($item->post->media_path) }}">
+                                                    <img src="{{ Storage::disk('s3')->url($item->post->media_path) }}" alt="" style="width: 50px;">
+                                                </a></th>
+                                            @else
+                                            <th>
+                                                @if ($item->post->post_type === 'carousel')
+                                                @php 
+                                                    $post_media_get = post_media_get($item->post_id);
+                                                @endphp
+                                                    @foreach ($post_media_get as $index => $media)
+                                                        <a target="_blank" href="{{ Storage::disk('s3')->url($media->media_path) }}">
+                                                            <img src="{{ Storage::disk('s3')->url($media->media_path) }}" alt="" style="width: 50px;">
+                                                        </a>
+                                                    @endforeach
+                                                @endif
+                                            </th>
+                                            @endif
+                                        @endif
 
                                         <td>
                                             <div class="dropdown">

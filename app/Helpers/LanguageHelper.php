@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Http;
 use App\Models\languag;
+use App\Models\PostMedia;
+
 
 function language_code($code){
     $language = languag::where('name', $code)->first();
@@ -57,6 +59,10 @@ if (!function_exists('translateMessageWithOpenAI')) {
 
 function stringConvertToArray($data){
     return explode(", ",$data);
+}
+
+function post_media_get($id){
+    return PostMedia::where('post_id', $id)->get();
 }
 
 
