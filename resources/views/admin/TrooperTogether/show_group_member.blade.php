@@ -44,13 +44,19 @@
                                     @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ ++$index }}</td>
-                                        <td>{{ $item->name }}</td>
-                                        <td>{{ $item->email??$item->phone_no }}</td>
+                                        <td>{{ $item->user->name }}</td>
+                                        <td>{{ $item->user->email??$item->user->phone_no }}</td>
                                         <td>
-                                            <a style="color: red !important;" href="{{ route('group-member-destroy', [$item->id,$group_data->id]) }}">
-                                            <i data-feather="trash" class="mr-50"></i>
-                                            <span>Delete</span>
+                                            @if($item->block_admin == '1')
+                                            <a style="color: red !important;" href="{{ route('group-member-destroy', $item->id) }}">
+                                                <i data-feather="trash" class="mr-50"></i>
+                                                <span>Block</span>
                                             </a>
+                                            @else 
+                                             <a href="{{ route('group-member-unblock', $item->id) }}">
+                                                <span>Unblock</span>
+                                             </a>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach

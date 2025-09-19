@@ -52,16 +52,23 @@ class TroopersTogetherController extends Controller
     public function group_member($id)
     {
         $group_data = TroopersTogether::find($id);
-        $group_member = UserGroup::where('block_admin', '1')->where('group_id', $id)->pluck('user_id');
-        $data = User::whereIn('id', $group_member)->paginate(20);
+        $data = UserGroup::with('user')->where('group_id', $id)->whereHas('user')->paginate(20);
+        // $data = User::whereIn('id', $group_member)->paginate(20);
         return view('admin/TrooperTogether/show_group_member',compact('data','group_data'));
     }
 
-    public function group_member_destroy($id,$UserGroupID)
+    public function group_member_destroy($id)
     {
-        $UserGroup = UserGroup::where('group_id', $UserGroupID)->where('user_id', $id)->first();
+        $UserGroup = UserGroup::where('id', $id)->first();
         $UserGroup->update(array('block_admin' => 2));
         return redirect()->back()->with('warning','Group member blocked successfully.');
+    }
+
+    public function group_member_unblock($id)
+    {
+        $UserGroup = UserGroup::where('id', $id)->first();
+        $UserGroup->update(array('block_admin' => 1));
+        return redirect()->back()->with('warning','Group member unblocked successfully.');
     }
 
     public function update(Request $request, $id)
