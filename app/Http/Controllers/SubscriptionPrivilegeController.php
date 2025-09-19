@@ -15,7 +15,7 @@ class SubscriptionPrivilegeController extends Controller
 
     public function create()
     {
-        return view('admin.subscription_privileges.add');
+        return view('admin.subscription_privileges.Add');
     }
 
     public function store(Request $request)
