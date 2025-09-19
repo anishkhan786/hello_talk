@@ -20,11 +20,7 @@ class Posts extends Model
     {
         return $this->hasMany(PostMedia::class,'post_id');
     }
-
-     public function post_reports()
-    {
-        return $this->hasMany(PostReports::class,'post_id');
-    }
+    
 
     public function user()
     {
