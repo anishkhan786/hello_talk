@@ -51,7 +51,7 @@ class ChatApiController extends Controller
             $user = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->where('id', $receiver_id)->first();
             $count = message::where('conversation_id', $conversation->id)->where('sender_id','!=', $userId)->where('is_read', '0')->count();
              // Latest message
-            $latestMessage = Message::where('conversation_id', $conversation->id)->where('sender_id','!=', $userId)->where('is_read', '0')->latest('created_at')->first();
+            $latestMessage = Message::where('conversation_id', $conversation->id)->latest('created_at')->first();
             
             
             return [
