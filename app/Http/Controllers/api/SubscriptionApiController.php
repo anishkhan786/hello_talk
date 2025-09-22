@@ -34,8 +34,11 @@ class SubscriptionApiController extends Controller
 
             $datas = SubscriptionPlan::where('status','1')->get();
             $data = $datas->map(function ($data) use($currencie_data) {
-                $price = $data->price + $currencie_data->base_price??'0';
-                $discounted_price = $data->discounted_price + $currencie_data->base_price??'0';
+                if($currencie_data->base_price != '0'){
+                    $price = $data->price*$currencie_data->base_price??'1';
+                    $discounted_price = $data->discounted_price * $currencie_data->base_price??'1';
+                }
+              
 
                 return [
                     'id' => $data->id,
