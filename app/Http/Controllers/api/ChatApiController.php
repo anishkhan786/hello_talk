@@ -483,15 +483,16 @@ class ChatApiController extends Controller
                                 })
                                 ->first();
 
-             $message = message::create([
+           
+            
+
+            $response = $messaging->send($message);
+             message::create([
                     'conversation_id'    => $conversation->id,
                     'sender_id'          => $request->callerId,
                     'type'               => 'voice_call',
                     'message'            => 'Audio call',
                 ]);
-            
-
-            $response = $messaging->send($message);
             return response()->json([
                 'success' => true,
                 'message' => 'Notification sent successfully!',
