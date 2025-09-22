@@ -37,6 +37,9 @@ class SubscriptionApiController extends Controller
                 if($currencie_data->base_price != '0'){
                     $price = $data->price*$currencie_data->base_price??'1';
                     $discounted_price = $data->discounted_price * $currencie_data->base_price??'1';
+                } else {
+                    $price = $data->price;
+                    $discounted_price = $data->discounted_price;
                 }
               
 
