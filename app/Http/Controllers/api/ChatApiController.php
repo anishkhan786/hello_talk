@@ -94,7 +94,7 @@ class ChatApiController extends Controller
                 'user_two_id' => $receiver_id,
             ]);
            $user = User::where('id', $receiver_id)->first();
-            if(!empty($user->fcm_token)){
+            if(!empty($user->fcm_token) AND $user->notification == '1'){
                 $language_code = language_code($user->interface_language);
 
                 $device_token = $user->fcm_token;
@@ -163,7 +163,7 @@ class ChatApiController extends Controller
         ]);
 
          $user = User::where('id', $receiver->id)->first();
-
+        if($user->notification =='1'){
           if(!empty($user->fcm_token) AND $receiver->id != $sender->id){
                 $language_code = language_code($user->interface_language);
 
@@ -174,7 +174,7 @@ class ChatApiController extends Controller
                 $key= 'chat_messages';
                 $this->notification_send($device_token,$title,$msg,$key);
             }
-
+        }
         // Broadcast the message
         // event(new \App\Events\MessageSent($message));
         broadcast(new MessageSent($message));

@@ -299,7 +299,7 @@ class UserApiController extends Controller
                 $user->interface_language = $request->interface_language;
             }
 
-             if ($request->has('online_status')) {
+            if ($request->has('online_status')) {
                 $user->online_status = $request->online_status;
             }
 
