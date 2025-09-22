@@ -76,7 +76,7 @@
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
                                                 <label for="base_price">Base Price *</label>
-                                                <input type="number" step="0.01" name="base_price" id="base_price" 
+                                                <input type="number" step="0.001" name="base_price" id="base_price" 
                                                     class="form-control" value="{{ old('base_price', 1) }}" required>
                                                 @error('base_price') <small class="text-danger">{{ $message }}</small> @enderror
                                             </div></div>

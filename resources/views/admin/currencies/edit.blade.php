@@ -83,7 +83,7 @@
                                                 <!-- Base Price -->
                                                 <div class="col-md-6 mb-3">
                                                     <label for="base_price">Base Price *</label>
-                                                    <input type="number" step="0.01" name="base_price" id="base_price"
+                                                    <input type="number" step="0.001" name="base_price" id="base_price"
                                                         class="form-control" value="{{ old('base_price', $currency->base_price) }}" required>
                                                     @error('base_price') <small class="text-danger">{{ $message }}</small> @enderror
                                                 </div>
