@@ -207,6 +207,14 @@ class ChatApiController extends Controller
         // Determine prefix (one/two)
         $delete_data = $conversation->user_one_id == $userId ? $conversation->user_one_chat_delete : $conversation->user_two_chat_delete;
        
+        if($conversation->user_one_id == $userId){
+            $user = User::where('id', $conversation->user_two_id)->first();
+        }
+        if($conversation->user_two_id == $userId) {
+            $user = User::where('id', $conversation->user_one_id)->first();
+        }
+       
+
         if(!empty($delete_data)){
             $messages = Message::with('sender:id,name')->where('created_at', '>=', $delete_data)->where('conversation_id', $request->conversation_id)
             ->orderBy('created_at', 'asc')
@@ -237,7 +245,7 @@ class ChatApiController extends Controller
                     ->where('is_read', '0')
                     ->update(['is_read' => 1]);
 
-        return response()->json(['message' => 'success', 'status' => true, 'base_url' => Storage::disk('s3')->url(''), 'data'=>$messages], 200);
+        return response()->json(['message' => 'success', 'status' => true, 'base_url' => Storage::disk('s3')->url(''),'user'=>$user, 'data'=>$messages], 200);
         } catch(\Exception $e)  {
             return response()->json([
                     'message' => HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'web_internal_error') ?? 'Some internal error occurred. Please try again later.',
@@ -643,6 +651,15 @@ class ChatApiController extends Controller
         try{
 
            $user_id = $request->user_id;
+           $user = User::where('online_status', '3')->where('id', $user_id)->first();
+
+            if(!empty($user)){
+                return response()->json([
+                    'status'   => true,
+                    'code'     => 200,
+                ]);
+            }
+
            $is_online = $request->is_online??2;
 
            $data = [
