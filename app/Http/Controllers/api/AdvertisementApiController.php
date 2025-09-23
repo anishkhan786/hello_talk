@@ -56,15 +56,8 @@ class AdvertisementApiController extends Controller
             $ads_type = 'menuaal';// only menuaal all time 
             // Handle ads block conditions for different pages
             $eventLogConditions = [
-                'landing' => function () use ( $today, $userId, $user) {
-                
-                    $withinDays = Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view',7);
-                    // 2️⃣ Check if ad already shown in last 24 hours
-                    $lastShown = MarketingUserEventLogs::where('user_id', $userId)
-                        ->where('event_type', 'landing')
-                        ->where('view_date', $today) // last 24 hrs
-                        ->exists();
-                     return $withinDays && !$lastShown;
+                'landing' => function () use ($user) {
+                    return Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view');
                 },
                 'audio_call' => function () use ($userId, $page_name, $today) {
                     return MarketingUserEventLogs::where('event_type', $page_name)
@@ -91,22 +84,6 @@ class AdvertisementApiController extends Controller
                         ->count() < env('ads_translate_per_day');
                 },
             ];
-
-
-             $withinDays = Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view');
-                    // 2️⃣ Check if ad already shown in last 24 hours
-                    $lastShown = MarketingUserEventLogs::where('user_id', $userId)
-                        ->where('event_type', 'landing')
-                        ->where('view_date', $today) // last 24 hrs
-                        ->first();
-            if($withinDays){
-                echo 'if';
-                dd($lastShown);
-            } else {
-                echo 'aa --- '.env('ads_landing_page_user_view');
-                dd($lastShown);
-            }
-            exit();
 
             if (isset($eventLogConditions[$page_name]) && $eventLogConditions[$page_name]()) {
                 // Log the first event only if not already logged
@@ -146,9 +123,25 @@ class AdvertisementApiController extends Controller
                 } else {
                     $ads_type = 'menuaal';
                 }
-                MarketingUserEventLogs::where('event_type', $page_name)->where('user_id', $userId)->where('view_date', $today)->delete();
+                if($page_name !='landing'){
+                    MarketingUserEventLogs::where('event_type', $page_name)->where('user_id', $userId)->where('view_date', $today)->delete();
+                }
             }
 
+             if($page_name =='landing'){
+                $lastShown = MarketingUserEventLogs::where('user_id', $userId)
+                    ->where('event_type', 'landing')
+                    ->where('view_date',  $today) // last 24 hrs
+                    ->first();
+                    if(!empty($lastShown)){
+                        return response()->json([
+                            'message' => 'Ads was not applied.',
+                            'type' => $ads_type,
+                            'status' => false,
+                            'data' => [],
+                        ], 200);
+                    }
+             }
             // Get the current view round or default to 1
             $currentRound = MarketingUserView::where('user_id', $userId)->max('view_round') ?? 1;
 
