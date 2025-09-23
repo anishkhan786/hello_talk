@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Lcobucci\JWT\Configuration;
 use App\Helpers\RtcTokenBuilder2;
 use App\Models\agora_call;
+use App\Models\UserSubscriptions;
+
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\HelperLanguage;
