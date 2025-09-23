@@ -93,7 +93,7 @@ class AdvertisementApiController extends Controller
             ];
 
 
-             $withinDays = Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view',7);
+             $withinDays = Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view');
                     // 2️⃣ Check if ad already shown in last 24 hours
                     $lastShown = MarketingUserEventLogs::where('user_id', $userId)
                         ->where('event_type', 'landing')
@@ -104,6 +104,7 @@ class AdvertisementApiController extends Controller
                 dd($lastShown);
             } else {
                 echo 'aa';
+                dd($withinDays);
             }
             exit();
 
