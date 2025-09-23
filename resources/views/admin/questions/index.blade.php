@@ -52,10 +52,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                @php 
+                                 $page = request()->get('page')??'1';
+                                 if($page !=1){
+                                    $page = $page-1;
+                                    $page = $page*10;
+                                    $page++;
+                                 } 
+                                @endphp
                                  @foreach($questions as $index => $q)
                                     <tr>
-                                        <td>{{ ++$index }}</td>
+                                        <td>{{ $page + $index }}</td>
                                         <td>{{ $q->title }}</td>
                                         <td>{{ $q->type }}</td>
                                         <td>{{ $q->marks }}</td>
