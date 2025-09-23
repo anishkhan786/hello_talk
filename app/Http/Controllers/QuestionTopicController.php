@@ -45,7 +45,7 @@ class QuestionTopicController extends Controller
         return redirect()->back()->with('success', 'Question Topic updated successfully.');
     }
 
-    public function delete($id){
+    public function delete(McqTopic $McqTopic,$id){
         $data = McqTopic::find($id);
         $user = $data->delete();
         return redirect()->back()->with('warning','Question Topic deleted.');

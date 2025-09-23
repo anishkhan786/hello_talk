@@ -63,7 +63,7 @@
                                                         <i data-feather="edit-2" class="mr-50"></i>
                                                         <span>Edit</span>
                                                     </a>
-                                                    <a class="dropdown-item" href="{{ route('question_topic-destroy', $item->id) }}">
+                                                    <a class="dropdown-item" href="{{ route('question-topic-delete', $item->id) }}">
                                                         <i data-feather="trash" class="mr-50"></i>
                                                         <span>Delete</span>
                                                     </a>

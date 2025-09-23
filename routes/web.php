@@ -170,7 +170,9 @@ Route::controller(PostsController::class)->group(function() {
         Route::post('/question_topic/new', 'store')->name('question_topic.store');
         Route::get('/question_topic/edit/{id}', 'edit')->name('question_topic-edit');
         Route::post('/question_topic/edit/{id}', 'update')->name('question_topic-edit.update');
-        Route::get('/question_topic/delete/{id}', 'delete')->name('question_topic-destroy');
+        
+        Route::get('/question-topic/delete/{id}', 'delete')->name('question-topic-delete');
+
     });
 
         Route::get('subscription_plans', [SubscriptionPlanController::class, 'index'])->name('subscription_plans.index');

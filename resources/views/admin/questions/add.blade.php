@@ -65,7 +65,7 @@
                                             <div class="col-md-12 col-12">
                                                 <div class="form-group">
                                                     <label for="country-floating">Description</label>
-                                                  <textarea name="description" class="form-control" required>{{ old('description') }}</textarea>
+                                                  <textarea name="description" class="form-control" >{{ old('description') }}</textarea>
                                                 
                                                 </div>
                                             </div>
