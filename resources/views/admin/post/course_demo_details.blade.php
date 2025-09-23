@@ -48,7 +48,7 @@
                                      @foreach ($data as $index => $course)
                                     <tr>
                                         <td>{{ ++$index }}</td>
-                                        <td>{{ $course->user->name }}</td>
+                                        <td>{{ $course->user->name??'NA' }}</td>
                                         <td>{{ $course->email }}</td>
                                         <td>{{ $course->mobile_number }}</td>
                                         <td>{{ $course->dob }}</td>
