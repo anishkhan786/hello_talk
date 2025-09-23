@@ -53,12 +53,25 @@ class ChatApiController extends Controller
              // Latest message
             $latestMessage = Message::where('conversation_id', $conversation->id)->latest('created_at')->first();
             
+            $today_date = now();
+            $subscription_res = UserSubscriptions::with('plan')
+                                ->where('end_date', '>=', $today_date)
+                                ->where('user_id', $user->id)
+                                ->where('payment_status', 'success')
+                                ->where('status', 'active')
+                                ->first();
+            if(!empty($subscription_res)){
+                $subscription_plan = true;
+            } else {
+                $subscription_plan = false;
+            }
             
             return [
                 'id' => $conversation->id,
                 'user_one_id' => $conversation->user_one_id,
                 'user_two_id' => $conversation->user_two_id,
                 'conversation_block' =>$conversation_block,
+                'subscription_plan' => $subscription_plan,
                 'user_data' => $user,
                 'messages_count' => $count,
                 'latestMessage'=>$latestMessage->created_at??$conversation->created_at
