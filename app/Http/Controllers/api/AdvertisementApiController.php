@@ -103,8 +103,8 @@ class AdvertisementApiController extends Controller
                 echo 'if';
                 dd($lastShown);
             } else {
-                echo 'aa';
-                dd($withinDays);
+                echo 'aa --- '.env('ads_landing_page_user_view');
+                dd($lastShown);
             }
             exit();
 
