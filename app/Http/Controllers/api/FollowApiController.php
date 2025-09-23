@@ -102,13 +102,33 @@ class FollowApiController extends Controller
     public function followers()
     {
         try {
-            $users = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')->whereIn('id', function ($query) {
+            $users = User::with('countryDetail','nativeLanguageDetail','learningLanguageDetail','knowLanguageDetail')
+            ->whereIn('id', function ($query) {
                 $query->select('follower_id')
                     ->from('follows')
                     ->where('following_id', Auth::id());
             })->get();
 
-            if(!empty( $users)){
+            if(!empty($users)){
+
+                $users->map(function($user){
+                    $today_date = now();
+                    $subscription_res = UserSubscriptions::with('plan')
+                                        ->where('end_date', '>=', $today_date)
+                                        ->where('user_id', $user->id)
+                                        ->where('payment_status', 'success')
+                                        ->where('status', 'active')
+                                        ->first();
+                    if(!empty($subscription_res)){
+                        $subscription_plan = true;
+                    } else {
+                        $subscription_plan = false;
+                    }
+
+                    $user->subscription_plan = $subscription_plan;
+                    return $user;
+                });
+
                 return response()->json([
                                 'success' => true,
                                  'base_url'=>Storage::disk('s3')->url(''),
