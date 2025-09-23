@@ -174,7 +174,7 @@ class UserApiController extends Controller
         }
 
         if ($request->has('for_you') && !empty($request->for_you)) {
-            $users = $users->where('native_language', $request->for_you);
+            $users = $users->where('learning_language', $request->for_you);
         }
 
         if ($request->has('name') && !empty($request->name)) {
