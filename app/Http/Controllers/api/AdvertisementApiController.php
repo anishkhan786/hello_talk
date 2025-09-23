@@ -99,7 +99,7 @@ class AdvertisementApiController extends Controller
                         ->where('event_type', 'landing')
                         ->where('view_date', $today) // last 24 hrs
                         ->first();
-            if($withinDays && !$lastShown){
+            if($withinDays){
                 echo 'if';
                 dd($lastShown);
             } else {
