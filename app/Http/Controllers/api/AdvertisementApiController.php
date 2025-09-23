@@ -58,11 +58,11 @@ class AdvertisementApiController extends Controller
             $eventLogConditions = [
                 'landing' => function () use ( $today, $userId, $user) {
                 
-                    $withinDays = Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view');
+                    $withinDays = Carbon::parse($user->created_at)->diffInDays(now()) <= env('ads_landing_page_user_view',7);
                     // 2️⃣ Check if ad already shown in last 24 hours
                     $lastShown = MarketingUserEventLogs::where('user_id', $userId)
                         ->where('event_type', 'landing')
-                        ->where('view_date', '==',  $today) // last 24 hrs
+                        ->where('view_date', $today) // last 24 hrs
                         ->exists();
                      return $withinDays && !$lastShown;
                 },
