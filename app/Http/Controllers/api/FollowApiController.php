@@ -125,7 +125,7 @@ class FollowApiController extends Controller
                         $subscription_plan = false;
                     }
 
-                    $user->subscription_plan = $subscription_plan;
+                    $user['subscription_plan'] = $subscription_plan;
                     return $user;
                 });
 
