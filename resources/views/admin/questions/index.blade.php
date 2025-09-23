@@ -53,9 +53,9 @@
                                 </thead>
                                 <tbody>
 
-                                 @foreach($questions as $q)
+                                 @foreach($questions as $index => $q)
                                     <tr>
-                                        <td>{{ $q->id }}</td>
+                                        <td>{{ ++$index }}</td>
                                         <td>{{ $q->title }}</td>
                                         <td>{{ $q->type }}</td>
                                         <td>{{ $q->marks }}</td>
