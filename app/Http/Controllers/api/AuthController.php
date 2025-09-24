@@ -198,12 +198,20 @@ class AuthController extends Controller
             $chat_deletion_days = (int) $today->diffInDays($data_deletion_date); 
 
             if($chat_deletion_days >= 7){
-                $conversation_ids = conversation::where('user_one_chat_delete','<=', $startOfDay)->where('user_one_id', $user->id)->pluck('id')->toArray();
+               $conversation_ids = conversation::where(function($q) use ($startOfDay) {
+                                            $q->where('user_one_chat_delete', '<=', $startOfDay)
+                                            ->orWhereNull('user_one_chat_delete');
+                                        })->where('user_one_id', $user->id)->pluck('id')->toArray();
+
                 if(!empty($conversation_ids)){
                     conversation::whereIn('id', $conversation_ids)->update(['user_one_chat_delete' => now()]);
                 }
 
-                $conversation_ids = conversation::where('user_two_chat_delete','<=', $startOfDay)->where('user_two_id', $user->id)->pluck('id')->toArray();
+               $conversation_ids = conversation::where(function($q) use ($startOfDay) {
+                                            $q->where('user_two_chat_delete', '<=', $startOfDay)
+                                            ->orWhereNull('user_two_chat_delete');
+                                        })->where('user_two_id', $user->id)->pluck('id')->toArray();
+
                 if(!empty($conversation_ids)){
                     conversation::whereIn('id', $conversation_ids)->update(['user_two_chat_delete' => now()]);
                 }
