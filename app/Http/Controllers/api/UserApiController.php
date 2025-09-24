@@ -288,6 +288,7 @@ class UserApiController extends Controller
             // Update the fields only if they are present in the request
             if ($request->has('data_deletion')) {
                 $user->data_deletion = $request->data_deletion;
+                $user->data_deletion_date = now();
             }
 
             if ($request->has('multimedia')) {

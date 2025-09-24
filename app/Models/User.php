@@ -37,7 +37,7 @@ class User extends Authenticatable
         'profession',
         'personality',
         'interest',
-
+        
         'avatar',
         'native_language',
         'learning_language',
@@ -51,6 +51,7 @@ class User extends Authenticatable
         'remember_token',
         'fcm_token',
         'data_deletion',
+        'data_deletion_date',
         'multimedia',
         'translate_language',
         'interface_language',

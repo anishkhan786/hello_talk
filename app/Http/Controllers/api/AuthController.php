@@ -12,6 +12,7 @@ use App\Models\UserSubscriptions;
 use App\Models\HelperLanguage;
 use App\Models\AppNotification;
 use Carbon\Carbon;
+use App\Models\conversation;
 
 class AuthController extends Controller
 {
@@ -168,7 +169,40 @@ class AuthController extends Controller
         } else {
           $subscription_details = array();
           $subscription_plan = false;
+        }
+        $today = Carbon::now();
+        $startOfDay = $today->copy()->startOfDay();
 
+        if($user->data_deletion == '1'){
+            $conversation_ids = conversation::where('user_one_chat_delete','<=', $startOfDay)->where('user_one_id', $user->id)->pluck('id')->toArray();
+            if(!empty($conversation_ids)){
+                conversation::whereIn('id', $conversation_ids)->update(['user_one_chat_delete' => now()]);
+            }
+
+            $conversation_ids = conversation::where('user_two_chat_delete','<=', $startOfDay)->where('user_two_id', $user->id)->pluck('id')->toArray();
+            if(!empty($conversation_ids)){
+                conversation::whereIn('id', $conversation_ids)->update(['user_two_chat_delete' => now()]);
+            }
+        }
+
+        if($user->data_deletion == '2'){
+
+            $data_deletion_date = Carbon::parse($user->data_deletion_date);
+            $today = Carbon::now();
+            $chat_deletion_days = (int) $today->diffInDays($data_deletion_date); 
+
+            if($chat_deletion_days >= 7){
+                $conversation_ids = conversation::where('user_one_chat_delete','<=', $startOfDay)->where('user_one_id', $user->id)->pluck('id')->toArray();
+                if(!empty($conversation_ids)){
+                    conversation::whereIn('id', $conversation_ids)->update(['user_one_chat_delete' => now()]);
+                }
+
+                $conversation_ids = conversation::where('user_two_chat_delete','<=', $startOfDay)->where('user_two_id', $user->id)->pluck('id')->toArray();
+                if(!empty($conversation_ids)){
+                    conversation::whereIn('id', $conversation_ids)->update(['user_two_chat_delete' => now()]);
+                }
+                User::where('id', $user->id)->update(['data_deletion_date' => now()]);
+            }
         }
 
         return response(["message"=> HelperLanguage::retrieve_message_from_arb_file($request->language_code, 'user_login_success') ??'You have logged in successfully.','status'=>true,'token'=>$token ,'user_data'=>$user,'subscription_plan'=>$subscription_plan ,'subscription'=>$subscription_details],200);
