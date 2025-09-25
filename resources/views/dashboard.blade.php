@@ -105,7 +105,7 @@
                     <div class="col-lg-4 col-12">
                         <div class="row match-height">
                             <!-- Bar Chart - Orders -->
-                            <div class="col-lg-6 col-md-3 col-6">
+                            <!-- <div class="col-lg-6 col-md-3 col-6">
                                 <div class="card">
                                     <div class="card-body pb-50">
                                         <h6>Orders</h6>
@@ -113,11 +113,11 @@
                                         <div id="statistics-order-chart"></div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <!--/ Bar Chart - Orders -->
 
                             <!-- Line Chart - Profit -->
-                            <div class="col-lg-6 col-md-3 col-6">
+                            <!-- <div class="col-lg-6 col-md-3 col-6">
                                 <div class="card card-tiny-line-stats">
                                     <div class="card-body pb-50">
                                         <h6>Profit</h6>
@@ -125,7 +125,7 @@
                                         <div id="statistics-profit-chart"></div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <!--/ Line Chart - Profit -->
 
                             <!-- Earnings Card -->
@@ -153,7 +153,7 @@
                     </div>
 
                     <!-- Revenue Report Card -->
-                    <div class="col-lg-8 col-12">
+                    <div class="col-lg-12 col-12">
                         <div class="card card-company-table">
                             <div class="card-body p-0">
                                 <div class="table-responsive">
