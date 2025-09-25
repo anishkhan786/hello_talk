@@ -21,7 +21,7 @@
                                 <h3 class="mb-75 mt-2 pt-50">
                                     <a href="javascript:void(0);">Total</a>
                                 </h3>
-                                <a href="" type="button" class="btn btn-primary">View Posts</a>
+                                <a href="{{route('post.view')}}" type="button" class="btn btn-primary">View Posts</a>
                                 <img src="../app-assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" />
                             </div>
                         </div>
@@ -129,7 +129,7 @@
                             <!--/ Line Chart - Profit -->
 
                             <!-- Earnings Card -->
-                            <div class="col-lg-12 col-md-6 col-12">
+                            <!-- <div class="col-lg-12 col-md-6 col-12">
                                 <div class="card earnings-card">
                                     <div class="card-body">
                                         <div class="row">
@@ -147,7 +147,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <!--/ Earnings Card -->
                         </div>
                     </div>
