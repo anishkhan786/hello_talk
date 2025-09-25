@@ -8,10 +8,40 @@ use App\Models\learningLevel;
 
 class QuestionTopicController extends Controller
 {
-    public function index(){
-        $data = McqTopic::with('language','learninglevel')->paginate(10);
-        return view('admin.question_topic.index',compact('data'));
-    }
+    public function index(Request $request)
+        {
+            $query = McqTopic::with(['language','learninglevel']);
+
+            // Name filter
+            if ($request->name) {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            }
+
+            // Description filter
+            if ($request->description) {
+                $query->where('description', 'like', '%' . $request->description . '%');
+            }
+
+            // Language filter
+            if ($request->language_id) {
+                $query->where('language_id', $request->language_id);
+            }
+
+            // Learning Level filter
+            if ($request->learning_level_id) {
+                $query->where('learning_level', $request->learning_level_id);
+            }
+
+            // Pagination ke sath filter values preserve karne ke liye appends()
+            $data = $query->paginate(10)->appends($request->all());
+
+            // dropdowns ke liye data bhejna hoga
+            $languages = languag::all();
+            $levels = learningLevel::all();
+
+            return view('admin.question_topic.index', compact('data','languages','levels'));
+        }
+
 
     public function create(){
         $language = languag::get();

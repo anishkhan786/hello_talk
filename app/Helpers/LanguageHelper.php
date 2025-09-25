@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Http;
 use App\Models\languag;
 use App\Models\PostMedia;
-
+use App\Models\McqOption;
 
 function language_code($code){
     $language = languag::where('name', $code)->first();
@@ -63,6 +63,12 @@ function stringConvertToArray($data){
 
 function post_media_get($id){
     return PostMedia::where('post_id', $id)->get();
+}
+
+function mcq_user_answer($id){
+   $data = McqOption::where('question_id', $id)->where('is_correct', '1')->first();
+    $data =  $data->option_text??'NA';
+    return$data ;
 }
 
 

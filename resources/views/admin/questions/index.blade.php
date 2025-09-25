@@ -45,6 +45,7 @@
                                    <tr>
                                         <th>#</th>
                                         <th>Title</th>
+                                        <th>Answer</th>
                                         <th>Type</th>
                                         <th>Marks</th>
                                         <th>Options</th>
@@ -64,6 +65,7 @@
                                     <tr>
                                         <td>{{ $page + $index }}</td>
                                         <td>{{ $q->title }}</td>
+                                        <td>{{  mcq_user_answer($q->id)}}</td>
                                         <td>{{ $q->type }}</td>
                                         <td>{{ $q->marks }}</td>
                                         <td>{{ $q->options->count() }}</td>
