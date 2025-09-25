@@ -165,11 +165,18 @@
                                                 <th>Email</th>
                                                 <th>Date Of Birth</th>
                                                 <th>Phone</th>
-                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                           <tr></tr>
+                                            @foreach($user_data as $index => $q)
+                                            </tr>
+                                                <td>{{ ++$index }}</td>
+                                                <td>{{ $q->name??'NA' }}</td>
+                                                <td>{{ $q->email??'NA' }}</td>
+                                                <td>{{ $q->dob??'NA' }}</td>
+                                                <td>{{ $q->phone_no??'NA' }}</td>
+                                            </tr>
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>

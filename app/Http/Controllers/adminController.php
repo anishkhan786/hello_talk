@@ -53,8 +53,9 @@ public function dashboard(){
     $inquiries = Inquiries::where('status', 'new')->count()??'00';
     $user = User::where('type','user')->count()??'00';
     $courseDemoDetails =CourseDemoDetails::count()??'00';
-      
-    return view('/dashboard', compact('userSubscriptions','inquiries','user','courseDemoDetails'));
+    $user_data = User::where('type','user')->limit(10)->orderBy('id', 'desc')->get();
+
+    return view('/dashboard', compact('userSubscriptions','inquiries','user','courseDemoDetails','user_data'));
 }
 
 public function logout(Request $request)
