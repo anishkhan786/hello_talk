@@ -39,7 +39,7 @@
                             </div>
                             <div class="card-body statistics-body">
                                 <div class="row">
-                                    <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+                                    <div class="col-xl-4 col-sm-6 col-12 mb-2 mb-xl-0">
                                         <div class="media">
                                             <div class="avatar bg-light-primary mr-2">
                                                 <div class="avatar-content">
@@ -53,7 +53,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+                                    <div class="col-xl-4 col-sm-6 col-12 mb-2 mb-xl-0">
                                         <div class="media">
                                             <div class="avatar bg-light-info mr-2">
                                                 <div class="avatar-content">
@@ -67,7 +67,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
+                                    <!-- <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
                                         <div class="media">
                                             <div class="avatar bg-light-danger mr-2">
                                                 <div class="avatar-content">
@@ -79,13 +79,13 @@
                                                 <p class="card-text font-small-3 mb-0">Plan</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xl-3 col-sm-6 col-12">
+                                    </div> -->
+                                    <div class="col-xl-4 col-sm-6 col-12">
                                         <div class="media">
                                             <div class="avatar bg-light-success mr-2">
                                                 <div class="avatar-content">
                                                     <a href="{{route('course-demo-details')}}">
-                                                    <i data-feather="dollar-sign" class="avatar-icon"></i></a>
+                                                    <i data-feather="book" class="avatar-icon"></i></a>
                                                 </div>
                                             </div>
                                             <div class="media-body my-auto">
