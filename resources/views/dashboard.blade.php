@@ -173,7 +173,7 @@
                                                 <td>{{ ++$index }}</td>
                                                 <td>{{ $q->name??'NA' }}</td>
                                                 <td>{{ $q->email??'NA' }}</td>
-                                                <td>{{ $q->dob??'NA' }}</td>
+                                                <td>{{ $q->dob?\Carbon\Carbon::parse($q->dob)->format('Y-m-d'):'NA' }}</td>
                                                 <td>{{ $q->phone_no??'NA' }}</td>
                                             </tr>
                                         @endforeach
