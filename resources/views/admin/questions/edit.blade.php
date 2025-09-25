@@ -85,8 +85,7 @@
                                                     <select name="type" id="qtype" class="form-control" required>
                                                         <option value="mcq" {{ $question->type==='mcq'?'selected':'' }}>Multiple Choice</option>
                                                         <option value="true_false" {{ $question->type==='true_false'?'selected':'' }}>True / False</option>
-                                                        <option value="fill_blank" {{ $question->type==='fill_blank'?'selected':'' }}>Fill in the Blank</option>
-                                                        <option value="short_answer" {{ $question->type==='short_answer'?'selected':'' }}>Short Answer</option>
+                                                       
                                                         <option value="matching" {{ $question->type==='matching'?'selected':'' }}>Matching</option>
                                                     </select>
                                                     @error('type')

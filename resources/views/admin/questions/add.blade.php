@@ -85,8 +85,7 @@
                                                     <select name="type" id="qtype" class="form-control" required>
                                                         <option value="mcq">Multiple Choice</option>
                                                         <option value="true_false">True / False</option>
-                                                        <option value="fill_blank">Fill in the Blank</option>
-                                                        <option value="short_answer">Short Answer</option>
+                                                      
                                                         <option value="matching">Matching</option>
                                                     </select>
                                                     @error('type')
